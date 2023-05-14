@@ -1,0 +1,10 @@
+<library>
+  <book id="1">
+    <title>The Catcher in the Rye</title>
+    <author>J.D. Salinger</author>
+  </book>
+  <book id="2">
+    <title>To Kill a Mockingbird</title>
+    <author>Harper Lee</author>
+  </book>
+</library>

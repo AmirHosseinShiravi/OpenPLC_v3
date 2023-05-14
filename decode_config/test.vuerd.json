@@ -1,0 +1,756 @@
+{
+  "canvas": {
+    "version": "2.2.11",
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": -175.99999999999997,
+    "scrollLeft": -242.39999999999995,
+    "zoomLevel": 0.8,
+    "show": {
+      "tableComment": true,
+      "columnComment": true,
+      "columnDataType": true,
+      "columnDefault": true,
+      "columnAutoIncrement": false,
+      "columnPrimaryKey": true,
+      "columnUnique": false,
+      "columnNotNull": true,
+      "relationship": true
+    },
+    "database": "MySQL",
+    "databaseName": "",
+    "canvasType": "ERD",
+    "language": "GraphQL",
+    "tableCase": "pascalCase",
+    "columnCase": "camelCase",
+    "highlightTheme": "VS2015",
+    "bracketType": "none",
+    "setting": {
+      "relationshipDataTypeSync": true,
+      "relationshipOptimization": false,
+      "columnOrder": [
+        "columnName",
+        "columnDataType",
+        "columnNotNull",
+        "columnUnique",
+        "columnAutoIncrement",
+        "columnDefault",
+        "columnComment"
+      ]
+    },
+    "pluginSerializationMap": {}
+  },
+  "table": {
+    "tables": [
+      {
+        "name": "Driver Types",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "3a3b3d1c-bac4-4cc5-9c37-b0d86bfadfb6"
+          },
+          {
+            "name": "driver_name",
+            "comment": "",
+            "dataType": "CHAR",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 74.25537109375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "820eea91-5bc0-4987-8cd3-5b3047c39fd0"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 691.6572,
+          "top": 10.2855,
+          "zIndex": 283,
+          "widthName": 74.9599609375,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "30742cdc-dea1-40a5-9447-9287a12b8a50"
+      },
+      {
+        "name": "Driver Instances",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          },
+          {
+            "name": "driver_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 74.25537109375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "2be7f7e4-2828-489b-b2e7-2aa8251d5eec"
+          },
+          {
+            "name": "instance_name",
+            "comment": "",
+            "dataType": "CHAR",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "0463cd97-4150-45fe-baec-076d5f8ef939"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 683.9746,
+          "top": 269.0411,
+          "zIndex": 300,
+          "widthName": 95.919921875,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "2dec93f8-6f09-4b87-9314-a97555af7f69"
+      },
+      {
+        "name": "LIO Driver Instances Options",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "bce217bb-6464-4aeb-a594-cdccf3f36eee"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "e29114bf-3542-4695-9fbb-996170837866"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1363.2,
+          "top": 270.4,
+          "zIndex": 288,
+          "widthName": 168.89892578125,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "017da0a9-702e-49cd-b967-36e116aea009"
+      },
+      {
+        "name": "DNP Driver Instances Options",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "646683ae-1062-4cb2-9f68-adfaf41b5d3e"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "90991713-a1c3-4d5b-894d-679bab6ad184"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1364,
+          "top": 536,
+          "zIndex": 290,
+          "widthName": 175.392578125,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "c842fd1d-a185-4f46-bb6b-f301047a6cc0"
+      },
+      {
+        "name": "Modbus Driver Instances Options",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "a56bc411-a1d9-4a4d-96dc-20d04381fd27"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "6738c700-94bf-4e37-91e5-74abf1441d8b"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1364,
+          "top": 408,
+          "zIndex": 287,
+          "widthName": 194.1943359375,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "33299869-eb12-4ed4-a255-44495212a463"
+      },
+      {
+        "name": "LIO Driver Instance Tags",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "11bbb0f0-9f1b-4c36-9567-159f1c212175"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "2630f3c4-4d15-4d26-a153-b11bcdff1a57"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 106.5143,
+          "top": 273.7141,
+          "zIndex": 293,
+          "widthName": 145.05712890625,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "033f078b-6910-4ad4-8cc6-43b05925cbf1"
+      },
+      {
+        "name": "Modbus Driver Instance Tags",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "f8a7d922-7681-400f-af8a-54c5aea79bab"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "8cdd2f4c-9bd0-49eb-bc03-214f9d861d92"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 106.4,
+          "top": 403.4,
+          "zIndex": 320,
+          "widthName": 170.3525390625,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "571a7a0b-d0c6-4378-9884-cb0e9c8f3cde"
+      },
+      {
+        "name": "",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "f94623a2-fbf0-483d-a9c4-7a0332033a6a"
+          },
+          {
+            "name": "instance_ref_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90.1689453125,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "cbc53925-1038-4a62-ae59-0f3c94d6fa48"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 105.4,
+          "top": 534.4,
+          "zIndex": 321,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "4a77c2f0-334b-41b6-a5bb-9fafda6a8bfc"
+      }
+    ],
+    "indexes": []
+  },
+  "memo": {
+    "memos": []
+  },
+  "relationship": {
+    "relationships": [
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "30742cdc-dea1-40a5-9447-9287a12b8a50",
+          "columnIds": [
+            "3a3b3d1c-bac4-4cc5-9c37-b0d86bfadfb6"
+          ],
+          "x": 872.284885546875,
+          "y": 120.2855,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "2be7f7e4-2828-489b-b2e7-2aa8251d5eec"
+          ],
+          "x": 872.55907265625,
+          "y": 269.0411,
+          "direction": "top"
+        },
+        "constraintName": "fk_driver types_to_driver instances",
+        "visible": true,
+        "id": "f76fa0d9-a5cb-4c58-b7e2-bb58c59b4228"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneOnly",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 1061.1435453125,
+          "y": 290.7911,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "017da0a9-702e-49cd-b967-36e116aea009",
+          "columnIds": [
+            "e29114bf-3542-4695-9fbb-996170837866"
+          ],
+          "x": 1363.2,
+          "y": 325.4,
+          "direction": "left"
+        },
+        "constraintName": "fk_driver instances_to_driver instance options",
+        "visible": true,
+        "id": "1e0859ce-33d4-4174-a614-d83cdcad9b81"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneOnly",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 1061.1435453125,
+          "y": 377.7911,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "c842fd1d-a185-4f46-bb6b-f301047a6cc0",
+          "columnIds": [
+            "90991713-a1c3-4d5b-894d-679bab6ad184"
+          ],
+          "x": 1364,
+          "y": 591,
+          "direction": "left"
+        },
+        "constraintName": "fk_driver instances_to_dnp driver instances options",
+        "visible": true,
+        "id": "882fffae-067f-48e9-89a4-58f4e97331e4"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 683.9746,
+          "y": 290.7911,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "033f078b-6910-4ad4-8cc6-43b05925cbf1",
+          "columnIds": [
+            "2630f3c4-4d15-4d26-a153-b11bcdff1a57"
+          ],
+          "x": 483.6832453125,
+          "y": 328.7141,
+          "direction": "right"
+        },
+        "constraintName": "fk_driver instances_to_lio driver instance tags",
+        "visible": true,
+        "id": "df8c0937-b8c8-4dee-8d72-66ddc509de4e"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneOnly",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 1061.1435453125,
+          "y": 334.2911,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "33299869-eb12-4ed4-a255-44495212a463",
+          "columnIds": [
+            "6738c700-94bf-4e37-91e5-74abf1441d8b"
+          ],
+          "x": 1364,
+          "y": 463,
+          "direction": "left"
+        },
+        "constraintName": "fk_driver instances_to_",
+        "visible": true,
+        "id": "0887cdf5-c441-44e9-8d2e-d62fe7719e1c"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 683.9746,
+          "y": 334.2911,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "571a7a0b-d0c6-4378-9884-cb0e9c8f3cde",
+          "columnIds": [
+            "8cdd2f4c-9bd0-49eb-bc03-214f9d861d92"
+          ],
+          "x": 483.5689453125,
+          "y": 458.4,
+          "direction": "right"
+        },
+        "constraintName": "fk_driver instances_to_",
+        "visible": true,
+        "id": "29b194dd-3da4-4a89-83fa-38f00c90e1ca"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "2dec93f8-6f09-4b87-9314-a97555af7f69",
+          "columnIds": [
+            "ecee10e4-1367-4884-be8d-6c23f8ef1b3e"
+          ],
+          "x": 683.9746,
+          "y": 377.7911,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "4a77c2f0-334b-41b6-a5bb-9fafda6a8bfc",
+          "columnIds": [
+            "cbc53925-1038-4a62-ae59-0f3c94d6fa48"
+          ],
+          "x": 482.5689453125,
+          "y": 589.4,
+          "direction": "right"
+        },
+        "constraintName": "fk_driver instances_to_",
+        "visible": true,
+        "id": "e2a913fe-cbb8-4b99-b4bf-798ab8b7c8ca"
+      }
+    ]
+  }
+}
