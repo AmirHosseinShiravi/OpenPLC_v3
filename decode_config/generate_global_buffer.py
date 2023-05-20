@@ -1,33 +1,41 @@
 from lxml import etree
 import os
-from bs4 import BeautifulSoup
-
+from test_csv_reader import generate_extern_variables
 # set False to false
 # set True to true
 # change empty range in LIO from "" to "-1"
 # change empty deadband in LIO from "" to "0"
 
+def concatenate_strings(destination_str ,string):
+
+    destination_str[0] += string + '\n'
 
 
-DRVTags_string = str()
 def decode_config_file(file_path):
 
 
-    def add_to_DRVTags(string):
-        global DRVTags_string
-        DRVTags_string += string + '\n'
+    DRVTags_string = [str()]
+    GlueVars_functions_string = [str()]
+    setDRVTagsFromVars_string = [str()] # inputs
+    setVarsFromDRVTags_string = [str()] # outputs
 
-    predefine_variables= '''#include <stdio.h>
+
+    concatenate_strings(GlueVars_functions_string, '#include "accessor.h"\n#include "iec_types.h"\n#include "iec_types_all.h"\n#include "DRVTags.h"')
+    extern_variables = generate_extern_variables('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/VARIABLES.csv')
+    concatenate_strings(GlueVars_functions_string, extern_variables)
+
+    concatenate_strings(setDRVTagsFromVars_string, 'void setDRVTagsFromVars(){')
+    concatenate_strings(setVarsFromDRVTags_string, 'void setVarsFromDRVTags(){')
+
+
+    predefines= '''#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-typedef struct {
-    long int tv_sec;            /* Seconds.  */
-    long int tv_nsec;           /* Nanoseconds.  */
-}IEC_TIMESPEC;
-typedef IEC_TIMESPEC IEC_DT;
+#include "iec_types.h"
+#include "iec_types_all.h"
+#include "accessor.h"
 
 // Drivers Structures
 typedef struct LIO_driver_options{
@@ -90,7 +98,7 @@ typedef struct Modbus_driver_options{
     char PhysicalLayer[20];
 }Modbus_driver_options;
 
-typedef struct ModbusBlocks{
+typedef struct ModbusBlock{
     char DeviceName[100];
     int SlaveID;
     char IP[100];
@@ -103,7 +111,7 @@ typedef struct ModbusBlocks{
     bool Enable;
     int FirstTagIndex;
     int LastTagIndex;
-}ModbusBlocks;
+}ModbusBlock;
 
 typedef struct Database_driver_options{
     bool Disable;
@@ -142,20 +150,22 @@ typedef struct Driver_properties{
     char DriverInstanceName[100];
     char DriverInstanceType[100];
     int InstanceIndex;
+    int number_of_tags;
+    int number_of_modbus_blocks;
     union
     {
         struct LIO_driver_options LIO_Options;
         struct DNP_driver_options DNP_Options;
         struct Modbus_driver_options Modbus_Options;
-        struct ModbusBlocks Modbus_Blocks_Options;
+        struct ModbusBlock* Modbus_Block_config;
         struct Database_driver_options Database_Options;
     }driverOptions;
     DriverTag *Tags;
 }Driver_properties;'''
-    # str_temp = predefine_variables.split('\n')
+    # str_temp = predefines.split('\n')
     # str_temp = [_.strip() for _ in str_temp]
-    # predefine_variables = '\n'.join(str_temp)
-    add_to_DRVTags(predefine_variables)
+    # predefines = '\n'.join(str_temp)
+    concatenate_strings(DRVTags_string ,predefines)
 
     with open(file_path, 'r') as file_handler:
         tree = etree.parse(source= file_handler)
@@ -170,17 +180,23 @@ typedef struct Driver_properties{
             driver_list.append((driver_name, driver_type, instance_index))
             instance_index += 1
         
-        # define DRVTags pointer
-        add_to_DRVTags('\nvoid declare_and_init_drvtags(Driver_properties* DRVTags){\n\n\tIEC_DT time_temp;\n\ttime_temp.tv_sec = 0;\n\ttime_temp.tv_nsec = 0;\n')
+        # define DRVTags
+        concatenate_strings(DRVTags_string ,f'\nint number_of_driver_instances = {len(driver_list)};')
+        concatenate_strings(DRVTags_string ,f'\nDriver_properties DRVTags[{len(driver_list)}];')
+
+        # declare declare_and_init_drvtags function
+        concatenate_strings(DRVTags_string ,'\nvoid declare_and_init_drvtags(Driver_properties* DRVTags){\n')
+        concatenate_strings(DRVTags_string ,f'\tIEC_DT time_temp;\n\ttime_temp.tv_sec = 0;\n\ttime_temp.tv_nsec = 0;\n')
+
         
 
         for driver_instance_name, driver_instance_type, instance_index in driver_list:
             
             if driver_instance_type == "LOCAL_IO":
 
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
 
 
                 driver_instance_node = tree.find(driver_instance_name)
@@ -194,12 +210,15 @@ typedef struct Driver_properties{
                         f'\t{LIO_options_prefix}.IOScan = {options.attrib.get("IOScan", None)};\n' + \
                         f'\tstrcpy({LIO_options_prefix}.TagConfiguration, "{options.attrib.get("TagConfiguration", None)}");\n'
                 
-                add_to_DRVTags(string)
+                concatenate_strings(DRVTags_string ,string)
+
+                tagConfiguration = options.attrib.get("TagConfiguration", None)
 
                 # Get and generate LIO's tag buffer
                 tags = driver_instance_node.find('Tags').findall('Tag')
                 number_of_tags = len(tags)
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].number_of_tags = {number_of_tags};')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
                 # we don't need to initialize other variables because of we don't use them for tihs
                 # driver.
                 for tag in tags:
@@ -218,13 +237,48 @@ typedef struct Driver_properties{
                                 f'\t{LIO_tag_prefix}.TagStatus = 1;\n' + \
                                 f'\t{LIO_tag_prefix}.OldTagStatus = 1;\n' + \
                                 f'\t{LIO_tag_prefix}.TagValueDT = time_temp;\n'
-                        add_to_DRVTags(string)
+                        concatenate_strings(DRVTags_string ,string)
+                        
+                        tag_type = tag.attrib.get("Type", "")
 
+                        if tag_type in ["1","2","3","4","200"]:
+                            # setVarsFromDRVTags
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                case "Value-Status":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                case "Value-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                        
+                        elif tag_type in ["10","11","201"]:
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                case "Value-Status":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                case "Value-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                
             elif driver_instance_type == "DNP3Slave":
 
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
 
                 driver_instance_node = tree.find(driver_instance_name)
                 # get LIO's Option
@@ -263,11 +317,15 @@ typedef struct Driver_properties{
                         f'\t{DNP_options_prefix}.DIHighSpeedEventScan = {options.attrib.get("DIHighSpeedEventScan", None)};\n' + \
                         f'\t{DNP_options_prefix}.DeleteOldestEvent = {options.attrib.get("DeleteOldestEvent", None)};\n'
                 
-                add_to_DRVTags(string)
+                concatenate_strings(DRVTags_string ,string)
+
+                tagConfiguration = options.attrib.get("TagConfiguration", None)
+
                 # Get and generate LIO's tag buffer
                 tags = driver_instance_node.find('Tags').findall('Tag')
                 number_of_tags = len(tags)
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].number_of_tags = {number_of_tags};')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
                 for tag in tags:
                     tag_index = tag.attrib.get("TagIndex", None)
                     if tag_index:
@@ -287,16 +345,50 @@ typedef struct Driver_properties{
                                 f'\t{DNP_tag_prefix}.OldTagStatus = 1;\n' + \
                                 f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n'
                         
-                        add_to_DRVTags(string)
-            
+                        concatenate_strings(DRVTags_string ,string)
+
+                        tag_type = tag.attrib.get("Type", "")
+
+                        if tag_type in ["50","51"]:
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                case "Value-Status":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                case "Value-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                            
+                        elif tag_type in ["1","4"]:
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                case "Value-Status":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                case "Value-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                
             elif driver_instance_type == "DNP3Master":
                 pass
 
             elif driver_instance_type == "ModbusMaster":
                 
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].InstanceIndex =  {instance_index};')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].InstanceIndex =  {instance_index};')
 
 
                 driver_instance_node = tree.find(driver_instance_name)
@@ -320,14 +412,18 @@ typedef struct Driver_properties{
                         f'\t{Modbus_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
                         f'\tstrcpy({Modbus_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n'
                 
-                add_to_DRVTags(string)
+                concatenate_strings(DRVTags_string ,string)
+
+                tagConfiguration = options.attrib.get("TagConfiguration", None)
 
                 # modbus blocks
                 blocks = driver_instance_node.find('Blocks').findall('Block')
                 number_of_blocks = len(blocks)
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].driverOptions.Modbus_Blocks_Options = malloc({number_of_blocks} * sizeof(*DRVTags[{instance_index}].driverOptions.Modbus_Blocks_Options));')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].number_of_tags = {number_of_tags};')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].number_of_modbus_blocks = {number_of_blocks};')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].driverOptions.Modbus_Block_config = malloc({number_of_blocks} * sizeof(*DRVTags[{instance_index}].driverOptions.Modbus_Block_config));')
                 for i, block in enumerate(blocks):
-                    Modbus_blocks_prefix = f"DRVTags[{instance_index}].driverOptions.Modbus_Blocks_Options[{i}]"
+                    Modbus_blocks_prefix = f"DRVTags[{instance_index}].driverOptions.Modbus_Block_config[{i}]"
 
                     string= f'\tstrcpy({Modbus_blocks_prefix}.DeviceName, "{block.attrib.get("DeviceName", "")}");\n' + \
                             f'\t{Modbus_blocks_prefix}.SlaveID = {block.attrib.get("SlaveID", None)};\n' + \
@@ -341,12 +437,12 @@ typedef struct Driver_properties{
                             f'\t{Modbus_blocks_prefix}.Enable = {block.attrib.get("Enable", None)};\n' + \
                             f'\t{Modbus_blocks_prefix}.FirstTagIndex = {block.attrib.get("FirstTagIndex", None)};\n' + \
                             f'\t{Modbus_blocks_prefix}.LastTagIndex = {block.attrib.get("LastTagIndex", None)};\n'
-                    add_to_DRVTags(string)
+                    concatenate_strings(DRVTags_string ,string)
 
                 # Get and generate LIO's tag buffer
                 tags = driver_instance_node.find('Tags').findall('Tag')
                 number_of_tags = len(tags)
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
                 # we don't need to initialize other variables because of we don't use them for tihs
                 # driver.
                 for tag in tags:
@@ -364,16 +460,51 @@ typedef struct Driver_properties{
                                 f'\t{Modebus_tag_prefix}.TagStatus = 1;\n' + \
                                 f'\t{Modebus_tag_prefix}.OldTagStatus = 1;\n' + \
                                 f'\t{Modebus_tag_prefix}.TagValueDT = time_temp;\n'
-                        add_to_DRVTags(string)
+                        concatenate_strings(DRVTags_string ,string)
 
+
+                        tag_type = tag.attrib.get("Type", "")
+
+                        if tag_type in [str(_) for _ in range(1,11+1)] + ['201']: # types 1 to 11 and 201
+                            # match tagConfiguration:
+                            #     case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                            concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                # case "Value-Status":
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                # case "Value-DT":
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                # case "Value-Status-DT":
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                #     concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                            
+                        elif tag_type in [str(_) for _ in range(51,56+1)] + ['202']: # types 51 to 56 and 202
+                            # match tagConfiguration:
+                            #     case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                # case "Value-Status":
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                # case "Value-DT":
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                                # case "Value-Status-DT":
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                #     concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                
             elif driver_instance_type == "ModbusSlave":
                 pass
 
             elif driver_instance_type == "SQLite":
                 
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
-                add_to_DRVTags(f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceName, "{driver_instance_name}");')
+                concatenate_strings(DRVTags_string ,f'\tstrcpy(DRVTags[{instance_index}].DriverInstanceType, "{driver_instance_type}");')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].InstanceIndex = {instance_index};')
 
 
                 driver_instance_node = tree.find(driver_instance_name)
@@ -394,12 +525,16 @@ typedef struct Driver_properties{
                         f'\t{database_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
                         f'\t{database_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n'        
                 
-                add_to_DRVTags(string)
+                concatenate_strings(DRVTags_string ,string)
+
+                tagConfiguration = options.attrib.get("TagConfiguration", None)
+
 
                 # Get and generate LIO's tag buffer
                 tags = driver_instance_node.find('Tags').findall('Tag')
                 number_of_tags = len(tags)
-                add_to_DRVTags(f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].number_of_tags = {number_of_tags};')
+                concatenate_strings(DRVTags_string ,f'\tDRVTags[{instance_index}].Tags = malloc({number_of_tags} * sizeof(*DRVTags[{instance_index}].Tags));')
                 # we don't need to initialize other variables because of we don't use them for tihs
                 # driver.
                 for tag in tags:
@@ -418,20 +553,60 @@ typedef struct Driver_properties{
                                 f'\t{database_tag_prefix}.TagStatus = 1;\n' + \
                                 f'\t{database_tag_prefix}.OldTagStatus = 1;\n' + \
                                 f'\t{database_tag_prefix}.TagValueDT = time_temp;\n'
-                        add_to_DRVTags(string)
+                        concatenate_strings(DRVTags_string ,string)
 
-        add_to_DRVTags('}')
-        add_to_DRVTags('\nint main(){\n')
-        add_to_DRVTags(f'\tDriver_properties DRVTags[{len(driver_list)}];')
-        add_to_DRVTags('\tdeclare_and_init_drvtags(DRVTags);\n')
-        add_to_DRVTags('\tprintf("%s\\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);')
-        add_to_DRVTags('\tprintf("%f\\n", DRVTags[4].Tags[0].Deadband);')
-        add_to_DRVTags('\n\tfor(int i=0; i <= sizeof(DRVTags) / sizeof(Driver_properties); i++){\n\t\tfree(DRVTags[i].Tags);\n\t};')
-        add_to_DRVTags('}')
+                        tag_type = tag.attrib.get("Type", "")
 
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/output.c', 'w') as output_file_handler:
-        output_file_handler.write(DRVTags_string)
+                        if tag_type != "202":
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                case "Value-Status":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                case "Value-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tDRVTags[{instance_index}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                            
+                        elif tag_type == "202":
+                            match tagConfiguration:
+                                case "Value":
+                                    # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                case "Value-Status":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                case "Value-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                                case "Value-Status-DT":
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DRVTags[{instance_index}].Tags[{tag_index}].TagValue);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DRVTags[{instance_index}].Tags[{tag_index}].TagStatus);')
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DRVTags[{instance_index}].Tags[{tag_index}].TagValueDT);')
+                
+                
+                
+        concatenate_strings(setDRVTagsFromVars_string, '}')
+        concatenate_strings(setVarsFromDRVTags_string, '}')
+        concatenate_strings(DRVTags_string ,'}')
+        # concatenate_strings(DRVTags_string ,'\nint main(){\n')
+        # concatenate_strings(DRVTags_string ,'\tdeclare_and_init_drvtags(DRVTags);\n')
+        # concatenate_strings(DRVTags_string ,'\tprintf("%s\\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);')
+        # concatenate_strings(DRVTags_string ,'\tprintf("%f\\n", DRVTags[4].Tags[0].Deadband);')
+        # concatenate_strings(DRVTags_string ,'\n\tfor(int i=0; i < sizeof(DRVTags) / sizeof(Driver_properties); i++){\n\t\tfree(DRVTags[i].Tags);\n\t};')
+        # concatenate_strings(DRVTags_string ,'}')
 
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/DRVTags.h', 'w') as output_file_handler:
+        output_file_handler.write(DRVTags_string[0])
+    
+    GlueVars_functions_string[0] += setDRVTagsFromVars_string[0] + setVarsFromDRVTags_string [0]
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/GlueVars_functions.h', 'w') as output_file_handler:
+        output_file_handler.write(GlueVars_functions_string[0])
 
 decode_config_file('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/aa.cfg')
     

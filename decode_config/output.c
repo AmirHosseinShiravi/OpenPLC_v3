@@ -128,13 +128,15 @@ typedef struct Driver_properties{
         struct LIO_driver_options LIO_Options;
         struct DNP_driver_options DNP_Options;
         struct Modbus_driver_options Modbus_Options;
-        struct ModbusBlocks Modbus_Blocks_Options;
+        struct ModbusBlocks* Modbus_Blocks_Options;
         struct Database_driver_options Database_Options;
     }driverOptions;
     DriverTag *Tags;
 }Driver_properties;
+	Driver_properties DRVTags[5];
 
 void declare_and_init_drvtags(Driver_properties* DRVTags){
+
 
 	IEC_DT time_temp;
 	time_temp.tv_sec = 0;
@@ -8031,17 +8033,4 @@ void declare_and_init_drvtags(Driver_properties* DRVTags){
 	DRVTags[4].Tags[0].OldTagStatus = 1;
 	DRVTags[4].Tags[0].TagValueDT = time_temp;
 
-}
-
-int main(){
-
-	Driver_properties DRVTags[5];
-	declare_and_init_drvtags(DRVTags);
-
-	printf("%s\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);
-	printf("%f\n", DRVTags[4].Tags[0].Deadband);
-
-	for(int i=0; i <= sizeof(DRVTags) / sizeof(Driver_properties); i++){
-		free(DRVTags[i].Tags);
-	};
 }

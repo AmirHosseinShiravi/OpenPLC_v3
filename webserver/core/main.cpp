@@ -36,6 +36,7 @@
 #include "ethercat_src.h"
 #endif
 
+
 #define OPLC_CYCLE          50000000
 
 extern int opterr;
@@ -308,6 +309,57 @@ int main(int argc,char **argv)
 	printf("Getting current time\n");
 	clock_gettime(CLOCK_MONOTONIC, &timer_start);
 
+
+    // void setDRVTagsFromVars();
+    declare_and_init_drvtags();
+
+
+    // printf("%s\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);
+	// printf("%f\n", DRVTags[4].Tags[0].Deadband);
+    // unsigned char log_msg[1000];
+    sprintf((char *)log_msg, "%d \n", Modbus_Master_Driver_Instances[0].Options.BaudRate);
+    log(log_msg);
+    sprintf((char *)log_msg, "number of tags: %d \n", DNP_Slave_Driver_Instances[0].number_of_tags);
+    log(log_msg);
+
+    // sprintf((char *)log_msg,"%s\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);
+    // log(log_msg);
+    // sprintf((char *)log_msg, "%f\n", DRVTags[0].Tags[0].TagValue);
+    // log(log_msg);
+    // sprintf((char *)log_msg,"%s\n", DRVTags[1].driverOptions.DNP_Options.LocalIPAddress);
+    // log(log_msg);
+
+    // for(int i=0; i< number_of_driver_instances; i++)
+    // {
+    //     if(strcmp(DRVTags[i].DriverInstanceType , (char *)"LOCAL_IO") == 0){
+    //         sprintf((char *)log_msg,"in :: %s :: instance:: .\n", DRVTags[i].DriverInstanceName );
+    //         log(log_msg);
+    //         sprintf((char *)log_msg,"number of tagsin driver :: %s :: instance:: %d :: is :: %d .\n", DRVTags[i].DriverInstanceName,i , DRVTags[i].number_of_tags );
+    //         log(log_msg);
+    //     }
+    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"DNP3Master") == 0){
+    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
+    //         log(log_msg);
+    //     }
+    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"DNP3Slave") == 0){
+    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
+    //         log(log_msg);
+    //     }
+    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"ModbusMaster") == 0){
+
+    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
+    //         log(log_msg);
+    //     }
+    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"ModbusSlave") == 0){
+    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
+    //         log(log_msg);
+    //     }
+    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"SQLite") == 0){
+    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
+    //         log(log_msg);
+    //     }
+
+    // }
 	//======================================================
 	//                    MAIN LOOP
 	//======================================================
@@ -350,7 +402,13 @@ int main(int argc,char **argv)
         updateBuffersIn_MB(); //update input image table with data from slave devices
         handleSpecialFunctions();
 		config_run__(__tick++); // execute plc program logic
-		updateCustomOut();
+        
+        setDRVTagsFromVars();
+
+		sprintf((char *)log_msg, "LIO_Driver_Instance.Tags[0].TagValue=  %f \n",LIO_Driver_Instance.Tags[0].TagValue);
+        log(log_msg);
+
+        updateCustomOut();
         updateBuffersOut_MB(); //update slave devices with data from the output image table
 		pthread_mutex_unlock(&bufferLock); //unlock mutex
 
@@ -407,3 +465,4 @@ int main(int argc,char **argv)
     printf("Shutting down OpenPLC Runtime...\n");
     exit(0);
 }
+ 

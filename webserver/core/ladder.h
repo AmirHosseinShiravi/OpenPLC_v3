@@ -1,28 +1,5 @@
-//-----------------------------------------------------------------------------
-// Copyright 2015 Thiago Alves
-//
-// Based on the LDmicro software by Jonathan Westhues
-// This file is part of the OpenPLC Software Stack.
-//
-// OpenPLC is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// OpenPLC is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
-//------
-//
-// This file is to be used in conjuction with OPLC_Compiler generated code.
-// It is the "glue" that holds all parts of the OpenPLC together.
-// Thiago Alves, Oct 2015
-//-----------------------------------------------------------------------------
-
+#include "DRVTags.h"
+#include "GlueVars_functions.h"
 #include <pthread.h>
 #include <stdint.h>
 
@@ -158,3 +135,16 @@ void dnp3StartServer(int port);
 //persistent_storage.cpp
 void startPstorage();
 int readPersistentStorage();
+
+
+// Driver Instances buffers defenitions
+extern LIO_Driver_Struct           LIO_Driver_Instance;
+extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
+extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
+
+// Gluvar_functions
+void setDRVTagsFromVars();
+void setVarsFromDRVTags();
+
+// DRVTags_init_function
+void declare_and_init_drvtags();

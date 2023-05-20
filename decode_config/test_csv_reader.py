@@ -41,8 +41,8 @@ def generate_extern_variables(variavles_file_path:str) -> str:
                     elif dot_counter == 2:
                         if type_mapper.get(row[4], None) is None:
                             continue
-                        string += f'extern {type_mapper.get(row[4], row[4])} {row[3][(row[3].find(".") + 1):]};\n'
+                        string += f'extern {type_mapper.get(row[4], row[4])} {row[3][(row[3].find(".") + 1):].replace(".", "__")};\n'
 
     return string
 
-print(generate_extern_variables('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/VARIABLES.csv'))
+# print(generate_extern_variables('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/VARIABLES.csv'))

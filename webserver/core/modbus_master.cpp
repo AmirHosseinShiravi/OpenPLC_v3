@@ -39,6 +39,7 @@
 
 #include "ladder.h"
 
+
 #define MB_TCP                1
 #define MB_RTU                2
 #define MAX_MB_IO            400
@@ -148,6 +149,33 @@ void getFunction(char *line, char *parameter)
         parameter[i] = '\0';
     }
 }
+
+
+
+// device4.name = "2"
+// device4.slave_id = "1"
+// device4.protocol = "TCP"
+// device4.address = "192.168.0.2"
+// device4.IP_Port = "502"
+// device4.RTU_Baud_Rate = "115200"
+// device4.RTU_Parity = "None"
+// device4.RTU_Data_Bits = "8"
+// device4.RTU_Stop_Bits = "1"
+// device4.RTU_TX_Pause = "0"
+
+// device4.Discrete_Inputs_Start = "0"
+// device4.Discrete_Inputs_Size = "0"
+// device4.Coils_Start = "0"
+// device4.Coils_Size = "0"
+// device4.Input_Registers_Start = "0"
+// device4.Input_Registers_Size = "0"
+// device4.Holding_Registers_Read_Start = "8"
+// device4.Holding_Registers_Read_Size = "12"
+// device4.Holding_Registers_Start = "0"
+// device4.Holding_Registers_Size = "0"
+
+
+
 
 void parseConfig()
 {
@@ -316,7 +344,7 @@ void parseConfig()
     else
     {
         unsigned char log_msg[1000];
-        sprintf(log_msg, "Skipping configuration of Slave Devices (mbconfig.cfg file not found)\n");
+        sprintf((char *)log_msg, "Skipping configuration of Slave Devices (mbconfig.cfg file not found)\n");
         log(log_msg);
     }
 
@@ -495,6 +523,9 @@ void *querySlaveDevices(void *arg)
                     
                     free(tempBuff);
                 }
+                
+                // Read coils
+                // Do Something
 
                 //Read input registers
                 if (mb_devices[i].input_registers.num_regs != 0)
@@ -612,7 +643,7 @@ void *querySlaveDevices(void *arg)
 //-----------------------------------------------------------------------------
 void initializeMB()
 {
-    parseConfig();
+    // parseConfig();
 
     for (int i = 0; i < num_devices; i++)
     {
@@ -622,6 +653,10 @@ void initializeMB()
         }
         else if (mb_devices[i].protocol == MB_RTU)
         {
+            // اگر دو تا دیوایس پیدا شدن که پورت کام مشترک داشتند اما تنظیمات نا مشترک،
+            //  در اینصورت تنظیمات آن دیوایسی که قبل تر از دیوایس جدید سی تی ایکس اش ست شده است را به دیوایس جدید میدهیم
+            //  در غیر اینصورت یک مدباس جدید با تنظیمات خودش ست میکنیم
+            //  حالا چون ما کدمان را بر اساس اینستنس هایی از مدباس که هر کدام پورت کام مجزا دارند میخواهیم تعریف کنیم،‌پس این حالت همواره اتفاق می افتد و همگی تنظیمات مشترک خواهند داشت
             //Check if there is a device using the same port
             int share_index = -1;
             for (int a = 0; a < num_devices && a < i; a++)
