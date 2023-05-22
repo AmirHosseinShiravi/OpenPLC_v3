@@ -30,11 +30,12 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include "iec_types.h"
+// #include "iec_types.h"
 #include "ladder.h"
 #ifdef _ethercat_src
 #include "ethercat_src.h"
 #endif
+
 
 
 #define OPLC_CYCLE          50000000
@@ -210,6 +211,43 @@ void RecordCycletimeLatency(long cycle_time, long sleep_latency)
     if (special_functions[5] != NULL) *special_functions[5] = sleep_latency;
 }
 
+
+// tm_t convert_seconds_to_date_and_time_amir(long int seconds) {
+//     tm_t dt;
+//     long int days, rem;
+//     days = seconds / SECONDS_PER_DAY;
+//     rem = seconds % SECONDS_PER_DAY;
+//     if (rem < 0) {
+//         rem += SECONDS_PER_DAY;
+//         days--;
+//     }
+
+//     // time of day
+//     dt.tm_hour = rem / SECONDS_PER_HOUR;
+//     rem %= SECONDS_PER_HOUR;
+//     dt.tm_min = rem / 60;
+//     dt.tm_sec = rem % 60;
+
+//     // date
+//     dt.tm_year = EPOCH_YEAR;
+//     while (days >= (rem = __isleap(dt.tm_year) ? 366 : 365)) {
+//         dt.tm_year++;
+//         days -= rem;
+//     }
+//     while (days < 0) {
+//         dt.tm_year--;
+//         days += __isleap(dt.tm_year) ? 366 : 365;
+//     }
+//     dt.tm_mon = 1;
+//     while (days > __mon_yday[__isleap(dt.tm_year)][dt.tm_mon]) {
+//         dt.tm_mon += 1;
+//     }
+//     dt.tm_day = days - __mon_yday[__isleap(dt.tm_year)][dt.tm_mon - 1] + 1;
+
+//     return dt;
+// }
+
+
 // pointers to IO *array[const][const] from cpp to c and back again don't work as expected, so instead callbacks
 u_int8_t *bool_input_call_back(int a, int b){ return bool_input[a][b]; }
 u_int8_t *bool_output_call_back(int a, int b){ return bool_output[a][b]; }
@@ -262,6 +300,12 @@ int main(int argc,char **argv)
     ethercat_configure("../utils/ethercat_src/build/ethercat.cfg", logger);
 #endif
     initializeHardware();
+    // Modbus_Master_Driver_Instances[0].Options.WriteByChange == true:
+    //  then : 
+    //      initializeMB();
+    //  else:
+    //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
+
     initializeMB();
     initCustomLayer();
     updateBuffersIn();
@@ -302,32 +346,47 @@ int main(int argc,char **argv)
 #endif
 
 	// Define the start, end, cycle time and latency time variables
-	struct timespec cycle_start, cycle_end, cycle_time;
+	struct timespec cycle_start, cycle_end, cycle_time, amir_time;
 	struct timespec timer_start, timer_end, sleep_latency;
 
 	//gets the starting point for the clock
 	printf("Getting current time\n");
 	clock_gettime(CLOCK_MONOTONIC, &timer_start);
 
-
-    // void setDRVTagsFromVars();
+    
     declare_and_init_drvtags();
 
+        
+    // ///////////////// GET REALTIME CLOCK   //////////////////////
+    // /// method 1:
+    // tm_t amir;  
+    // struct timespec ts;
+    // if (clock_gettime(CLOCK_REALTIME, &ts) != 0) {
+    //     perror("clock_gettime");
+    //     return 1;
+    // }
+    // sprintf((char *)log_msg,"Real-time clock: %ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
+    // log(log_msg);
+    // amir = convert_seconds_to_date_and_time_amir(ts.tv_sec + 12600);
+    // sprintf((char *)log_msg, "\n%d:%d:%d:%d:%d:%d\n",amir.tm_year, amir.tm_mon,amir.tm_day,amir.tm_hour,amir.tm_min,amir.tm_sec);
+    // log(log_msg);
+    
+    // /// method 2:
+    // struct tm *current_time;
+    // time_t rawtime;
+    // time(&rawtime);
+    // current_time = localtime(&rawtime);
+    
+    // rawtime = rawtime - timezone;
+    // if (current_time->tm_isdst > 0) rawtime = rawtime + 3600;
 
-    // printf("%s\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);
-	// printf("%f\n", DRVTags[4].Tags[0].Deadband);
-    // unsigned char log_msg[1000];
-    sprintf((char *)log_msg, "%d \n", Modbus_Master_Driver_Instances[0].Options.BaudRate);
-    log(log_msg);
-    sprintf((char *)log_msg, "number of tags: %d \n", DNP_Slave_Driver_Instances[0].number_of_tags);
-    log(log_msg);
+    // sprintf((char *)log_msg, "\n%d:%d:%d:%d:%d:%d -- %s\n", current_time->tm_year + 1900, current_time->tm_mon,current_time->tm_mday,current_time->tm_hour,current_time->tm_min,current_time->tm_sec, current_time->tm_zone);
+    // log(log_msg);
+    // ///////////////////////////////////////////////////////////////
 
-    // sprintf((char *)log_msg,"%s\n", DRVTags[4].driverOptions.Database_Options.DatabasePath);
-    // log(log_msg);
-    // sprintf((char *)log_msg, "%f\n", DRVTags[0].Tags[0].TagValue);
-    // log(log_msg);
-    // sprintf((char *)log_msg,"%s\n", DRVTags[1].driverOptions.DNP_Options.LocalIPAddress);
-    // log(log_msg);
+
+
+
 
     // for(int i=0; i< number_of_driver_instances; i++)
     // {
@@ -360,6 +419,8 @@ int main(int argc,char **argv)
     //     }
 
     // }
+
+
 	//======================================================
 	//                    MAIN LOOP
 	//======================================================
@@ -401,12 +462,18 @@ int main(int argc,char **argv)
 		updateCustomIn();
         updateBuffersIn_MB(); //update input image table with data from slave devices
         handleSpecialFunctions();
+        
+        setVarsFromDRVTags();
+
 		config_run__(__tick++); // execute plc program logic
         
         setDRVTagsFromVars();
 
-		sprintf((char *)log_msg, "LIO_Driver_Instance.Tags[0].TagValue=  %f \n",LIO_Driver_Instance.Tags[0].TagValue);
-        log(log_msg);
+		// sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %f \n",LIO_Driver_Instance.Tags[8].TagValue);
+        // log(log_msg);
+
+		// sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
+        // log(log_msg);
 
         updateCustomOut();
         updateBuffersOut_MB(); //update slave devices with data from the output image table

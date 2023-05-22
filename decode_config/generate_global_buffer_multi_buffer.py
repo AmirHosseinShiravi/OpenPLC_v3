@@ -1,10 +1,19 @@
 from lxml import etree
 import os
 from test_csv_reader import generate_extern_variables
+
+############# change .cfg file by this routines ################
 # set False to false
 # set True to true
 # change empty range in LIO from "" to "-1"
 # change empty deadband in LIO from "" to "0"
+################################################################
+
+################################################################
+################################################################
+# TODO: add function to Stote and retrieve tags with retain flag
+################################################################
+################################################################
 
 def concatenate_strings(destination_str ,string):
 
@@ -39,6 +48,8 @@ def decode_config_file(file_path):
 #include "iec_types.h"
 #include "iec_types_all.h"
 #include "accessor.h"
+#include <modbus.h>
+
 
 '''
 
@@ -46,12 +57,12 @@ def decode_config_file(file_path):
 // Modbus Definitions
 typedef struct Modbus_master_driver_options{
 bool Disable;
-int COMPort;
+char COMPort[100];
 int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[10];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -68,7 +79,7 @@ int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[10];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -79,6 +90,8 @@ char PhysicalLayer[20];
 }Modbus_slave_driver_options;
 
 typedef struct ModbusBlocks{
+    modbus_t *mb_ctx;
+    bool isConnected;
     char DeviceName[100];
     int SlaveID;
     char IP[100];
@@ -393,6 +406,7 @@ typedef struct Database_Driver_Struct{
             driver_instance_name = driver_instance.attrib.get('name','')
             driver_instance_type = driver_instance.attrib.get('type','')
             match driver_instance_type:
+                
                 case "LOCAL_IO":
 
                     driver_instance_node = tree.find(driver_instance_name)
@@ -437,7 +451,7 @@ typedef struct Database_Driver_Struct{
                             
                             tag_type = tag.attrib.get("Type", "")
 
-                            if tag_type in ["1","2","3","4","200"]:
+                            if tag_type in ["10","11","201"]:
                                 # setVarsFromDRVTags
                                 match tagConfiguration:
                                     case "Value":
@@ -454,7 +468,7 @@ typedef struct Database_Driver_Struct{
                                         concatenate_strings(setDRVTagsFromVars_string, f'\tLIO_Driver_Instance.Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
                                         concatenate_strings(setDRVTagsFromVars_string, f'\tLIO_Driver_Instance.Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
                             
-                            elif tag_type in ["10","11","201"]:
+                            elif tag_type in ["1","2","3","4","200"]:
                                 match tagConfiguration:
                                     case "Value":
                                         # TODO: HardCoded RES0. fixit later.
@@ -473,285 +487,299 @@ typedef struct Database_Driver_Struct{
                 case "DNP3Master":
                     pass
                 case "DNP3Slave":
+                    if options.attrib.get("Disable", None) == "true":
+                        continue
+                    else:
+                        driver_instance_node = tree.find(driver_instance_name)
+                        # get LIO's Option
+                        options = driver_instance_node.find('options')
 
-                    driver_instance_node = tree.find(driver_instance_name)
-                    # get LIO's Option
-                    options = driver_instance_node.find('options')
-
-                    DNP_options_prefix = f"DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Options"
-                    string= f'\t{DNP_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
-                            f'\t{DNP_options_prefix}.COMPort = {options.attrib.get("COMPort", None)};\n' + \
-                            f'\t{DNP_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
-                            f'\t{DNP_options_prefix}.DataBits = {options.attrib.get("DataBits", None)};\n' + \
-                            f'\t{DNP_options_prefix}.StopBits = {options.attrib.get("StopBits", None)};\n' + \
-                            f'\t{DNP_options_prefix}.Parity = {options.attrib.get("Parity", None)};\n' + \
-                            f'\t{DNP_options_prefix}.FlowControl = {options.attrib.get("FlowControl", None)};\n' + \
-                            f'\t{DNP_options_prefix}.SlaveAddress = {options.attrib.get("SlaveAddress", None)};\n' + \
-                            f'\t{DNP_options_prefix}.MasterAddress = {options.attrib.get("MasterAddress", None)};\n' + \
-                            f'\t{DNP_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
-                            f'\t{DNP_options_prefix}.SocketPort = {options.attrib.get("SocketPort", None)};\n' + \
-                            f'\t{DNP_options_prefix}.PhysicalLayerScanTime = {options.attrib.get("PhysicalLayerScanTime", None)};\n' + \
-                            f'\t{DNP_options_prefix}.SBOTimeOut = {options.attrib.get("SBOTimeOut", None)};\n' + \
-                            f'\t{DNP_options_prefix}.LinkStatusPeriod = {options.attrib.get("LinkStatusPeriod", None)};\n' + \
-                            f'\t{DNP_options_prefix}.AppConfirmationTimeout = {options.attrib.get("AppConfirmationTimeout", None)};\n' + \
-                            f'\t{DNP_options_prefix}.MaxEventNum = {options.attrib.get("MaxEventNum", None)};\n' + \
-                            f'\t{DNP_options_prefix}.ClockValidPeriod = {options.attrib.get("ClockValidPeriod", None)};\n' + \
-                            f'\t{DNP_options_prefix}.DLLAckConfirmationTimeout = {options.attrib.get("DLLAckConfirmationTimeout", None)};\n' + \
-                            f'\tstrcpy({DNP_options_prefix}.TagConfiguration , "{options.attrib.get("TagConfiguration", None)}");\n' + \
-                            f'\t{DNP_options_prefix}.UnsolicitedRetryDelay = {options.attrib.get("UnsolicitedRetryDelay", None)};\n' + \
-                            f'\t{DNP_options_prefix}.UnsolicitedSendRetries = {options.attrib.get("UnsolicitedSendRetries", None)};\n' + \
-                            f'\tstrcpy({DNP_options_prefix}.MasterIPAddress, "{options.attrib.get("MasterIPAddress", None)}");\n' + \
-                            f'\tstrcpy({DNP_options_prefix}.LocalIPAddress, "{options.attrib.get("LocalIPAddress", None)}");\n' + \
-                            f'\t{DNP_options_prefix}.EnableUnsolicited = {options.attrib.get("EnableUnsolicited", None)};\n' + \
-                            f'\t{DNP_options_prefix}.SendUnsolicitedWhenOnline = {options.attrib.get("SendUnsolicitedWhenOnline", None)};\n' + \
-                            f'\t{DNP_options_prefix}.UseLocalTime = {options.attrib.get("UseLocalTime", None)};\n' + \
-                            f'\t{DNP_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
-                            f'\t{DNP_options_prefix}.DLLAckConfirmation = {options.attrib.get("DLLAckConfirmation", None)};\n' + \
-                            f'\tstrcpy({DNP_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n' + \
-                            f'\t{DNP_options_prefix}.DIHighSpeedEventScan = {options.attrib.get("DIHighSpeedEventScan", None)};\n' + \
-                            f'\t{DNP_options_prefix}.DeleteOldestEvent = {options.attrib.get("DeleteOldestEvent", None)};\n'
-                    
-                    concatenate_strings(DRVTags_string_body ,string)
-
-                    tagConfiguration = options.attrib.get("TagConfiguration", None)
-
-                    # Get and generate LIO's tag buffer
-                    tags = driver_instance_node.find('Tags').findall('Tag')
-                    number_of_tags = len(tags)
-                    concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].number_of_tags = {number_of_tags};')
-                    concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
-                    for tag in tags:
-                        tag_index = tag.attrib.get("TagIndex", None)
-                        if tag_index:
-                            DNP_tag_prefix = f"DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}]"
-                            string= f'\tstrcpy({DNP_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
-                                    f'\t{DNP_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
-                                    f'\t{DNP_tag_prefix}.Class = {tag.attrib.get("Class", "")};\n' + \
-                                    f'\t{DNP_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
-                                    f'\t{DNP_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
-                                    f'\t{DNP_tag_prefix}.Group = {tag.attrib.get("Group", "")};\n' + \
-                                    f'\t{DNP_tag_prefix}.Deadband = {tag.attrib.get("Deadband", 0)};\n' + \
-                                    f'\t{DNP_tag_prefix}.Retain = {tag.attrib.get("Retain", 0)};\n' + \
-                                    f'\t{DNP_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                    f'\t{DNP_tag_prefix}.TagValue = 0;\n' + \
-                                    f'\t{DNP_tag_prefix}.OldTagValue = 0;\n' + \
-                                    f'\t{DNP_tag_prefix}.TagStatus = 1;\n' + \
-                                    f'\t{DNP_tag_prefix}.OldTagStatus = 1;\n' + \
-                                    f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n'
-                            
-                            concatenate_strings(DRVTags_string_body ,string)
-
-                            tag_type = tag.attrib.get("Type", "")
-
-                            if tag_type in ["50","51"]:
-                                match tagConfiguration:
-                                    case "Value":
-                                        # TODO: HardCoded RES0. fixit later.
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                    case "Value-Status":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
-                                    case "Value-DT":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
-                                    case "Value-Status-DT":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
-                                
-                            elif tag_type in ["1","4"]:
-                                match tagConfiguration:
-                                    case "Value":
-                                        # TODO: HardCoded RES0. fixit later.
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                    case "Value-Status":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus);')
-                                    case "Value-DT":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
-                                    case "Value-Status-DT":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
-                    
-                    number_of_DNP_Slave_Driver_Instances += 1
- 
-                case "ModbusMaster":
-
-                    driver_instance_node = tree.find(driver_instance_name)
-                    # get LIO's Option
-                    options = driver_instance_node.find('options')
-
-                    Modbus_options_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Options"
-
-                    string= f'\t{Modbus_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.COMPort = {options.attrib.get("COMPort", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.DataBit = {options.attrib.get("DataBit", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.StopBit = {options.attrib.get("StopBit", None)};\n' + \
-                            f'\tstrcpy({Modbus_options_prefix}.Parity, "{options.attrib.get("Parity", None)}");\n' + \
-                            f'\tstrcpy({Modbus_options_prefix}.WakeUpString, "{options.attrib.get("WakeUpString", None)}");\n' + \
-                            f'\t{Modbus_options_prefix}.DelayBetweenPolls = {options.attrib.get("DelayBetweenPolls", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.ContPoll = {options.attrib.get("ContPoll", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.ByteFormat = {options.attrib.get("ByteFormat", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.WriteByChange = {options.attrib.get("WriteByChange", None)};\n' + \
-                            f'\t{Modbus_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
-                            f'\tstrcpy({Modbus_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n'
-                    
-                    concatenate_strings(DRVTags_string_body ,string)
-
-                    tagConfiguration = options.attrib.get("TagConfiguration", None)
-
-                    # modbus blocks
-                    blocks = driver_instance_node.find('Blocks').findall('Block')
-                    number_of_blocks = len(blocks)
-                    
-                    concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_modbus_blocks = {number_of_blocks};')
-                    concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
-                    for i, block in enumerate(blocks):
-                        Modbus_blocks_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks[{i}]"
-
-                        string= f'\tstrcpy({Modbus_blocks_prefix}.DeviceName, "{block.attrib.get("DeviceName", "")}");\n' + \
-                                f'\t{Modbus_blocks_prefix}.SlaveID = {block.attrib.get("SlaveID", None)};\n' + \
-                                f'\tstrcpy({Modbus_blocks_prefix}.IP, "{block.attrib.get("IP", "")}");\n' + \
-                                f'\t{Modbus_blocks_prefix}.SocketPort = {block.attrib.get("SocketPort", None)};\n' + \
-                                f'\tstrcpy({Modbus_blocks_prefix}.Name, "{block.attrib.get("Name", "")}");\n' + \
-                                f'\t{Modbus_blocks_prefix}.Type = {block.attrib.get("Type", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.StartAdd = {block.attrib.get("StartAdd", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.Count = {block.attrib.get("Count", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.Timeout = {block.attrib.get("Timeout", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.Enable = {block.attrib.get("Enable", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.FirstTagIndex = {block.attrib.get("FirstTagIndex", None)};\n' + \
-                                f'\t{Modbus_blocks_prefix}.LastTagIndex = {block.attrib.get("LastTagIndex", None)};\n'
+                        DNP_options_prefix = f"DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Options"
+                        string= f'\t{DNP_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
+                                f'\t{DNP_options_prefix}.COMPort = {options.attrib.get("COMPort", None)};\n' + \
+                                f'\t{DNP_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
+                                f'\t{DNP_options_prefix}.DataBits = {options.attrib.get("DataBits", None)};\n' + \
+                                f'\t{DNP_options_prefix}.StopBits = {options.attrib.get("StopBits", None)};\n' + \
+                                f'\t{DNP_options_prefix}.Parity = {options.attrib.get("Parity", None)};\n' + \
+                                f'\t{DNP_options_prefix}.FlowControl = {options.attrib.get("FlowControl", None)};\n' + \
+                                f'\t{DNP_options_prefix}.SlaveAddress = {options.attrib.get("SlaveAddress", None)};\n' + \
+                                f'\t{DNP_options_prefix}.MasterAddress = {options.attrib.get("MasterAddress", None)};\n' + \
+                                f'\t{DNP_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
+                                f'\t{DNP_options_prefix}.SocketPort = {options.attrib.get("SocketPort", None)};\n' + \
+                                f'\t{DNP_options_prefix}.PhysicalLayerScanTime = {options.attrib.get("PhysicalLayerScanTime", None)};\n' + \
+                                f'\t{DNP_options_prefix}.SBOTimeOut = {options.attrib.get("SBOTimeOut", None)};\n' + \
+                                f'\t{DNP_options_prefix}.LinkStatusPeriod = {options.attrib.get("LinkStatusPeriod", None)};\n' + \
+                                f'\t{DNP_options_prefix}.AppConfirmationTimeout = {options.attrib.get("AppConfirmationTimeout", None)};\n' + \
+                                f'\t{DNP_options_prefix}.MaxEventNum = {options.attrib.get("MaxEventNum", None)};\n' + \
+                                f'\t{DNP_options_prefix}.ClockValidPeriod = {options.attrib.get("ClockValidPeriod", None)};\n' + \
+                                f'\t{DNP_options_prefix}.DLLAckConfirmationTimeout = {options.attrib.get("DLLAckConfirmationTimeout", None)};\n' + \
+                                f'\tstrcpy({DNP_options_prefix}.TagConfiguration , "{options.attrib.get("TagConfiguration", None)}");\n' + \
+                                f'\t{DNP_options_prefix}.UnsolicitedRetryDelay = {options.attrib.get("UnsolicitedRetryDelay", None)};\n' + \
+                                f'\t{DNP_options_prefix}.UnsolicitedSendRetries = {options.attrib.get("UnsolicitedSendRetries", None)};\n' + \
+                                f'\tstrcpy({DNP_options_prefix}.MasterIPAddress, "{options.attrib.get("MasterIPAddress", None)}");\n' + \
+                                f'\tstrcpy({DNP_options_prefix}.LocalIPAddress, "{options.attrib.get("LocalIPAddress", None)}");\n' + \
+                                f'\t{DNP_options_prefix}.EnableUnsolicited = {options.attrib.get("EnableUnsolicited", None)};\n' + \
+                                f'\t{DNP_options_prefix}.SendUnsolicitedWhenOnline = {options.attrib.get("SendUnsolicitedWhenOnline", None)};\n' + \
+                                f'\t{DNP_options_prefix}.UseLocalTime = {options.attrib.get("UseLocalTime", None)};\n' + \
+                                f'\t{DNP_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
+                                f'\t{DNP_options_prefix}.DLLAckConfirmation = {options.attrib.get("DLLAckConfirmation", None)};\n' + \
+                                f'\tstrcpy({DNP_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n' + \
+                                f'\t{DNP_options_prefix}.DIHighSpeedEventScan = {options.attrib.get("DIHighSpeedEventScan", None)};\n' + \
+                                f'\t{DNP_options_prefix}.DeleteOldestEvent = {options.attrib.get("DeleteOldestEvent", None)};\n'
+                        
                         concatenate_strings(DRVTags_string_body ,string)
 
-                    # Get and generate LIO's tag buffer
-                    tags = driver_instance_node.find('Tags').findall('Tag')
-                    number_of_tags = len(tags)
-                    concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_tags = {number_of_tags};')
-                    concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
-                    # we don't need to initialize other variables because of we don't use them for tihs
-                    # driver.
-                    for tag in tags:
-                        tag_index = tag.attrib.get("TagIndex", None)
-                        if tag_index:
-                            Modebus_tag_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}]"
-                            string= f'\tstrcpy({Modebus_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
-                                    f'\tstrcpy({Modebus_tag_prefix}.BlockName, "{tag.attrib.get("BlockName", "")}");\n' + \
-                                    f'\t{Modebus_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
-                                    f'\t{Modebus_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
-                                    f'\t{Modebus_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
-                                    f'\t{Modebus_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                    f'\t{Modebus_tag_prefix}.TagValue = 0;\n' + \
-                                    f'\t{Modebus_tag_prefix}.OldTagValue = 0;\n' + \
-                                    f'\t{Modebus_tag_prefix}.TagStatus = 1;\n' + \
-                                    f'\t{Modebus_tag_prefix}.OldTagStatus = 1;\n' + \
-                                    f'\t{Modebus_tag_prefix}.TagValueDT = time_temp;\n'
+                        tagConfiguration = options.attrib.get("TagConfiguration", None)
+
+                        # Get and generate LIO's tag buffer
+                        tags = driver_instance_node.find('Tags').findall('Tag')
+                        number_of_tags = len(tags)
+                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].number_of_tags = {number_of_tags};')
+                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
+                        for tag in tags:
+                            tag_index = tag.attrib.get("TagIndex", None)
+                            if tag_index:
+                                DNP_tag_prefix = f"DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}]"
+                                string= f'\tstrcpy({DNP_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
+                                        f'\t{DNP_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
+                                        f'\t{DNP_tag_prefix}.Class = {tag.attrib.get("Class", "")};\n' + \
+                                        f'\t{DNP_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{DNP_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
+                                        f'\t{DNP_tag_prefix}.Group = {tag.attrib.get("Group", "")};\n' + \
+                                        f'\t{DNP_tag_prefix}.Deadband = {tag.attrib.get("Deadband", 0)};\n' + \
+                                        f'\t{DNP_tag_prefix}.Retain = {tag.attrib.get("Retain", 0)};\n' + \
+                                        f'\t{DNP_tag_prefix}.TagIndex = {tag_index};\n' + \
+                                        f'\t{DNP_tag_prefix}.TagValue = 0;\n' + \
+                                        f'\t{DNP_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{DNP_tag_prefix}.TagStatus = 1;\n' + \
+                                        f'\t{DNP_tag_prefix}.OldTagStatus = 1;\n' + \
+                                        f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n'
+                                
+                                concatenate_strings(DRVTags_string_body ,string)
+
+                                tag_type = tag.attrib.get("Type", "")
+
+                                if tag_type in ["1","4"]:
+                                    match tagConfiguration:
+                                        case "Value":
+                                            # TODO: HardCoded RES0. fixit later.
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                        case "Value-Status":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                        case "Value-DT":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                        case "Value-Status-DT":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                    
+                                elif tag_type in ["50","51"]:
+                                    match tagConfiguration:
+                                        case "Value":
+                                            # TODO: HardCoded RES0. fixit later.
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                        case "Value-Status":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus);')
+                                        case "Value-DT":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
+                                        case "Value-Status-DT":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagStatus);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
+                        
+                        number_of_DNP_Slave_Driver_Instances += 1
+ 
+                case "ModbusMaster":
+                    if options.attrib.get("Disable", None) == "true":
+                        continue
+                    else:
+                        driver_instance_node = tree.find(driver_instance_name)
+                        # get LIO's Option
+                        options = driver_instance_node.find('options')
+
+                        Modbus_options_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Options"
+                        match options.attrib.get("Parity", None):
+                            case "Even":
+                                parity = 'E'
+                            case "Odd":
+                                parity = 'O'
+                            case "None":
+                                parity = 'N'
+                    
+                        string= f'\t{Modbus_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.COMPort = {options.attrib.get("COMPort", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.DataBit = {options.attrib.get("DataBit", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.StopBit = {options.attrib.get("StopBit", None)};\n' + \
+                                f"\tstrcpy({Modbus_options_prefix}.Parity, '{parity}');\n" + \
+                                f'\tstrcpy({Modbus_options_prefix}.WakeUpString, "{options.attrib.get("WakeUpString", None)}");\n' + \
+                                f'\t{Modbus_options_prefix}.DelayBetweenPolls = {options.attrib.get("DelayBetweenPolls", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.ContPoll = {options.attrib.get("ContPoll", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.ByteFormat = {options.attrib.get("ByteFormat", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.WriteByChange = {options.attrib.get("WriteByChange", None)};\n' + \
+                                f'\t{Modbus_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
+                                f'\tstrcpy({Modbus_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n'
+                        
+                        concatenate_strings(DRVTags_string_body ,string)
+
+                        tagConfiguration = options.attrib.get("TagConfiguration", None)
+
+                        # modbus blocks
+                        blocks = driver_instance_node.find('Blocks').findall('Block')
+                        number_of_blocks = len(blocks)
+                        
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_modbus_blocks = {number_of_blocks};')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
+                        for i, block in enumerate(blocks):
+                            Modbus_blocks_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks[{i}]"
+
+                            string= f'\tstrcpy({Modbus_blocks_prefix}.DeviceName, "{block.attrib.get("DeviceName", "")}");\n' + \
+                                    f'\t{Modbus_blocks_prefix}.SlaveID = {block.attrib.get("SlaveID", None)};\n' + \
+                                    f'\tstrcpy({Modbus_blocks_prefix}.IP, "{block.attrib.get("IP", "")}");\n' + \
+                                    f'\t{Modbus_blocks_prefix}.SocketPort = {block.attrib.get("SocketPort", None)};\n' + \
+                                    f'\tstrcpy({Modbus_blocks_prefix}.Name, "{block.attrib.get("Name", "")}");\n' + \
+                                    f'\t{Modbus_blocks_prefix}.Type = {block.attrib.get("Type", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.StartAdd = {block.attrib.get("StartAdd", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.Count = {block.attrib.get("Count", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.Timeout = {block.attrib.get("Timeout", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.Enable = {block.attrib.get("Enable", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.FirstTagIndex = {block.attrib.get("FirstTagIndex", None)};\n' + \
+                                    f'\t{Modbus_blocks_prefix}.LastTagIndex = {block.attrib.get("LastTagIndex", None)};\n'
                             concatenate_strings(DRVTags_string_body ,string)
 
+                        # Get and generate LIO's tag buffer
+                        tags = driver_instance_node.find('Tags').findall('Tag')
+                        number_of_tags = len(tags)
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_tags = {number_of_tags};')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
+                        # we don't need to initialize other variables because of we don't use them for tihs
+                        # driver.
+                        for tag in tags:
+                            tag_index = tag.attrib.get("TagIndex", None)
+                            if tag_index:
+                                Modebus_tag_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}]"
+                                string= f'\tstrcpy({Modebus_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
+                                        f'\tstrcpy({Modebus_tag_prefix}.BlockName, "{tag.attrib.get("BlockName", "")}");\n' + \
+                                        f'\t{Modebus_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
+                                        f'\t{Modebus_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{Modebus_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
+                                        f'\t{Modebus_tag_prefix}.TagIndex = {tag_index};\n' + \
+                                        f'\t{Modebus_tag_prefix}.TagValue = 0;\n' + \
+                                        f'\t{Modebus_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{Modebus_tag_prefix}.TagStatus = 1;\n' + \
+                                        f'\t{Modebus_tag_prefix}.OldTagStatus = 1;\n' + \
+                                        f'\t{Modebus_tag_prefix}.TagValueDT = time_temp;\n'
+                                concatenate_strings(DRVTags_string_body ,string)
 
-                            tag_type = tag.attrib.get("Type", "")
 
-                            if tag_type in [str(_) for _ in range(1,11+1)] + ['201']: # types 1 to 11 and 201
+                                tag_type = tag.attrib.get("Type", "")
 
-                                        # TODO: HardCoded RES0. fixit later.
-                                concatenate_strings(setDRVTagsFromVars_string, f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                  
-                            elif tag_type in [str(_) for _ in range(51,56+1)] + ['202']: # types 51 to 56 and 202
+                                if tag_type in [str(_) for _ in range(51,56+1)] + ['202']:  # types 51 to 56 and 202
 
-                                        # TODO: HardCoded RES0. fixit later.
-                                concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},,Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                  
-                    number_of_Modbus_Master_Driver_Instances += 1
+                                            # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setDRVTagsFromVars_string, f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                    
+                                elif tag_type in [str(_) for _ in range(1,11+1)] + ['201']: # types 1 to 11 and 201 
+
+                                            # TODO: HardCoded RES0. fixit later.
+                                    concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("BlockName", "").upper()}_{tag.attrib.get("Name", "").upper()},,Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                    
+                        number_of_Modbus_Master_Driver_Instances += 1
 
                 case "ModbusSlave":
                     pass
                 case "SQLite":
-                    driver_instance_node = tree.find(driver_instance_name)
-                    # get LIO's Option
-                    options = driver_instance_node.find('options')
+                    if options.attrib.get("Disable", None) == "true":
+                        continue
+                    else:                    
+                        driver_instance_node = tree.find(driver_instance_name)
+                        # get LIO's Option
+                        options = driver_instance_node.find('options')
 
-                    database_options_prefix = f"Database_Driver_Instances[{number_of_Database_Driver_Instances}].Options"
+                        database_options_prefix = f"Database_Driver_Instances[{number_of_Database_Driver_Instances}].Options"
 
-                    string= f'\t{database_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
-                            f'\tstrcpy({database_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n' + \
-                            f'\t{database_options_prefix}.CyclicInterval = {options.attrib.get("CyclicInterval", None)};\n' + \
-                            f'\t{database_options_prefix}.MaxDatabaseSize = {options.attrib.get("MaxDatabaseSize", None)};\n' + \
-                            f'\tstrcpy({database_options_prefix}.DatabasePath, "{options.attrib.get("DatabasePath", None)}");\n' + \
-                            f'\t{database_options_prefix}.PhysicalLayerScanTime = {options.attrib.get("PhysicalLayerScanTime", None)};\n' + \
-                            f'\t{database_options_prefix}.DatabaseLocation = {options.attrib.get("DatabaseLocation", None)};\n' + \
-                            f'\t{database_options_prefix}.RecordMode = {options.attrib.get("RecordMode", None)};\n' + \
-                            f'\tstrcpy({database_options_prefix}.TagConfiguration, "{options.attrib.get("TagConfiguration", None)}");\n' + \
-                            f'\t{database_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
-                            f'\t{database_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n'        
-                    
-                    concatenate_strings(DRVTags_string_body ,string)
+                        string= f'\t{database_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
+                                f'\tstrcpy({database_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n' + \
+                                f'\t{database_options_prefix}.CyclicInterval = {options.attrib.get("CyclicInterval", None)};\n' + \
+                                f'\t{database_options_prefix}.MaxDatabaseSize = {options.attrib.get("MaxDatabaseSize", None)};\n' + \
+                                f'\tstrcpy({database_options_prefix}.DatabasePath, "{options.attrib.get("DatabasePath", None)}");\n' + \
+                                f'\t{database_options_prefix}.PhysicalLayerScanTime = {options.attrib.get("PhysicalLayerScanTime", None)};\n' + \
+                                f'\t{database_options_prefix}.DatabaseLocation = {options.attrib.get("DatabaseLocation", None)};\n' + \
+                                f'\t{database_options_prefix}.RecordMode = {options.attrib.get("RecordMode", None)};\n' + \
+                                f'\tstrcpy({database_options_prefix}.TagConfiguration, "{options.attrib.get("TagConfiguration", None)}");\n' + \
+                                f'\t{database_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
+                                f'\t{database_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n'        
+                        
+                        concatenate_strings(DRVTags_string_body ,string)
 
-                    tagConfiguration = options.attrib.get("TagConfiguration", None)
+                        tagConfiguration = options.attrib.get("TagConfiguration", None)
 
 
-                    # Get and generate LIO's tag buffer
-                    tags = driver_instance_node.find('Tags').findall('Tag')
-                    number_of_tags = len(tags)
-                    concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].number_of_tags = {number_of_tags};')
-                    concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
-                    # we don't need to initialize other variables because of we don't use them for tihs
-                    # driver.
-                    for tag in tags:
-                        tag_index = tag.attrib.get("TagIndex", None)
-                        if tag_index:
-                            database_tag_prefix = f"Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}]"
-                            string= f'\tstrcpy({database_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
-                                    f'\t{database_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
-                                    f'\t{database_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
-                                    f'\t{database_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
-                                    f'\t{database_tag_prefix}.Range = {tag.attrib.get("Range", -1)};\n' + \
-                                    f'\t{database_tag_prefix}.Deadband = {tag.attrib.get("Deadband", -1)};\n' + \
-                                    f'\t{database_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                    f'\t{database_tag_prefix}.TagValue = 0;\n' + \
-                                    f'\t{database_tag_prefix}.OldTagValue = 0;\n' + \
-                                    f'\t{database_tag_prefix}.TagStatus = 1;\n' + \
-                                    f'\t{database_tag_prefix}.OldTagStatus = 1;\n' + \
-                                    f'\t{database_tag_prefix}.TagValueDT = time_temp;\n'
-                            concatenate_strings(DRVTags_string_body ,string)
+                        # Get and generate LIO's tag buffer
+                        tags = driver_instance_node.find('Tags').findall('Tag')
+                        number_of_tags = len(tags)
+                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].number_of_tags = {number_of_tags};')
+                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
+                        # we don't need to initialize other variables because of we don't use them for tihs
+                        # driver.
+                        for tag in tags:
+                            tag_index = tag.attrib.get("TagIndex", None)
+                            if tag_index:
+                                database_tag_prefix = f"Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}]"
+                                string= f'\tstrcpy({database_tag_prefix}.Name, "{tag.attrib.get("Name", "")}");\n' + \
+                                        f'\t{database_tag_prefix}.Type = {tag.attrib.get("Type", "")};\n' + \
+                                        f'\t{database_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{database_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
+                                        f'\t{database_tag_prefix}.Range = {tag.attrib.get("Range", -1)};\n' + \
+                                        f'\t{database_tag_prefix}.Deadband = {tag.attrib.get("Deadband", -1)};\n' + \
+                                        f'\t{database_tag_prefix}.TagIndex = {tag_index};\n' + \
+                                        f'\t{database_tag_prefix}.TagValue = 0;\n' + \
+                                        f'\t{database_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{database_tag_prefix}.TagStatus = 1;\n' + \
+                                        f'\t{database_tag_prefix}.OldTagStatus = 1;\n' + \
+                                        f'\t{database_tag_prefix}.TagValueDT = time_temp;\n'
+                                concatenate_strings(DRVTags_string_body ,string)
 
-                            tag_type = tag.attrib.get("Type", "")
+                                tag_type = tag.attrib.get("Type", "")
 
-                            if tag_type != "202":
-                                match tagConfiguration:
-                                    case "Value":
-                                        # TODO: HardCoded RES0. fixit later.
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                    case "Value-Status":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
-                                    case "Value-DT":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
-                                    case "Value-Status-DT":
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
-                                        concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
-                                
-                            elif tag_type == "202":
-                                match tagConfiguration:
-                                    case "Value":
-                                        # TODO: HardCoded RES0. fixit later.
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                    case "Value-Status":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus);')
-                                    case "Value-DT":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
-                                    case "Value-Status-DT":
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus);')
-                                        concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
-                    
-                    number_of_Database_Driver_Instances += 1
+                                if tag_type == "202":
+                                    match tagConfiguration:
+                                        case "Value":
+                                            # TODO: HardCoded RES0. fixit later.
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                        case "Value-Status":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                        case "Value-DT":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                        case "Value-Status-DT":
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,);')
+                                            concatenate_strings(setDRVTagsFromVars_string, f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT = __GET_VAR(RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,);')
+                                    
+                                elif tag_type != "202":
+                                    match tagConfiguration:
+                                        case "Value":
+                                            # TODO: HardCoded RES0. fixit later.
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                        case "Value-Status":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus);')
+                                        case "Value-DT":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
+                                        case "Value-Status-DT":
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()},,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValue);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_STATUS,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagStatus);')
+                                            concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
+                        
+                        number_of_Database_Driver_Instances += 1
 
         # define DRVTags
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_DNP_Master_Driver_Instances {number_of_DNP_Master_Driver_Instances};')
@@ -762,6 +790,7 @@ typedef struct Database_Driver_Struct{
 
 
         concatenate_strings(DRVTags_string_type_init ,'#include "DRVTags.h"\n')
+
         concatenate_strings(DRVTags_string_type_init ,f'LIO_Driver_Struct           LIO_Driver_Instance;')
         if number_of_DNP_Master_Driver_Instances > 0:
             concatenate_strings(DRVTags_string_type_init ,f'DNP_Master_Driver_Struct    DNP_Master_Driver_Instances[{number_of_DNP_Master_Driver_Instances}];')
