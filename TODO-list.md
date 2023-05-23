@@ -5,4 +5,4 @@
 [ ]: write another mb function that only run if each block poll flag set to one(continous polling = false). present function is periodic mode(continous polling = true)
 [ ]: add "wakeup string" feature to modbus. if this option have any value except to "", then every time we call modbus_connect(), after that run wakeup routine before doing another work.
 [ ]: adition to modbus_new_tcp() function, we have modbus_new_tcp_pi() function. check it for raspberry pi usage.
-[ ]: 
+[ ]: modbus tcp use defualt ethernet interface for communicaion. for better design add "select ethernet interface" feature.

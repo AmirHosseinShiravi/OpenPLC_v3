@@ -63,8 +63,8 @@ typedef struct ModbusBlocks{
 }ModbusBlocks;
 
 typedef struct Modbus_master_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
@@ -82,8 +82,8 @@ typedef struct Modbus_master_driverTag{
 } Modbus_master_driverTag;
 
 typedef struct Modbus_slave_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
@@ -118,8 +118,8 @@ typedef struct Database_driver_options{
 }Database_driver_options;
 
 typedef struct Database_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
@@ -148,8 +148,8 @@ typedef struct LIO_driver_options{
 }LIO_driver_options;
 
 typedef struct LIO_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
@@ -239,8 +239,8 @@ typedef struct DNP_slave_driver_options{
 }DNP_slave_driver_options;
 
 typedef struct DNP_master_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
@@ -258,8 +258,8 @@ typedef struct DNP_master_driverTag{
 } DNP_master_driverTag;
 
 typedef struct DNP_slave_driverTag{
-    double TagValue;
-    double OldTagValue;
+    long double TagValue;
+    long double OldTagValue;
     uint32_t TagStatus;
     uint32_t OldTagStatus;
     IEC_DT TagValueDT;
