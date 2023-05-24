@@ -50,7 +50,7 @@ void *querySlaveDevices(void *arg)
     int instance_index;
     instance_index = *(int*)arg;
 
-    while (run_openplc)
+    while (1)
     {
         unsigned char log_msg[1000];
         

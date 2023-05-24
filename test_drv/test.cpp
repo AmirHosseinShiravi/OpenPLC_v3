@@ -2,10 +2,52 @@
 #include "ladder.h"
 
 // g++ -std=gnu++11 long_double.cpp -o long_double -lstdc++
+
+// g++ -std=gnu++11 -I ./lib -c Config0.c -w
+// g++ -std=gnu++11 -I ./lib -c Res0.c -w
+// g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -w
+
+
 TIME __CURRENT_TIME;
 unsigned char log_buffer[1000000];
 int log_index = 0;
 int log_counter = 0;
+
+
+pthread_mutex_t bufferLock; //mutex for the internal buffers
+pthread_mutex_t logLock; //mutex for the internal log
+//Variable to control OpenPLC Runtime execution
+
+
+//-----------------------------------------------------------------------------
+// Helper function - Makes the running thread sleep for the ammount of time
+// in milliseconds
+//-----------------------------------------------------------------------------
+void sleep_until(struct timespec *ts, long long delay)
+{
+    ts->tv_sec  += delay / (1000*1000*1000);
+    ts->tv_nsec += delay % (1000*1000*1000);
+    if(ts->tv_nsec >= 1000*1000*1000)
+    {
+        ts->tv_nsec -= 1000*1000*1000;
+        ts->tv_sec++;
+    }
+    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, ts,  NULL);
+}
+
+//-----------------------------------------------------------------------------
+// Helper function - Makes the running thread sleep for the ammount of time
+// in milliseconds
+//-----------------------------------------------------------------------------
+void sleepms(int milliseconds)
+{
+	struct timespec ts;
+	ts.tv_sec = milliseconds / 1000;
+	ts.tv_nsec = (milliseconds % 1000) * 1000000;
+	nanosleep(&ts, NULL);
+}
+
+
 void log(unsigned char *logmsg)
 {
 
@@ -39,5 +81,7 @@ int main(){
 
 	sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
     log(log_msg);
+
+    initializeMB();
     return 0;
 }

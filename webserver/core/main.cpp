@@ -306,7 +306,7 @@ int main(int argc,char **argv)
     //  else:
     //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
 
-    initializeMB();
+    // initializeMB();
     initCustomLayer();
     updateBuffersIn();
     updateCustomIn();
