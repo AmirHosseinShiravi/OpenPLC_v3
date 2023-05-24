@@ -126,8 +126,8 @@ uint16_t processPCCCMessage(unsigned char *buffer, int buffer_size);
 //modbus_master.cpp
 void initializeMB();
 void *querySlaveDevices(void *arg);
-void updateBuffersIn_MB();
-void updateBuffersOut_MB();
+// void updateBuffersIn_MB();
+// void updateBuffersOut_MB();
 
 //dnp3.cpp
 void dnp3StartServer(int port);

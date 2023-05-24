@@ -6,7 +6,7 @@
 #include "iec_types.h"
 #include "iec_types_all.h"
 #include "accessor.h"
-#include <modbus.h>
+
 
 
 
@@ -46,7 +46,7 @@ char PhysicalLayer[20];
 }Modbus_slave_driver_options;
 
 typedef struct ModbusBlocks{
-    modbus_t *mb_ctx;
+
     bool isConnected;
     char DeviceName[100];
     int SlaveID;

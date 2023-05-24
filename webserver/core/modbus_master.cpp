@@ -40,213 +40,7 @@
 #include "ladder.h"
 
 
-#define MB_TCP                1
-#define MB_RTU                2
-#define MAX_MB_IO            400
-
 using namespace std;
-
-uint8_t bool_input_buf[MAX_MB_IO];
-uint8_t bool_output_buf[MAX_MB_IO];
-uint16_t int_input_buf[MAX_MB_IO];
-uint16_t int_output_buf[MAX_MB_IO];
-
-pthread_mutex_t ioLock;
-
-struct MB_address
-{
-    uint16_t start_address;
-    uint16_t num_regs;
-};
-
-struct MB_device
-{
-    modbus_t *mb_ctx;
-    char dev_name[100];
-    uint8_t protocol;
-    char dev_address[100];
-    uint16_t ip_port;
-    int rtu_baud;
-    char rtu_parity[10];
-    int rtu_data_bit;
-    int rtu_stop_bit;
-    int rtu_tx_pause;
-    uint8_t dev_id;
-    bool isConnected;
-
-    struct MB_address discrete_inputs;
-    struct MB_address coils;
-    struct MB_address input_registers;
-    struct MB_address holding_read_registers;
-    struct MB_address holding_registers;
-};
-
-struct MB_device **mb_devices;
-
-uint8_t num_devices;
-uint16_t polling_period = 100;
-uint16_t timeout = 1000;
-
-//-----------------------------------------------------------------------------
-// Finds the data between the separators on the line provided
-//-----------------------------------------------------------------------------
-void getData(char *line, char *buf, char separator1, char separator2)
-{
-    int i=0, j=0;
-    buf[j] = '\0';
-
-    while (line[i] != separator1 && line[i] != '\0')
-    {
-        i++;
-    }
-    i++;
-
-    while (line[i] != separator2 && line[i] != '\0')
-    {
-        buf[j] = line[i];
-        i++;
-        j++;
-        buf[j] = '\0';
-    }
-}
-
-//-----------------------------------------------------------------------------
-// Get the number of the Modbus device
-//-----------------------------------------------------------------------------
-int getDeviceNumber(char *line)
-{
-    char temp[5];
-    int i = 0, j = 6;
-
-    while (line[j] != '.')
-    {
-        temp[i] = line[j];
-        i++;
-        j++;
-        temp[i] = '\0';
-    }
-
-    return(atoi(temp));
-}
-
-//-----------------------------------------------------------------------------
-// get the type of function or parameter for the Modbus device
-//-----------------------------------------------------------------------------
-void getFunction(char *line, char *parameter)
-{
-    int i = 0, j = 0;
-
-    while (line[j] != '.')
-    {
-        j++;
-    }
-    j++;
-
-    while (line[j] != ' ' && line[j] != '=' && line[j] != '(')
-    {
-        parameter[i] = line[j];
-        i++;
-        j++;
-        parameter[i] = '\0';
-    }
-}
-
-
-
-// device4.name = "2"
-// device4.slave_id = "1"
-// device4.protocol = "TCP"
-// device4.address = "192.168.0.2"
-// device4.IP_Port = "502"
-// device4.RTU_Baud_Rate = "115200"
-// device4.RTU_Parity = "None"
-// device4.RTU_Data_Bits = "8"
-// device4.RTU_Stop_Bits = "1"
-// device4.RTU_TX_Pause = "0"
-
-// device4.Discrete_Inputs_Start = "0"
-// device4.Discrete_Inputs_Size = "0"
-// device4.Coils_Start = "0"
-// device4.Coils_Size = "0"
-// device4.Input_Registers_Start = "0"
-// device4.Input_Registers_Size = "0"
-// device4.Holding_Registers_Read_Start = "8"
-// device4.Holding_Registers_Read_Size = "12"
-// device4.Holding_Registers_Start = "0"
-// device4.Holding_Registers_Size = "0"
-
-
-
-
-void parseConfig()
-{   
-    // /* Define the dimensions of the array */    
-    // /* Allocate memory for the array */
-    // struct MB_device **mb_devices = malloc(number_of_Modbus_Master_Driver_Instances * sizeof(struct MB_device *));
-
-    // for(int i= 0; i < number_of_Modbus_Master_Driver_Instances; i++){
-    //     if (!Modbus_Master_Driver_Instances[i].Options.Disable){ // useless
-
-    //             mb_devices[i] = malloc(num_devices_per_instance * sizeof(struct MB_device));
-    //     }
-    // }
-
-    // /* Initialize the mb_devices */
-    // for (int i = 0; i < number_of_Modbus_Master_Driver_Instances; i++) {
-    //     for (int j = 0; j < Modbus_Master_Driver_Instances[i].number_of_modbus_blocks; j++) {
-    //         /* Set the device properties */
-    //         // mb_devices[i][j].mb_ctx = NULL;
-    //         if(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer == "TCP"){
-    //             mb_devices[i][j].protocol = 1;
-    //             snprintf(mb_devices[i][j].dev_address, Modbus_Master_Driver_Instances[i].Blocks[j].IP);
-    //             mb_devices[i][j].ip_port = (uint16_t) Modbus_Master_Driver_Instances[i].Blocks[j].SocketPort;
-    //         }
-    //         else{
-    //             snprintf(mb_devices[i][j].dev_name, Modbus_Master_Driver_Instances[i].Blocks[j].DeviceName);
-    //             mb_devices[i][j].protocol = 2;
-    //             snprintf(mb_devices[i][j].dev_address, Modbus_Master_Driver_Instances[i].Options.COMPort);
-    //             mb_devices[i][j].rtu_baud = 9600;
-    //             mb_devices[i][j].rtu_parity = 'N';
-    //             mb_devices[i][j].rtu_data_bit = 8;
-    //             mb_devices[i][j].rtu_stop_bit = 1;
-    //             mb_devices[i][j].rtu_tx_pause = 0;
-    //             mb_devices[i][j].dev_id = 1;
-    //             mb_devices[i][j].isConnected = false;
-    //             mb_devices[i][j].discrete_inputs.start_addr = 0;
-    //             mb_devices[i][j].coils.start_addr = 0;
-    //             mb_devices[i][j].input_registers.start_addr = 0;
-    //             mb_devices[i][j].holding_read_registers.start_addr = 0;
-    //             mb_devices[i][j].holding_registers.start_addr = 0;
-    //     }
-    // }
-    // }
-    
-    // //Parser Debug
-    // ///*
-    // for (int i = 0; i < num_devices; i++)
-    // {
-    //     printf("Device %d\n", i);
-    //     printf("Name: %s\n", mb_devices[i].dev_name);
-    //     printf("Protocol: %d\n", mb_devices[i].protocol);
-    //     printf("Address: %s\n", mb_devices[i].dev_address);
-    //     printf("IP Port: %d\n", mb_devices[i].ip_port);
-    //     printf("Baud rate: %d\n", mb_devices[i].rtu_baud);
-    //     printf("Parity: %c\n", mb_devices[i].rtu_parity);
-    //     printf("Data Bits: %d\n", mb_devices[i].rtu_data_bit);
-    //     printf("Stop Bits: %d\n", mb_devices[i].rtu_stop_bit);
-    //     printf("DI Start: %d\n", mb_devices[i].discrete_inputs.start_address);
-    //     printf("DI Size: %d\n", mb_devices[i].discrete_inputs.num_regs);
-    //     printf("Coils Start: %d\n", mb_devices[i].coils.start_address);
-    //     printf("Coils Size: %d\n", mb_devices[i].coils.num_regs);
-    //     printf("IR Start: %d\n", mb_devices[i].input_registers.start_address);
-    //     printf("IR Size: %d\n", mb_devices[i].input_registers.num_regs);
-    //     printf("HR Start: %d\n", mb_devices[i].holding_registers.start_address);
-    //     printf("HR Size: %d\n", mb_devices[i].holding_registers.num_regs);
-    //     printf("\n\n");
-    // }
-    // //*/
-}
-
 
 //-----------------------------------------------------------------------------
 // Thread to poll each slave device
@@ -254,7 +48,7 @@ void parseConfig()
 void *querySlaveDevices(void *arg)
 {
     int instance_index;
-    instance_index = *arg;
+    instance_index = *(int*)arg;
 
     while (run_openplc)
     {
@@ -472,7 +266,8 @@ void *querySlaveDevices(void *arg)
                         pthread_mutex_lock(&bufferLock);
                         int j = 0;
                         int tag_index = 0;
-                        
+                        uint32_t temp;
+
                         while(j < return_val)
                         {
                             switch (Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].Type)
@@ -483,7 +278,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 9: // 32-bit FP
-                                uint32_t temp;
+                                temp = 0;
 
                                 if(endian_type == 1){ // big-endian
                                     temp = (tempBuff[j] << 16) | tempBuff[j + 1];
@@ -496,7 +291,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 10: // 32-bit long
-                                uint32_t temp;
+                                temp = 0;
                                 if(endian_type == 1){ // big-endian
                                     temp = (tempBuff[j] << 16) | tempBuff[j + 1];
                                 }
@@ -508,7 +303,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 11: // 32-bit swap FP
-                                uint32_t temp;
+                                temp = 0;
 
                                 if(endian_type == 1){ // big-endian swap
                                     temp = (tempBuff[j + 1] << 16) | tempBuff[j];
@@ -520,7 +315,7 @@ void *querySlaveDevices(void *arg)
                                 j += 2;
                                 break;
                             case 12: // 32-bit swap long
-                                uint32_t temp;
+                                temp = 0;
 
                                 if(endian_type == 1){ // big-endian swap
                                     temp = ((tempBuff[j + 1] << 16) | tempBuff[j]);
@@ -596,7 +391,8 @@ void *querySlaveDevices(void *arg)
                         pthread_mutex_lock(&bufferLock);
                         int j = 0;
                         int tag_index = 0;
-                        
+                        uint32_t temp;
+
                         while(j < return_val)
                         {
                             switch (Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].Type)
@@ -607,7 +403,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 4: // 32-bit FP
-                                uint32_t temp;
+                                temp= 0;
 
                                 if(endian_type == 1){ // big-endian
                                     temp = (tempBuff[j] << 16) | tempBuff[j + 1];
@@ -620,7 +416,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 5: // 32-bit long
-                                uint32_t temp;
+                                temp = 0;
                                 if(endian_type == 1){ // big-endian
                                     temp = ((tempBuff[j] << 16) | tempBuff[j + 1]);
                                 }
@@ -632,7 +428,7 @@ void *querySlaveDevices(void *arg)
                                 break;
 
                             case 6: // 32-bit swap FP
-                                uint32_t temp;
+                                temp = 0;
 
                                 if(endian_type == 1){ // big-endian swap
                                     temp = (tempBuff[j + 1] << 16) | tempBuff[j];
@@ -645,7 +441,7 @@ void *querySlaveDevices(void *arg)
                                 break;
                             
                             case 7:
-                                uint32_t temp ;
+                                temp = 0;
                                 if(endian_type == 1){ // big-endian swap
                                     temp = ((tempBuff[j + 1] << 16) | tempBuff[j]);
                                 }
@@ -668,34 +464,161 @@ void *querySlaveDevices(void *arg)
                 }
 
                 //Write holding registers
-                if (mb_devices[i].holding_registers.num_regs != 0)
+                if (Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count != 0 && Modbus_Master_Driver_Instances[instance_index].Blocks[i].Type >= 52 && \
+                                                                                           Modbus_Master_Driver_Instances[instance_index].Blocks[i].Type <= 56   )
                 {
-                    sleepms(mb_devices[i].rtu_tx_pause);
+                    int lastTagIndex = Modbus_Master_Driver_Instances[instance_index].Blocks[i].LastTagIndex;
+                    int start_address = Modbus_Master_Driver_Instances[instance_index].Blocks[i].StartAdd;
+                    int count = Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count;
+                    bool endian_type = Modbus_Master_Driver_Instances[instance_index].Options.ByteFormat; // 0==false: little-endian | 1==true: big-endian
+                    int number_of_regs;
+                    
+                    switch (Modbus_Master_Driver_Instances[instance_index].Blocks[i].Type){
+                        case 52:
+                            number_of_regs = count;
+                            break;
+                        case 53:
+                            number_of_regs = 2 * count;
+                            break;
+                        case 54:
+                            number_of_regs = 2 * count;
+                            break;
+                        case 55:
+                            number_of_regs = 2 * count;
+                            break;
+                        case 56:
+                            number_of_regs = 2 * count;
+                            break;
+                        default:
+                            break;
+                    // sleepms(mb_devices[i].rtu_tx_pause);
                     uint16_t *tempBuff;
-                    tempBuff = (uint16_t *)malloc(2*mb_devices[i].holding_registers.num_regs);
+                    tempBuff = (uint16_t *)malloc(2 * number_of_regs);
 
-                    pthread_mutex_lock(&ioLock);
-                    for (int j = 0; j < mb_devices[i].holding_registers.num_regs; j++)
-                    {
-                        tempBuff[j] = int_output_buf[int_output_index];
-                        int_output_index++;
-                    }
-                    pthread_mutex_unlock(&ioLock);
+                    pthread_mutex_lock(&bufferLock);
+                        int j = 0;
+                        int tag_index = 0;
+                        float float_temp_tag;
+                        long long_temp_tag;
+                        uint32_t temp;
+                        uint16_t low_word = 0;
+                        uint16_t high_word = 0;
+                        while(j < number_of_regs)
+                        {
+
+                            switch (Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].Type)
+                            {
+                            case 52:
+                                tempBuff[j] = Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].TagValue;
+                                j += 1;
+                                break;
+
+                            case 53: // 32-bit FP
+                                temp= 0;
+                                low_word = 0;
+                                high_word = 0;
+
+                                float_temp_tag = (float) Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].TagValue;
+                                temp = *(uint32_t *)(&float_temp_tag);
+                                low_word = (uint16_t)(temp & 0xFFFF);
+                                high_word = (uint16_t)((temp >> 16) & 0xFFFF);
+                                if(endian_type == 1){ // big-endian
+                                    tempBuff[j] = high_word;
+                                    tempBuff[j + 1] = low_word;
+                                }
+                                else{ // little-endian
+                                    tempBuff[j] = low_word;
+                                    tempBuff[j + 1] = high_word;
+                                }
+                                
+                                j += 2;
+                                break;
+
+                            case 54: // 32-bit long
+                                temp = 0;
+                                low_word = 0;
+                                high_word = 0;
+
+                                long_temp_tag = (long) Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].TagValue;
+                                temp = *(uint32_t *)(&long_temp_tag);
+                                low_word = (uint16_t)(temp & 0xFFFF);
+                                high_word = (uint16_t)((temp >> 16) & 0xFFFF);
+                                if(endian_type == 1){ // big-endian
+                                    tempBuff[j] = high_word;
+                                    tempBuff[j + 1] = low_word;
+                                }
+                                else{ // little-endian
+                                    tempBuff[j] = low_word;
+                                    tempBuff[j + 1] = high_word;
+                                }
+                                
+                                j += 2;
+                                break;
+
+                            case 55: // 32-bit swap FP
+                                temp = 0;
+                                low_word = 0;
+                                high_word = 0;
+
+                                float_temp_tag = (float) Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].TagValue;
+                                temp = *(uint32_t *)(&float_temp_tag);
+                                low_word = (uint16_t)(temp & 0xFFFF);
+                                high_word = (uint16_t)((temp >> 16) & 0xFFFF);
+                                if(endian_type == 1){ // big-endian
+                                    tempBuff[j] = low_word;
+                                    tempBuff[j + 1] = high_word;
+                                }
+                                else{ // little-endian
+                                    tempBuff[j] = high_word;
+                                    tempBuff[j + 1] = low_word;
+                                }
+                                j += 2;
+                                break;
+                            
+                            case 56: // 32-bit long swap
+                                temp = 0;
+                                low_word = 0;
+                                high_word = 0;
+
+                                long_temp_tag = (long) Modbus_Master_Driver_Instances[instance_index].Tags[start_address + tag_index].TagValue;
+                                temp = *(uint32_t *)(&long_temp_tag);
+                                low_word = (uint16_t)(temp & 0xFFFF);
+                                high_word = (uint16_t)((temp >> 16) & 0xFFFF);
+                                if(endian_type == 1){ // big-endian
+                                    tempBuff[j] = low_word;
+                                    tempBuff[j + 1] = high_word;
+                                }
+                                else{ // little-endian
+                                    tempBuff[j] = high_word;
+                                    tempBuff[j + 1] = low_word;
+                                }
+                                
+                                j += 2;
+                                break;
+                            default:
+                                break;
+                            }
+                            
+                            tag_index++;
+                        }
+                        pthread_mutex_unlock(&bufferLock);
 
                     nanosleep(&ts, NULL); 
-                    int return_val = modbus_write_registers(mb_devices[i].mb_ctx, mb_devices[i].holding_registers.start_address,
-                                                            mb_devices[i].holding_registers.num_regs, tempBuff);
+                    int return_val = modbus_write_registers(Modbus_Master_Driver_Instances[instance_index].Blocks[i].mb_ctx,
+                                                            Modbus_Master_Driver_Instances[instance_index].Blocks[i].StartAdd,
+                                                            number_of_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "TCP") == 0)
                         {
-                            modbus_close(mb_devices[i].mb_ctx);
-                            mb_devices[i].isConnected = false;
+                            modbus_close(Modbus_Master_Driver_Instances[instance_index].Blocks[i].mb_ctx);
+                            Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
                         
-                        sprintf(log_msg, "Modbus Write Holding Registers failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Holding Registers failed on MB device  %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
-                        if (special_functions[2] != NULL) *special_functions[2]++;
+                        // if (special_functions[2] != NULL) *special_functions[2]++;
+                        Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
                     }
                     
                     free(tempBuff);
@@ -704,6 +627,7 @@ void *querySlaveDevices(void *arg)
         }
         sleepms(Modbus_Master_Driver_Instances[instance_index].Options.DelayBetweenPolls);
     }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -715,6 +639,8 @@ void initializeMB()
     // parseConfig();
     pthread_t *thread_array;
     int *instances_index;
+    unsigned char log_msg[1000];
+    
     instances_index = malloc(number_of_Modbus_Master_Driver_Instances * sizeof(int));
     thread_array = malloc(number_of_Modbus_Master_Driver_Instances * sizeof(pthread_t));
     // if Disable == false then init modbus instance
@@ -795,11 +721,11 @@ void initializeMB()
             {
 
                 for (int k = 0; k < number_of_Modbus_Master_Driver_Instances; k++){
-                    *instances_index[k] = k;
-                    int ret = pthread_create(&thread_array[k], NULL, querySlaveDevices, instances_index[k]);
+                    instances_index[k] = k;
+                    int ret = pthread_create(&thread_array[k], NULL, querySlaveDevices, (void*)&instances_index[k]);
                     if (ret == 0)
                     {
-                        pthread_detach(thread);
+                        pthread_detach(thread_array[k]);
                     }
                 }
 
@@ -812,33 +738,33 @@ void initializeMB()
 // This function is called by the OpenPLC in a loop. Here the internal buffers
 // must be updated to reflect the actual Input state.
 //-----------------------------------------------------------------------------
-void updateBuffersIn_MB()
-{
-    pthread_mutex_lock(&ioLock);
+// void updateBuffersIn_MB()
+// {
+//     pthread_mutex_lock(&ioLock);
 
-    for (int i = 0; i < MAX_MB_IO; i++)
-    {
-        if (bool_input[100+(i/8)][i%8] != NULL) *bool_input[100+(i/8)][i%8] = bool_input_buf[i];
-        if (int_input[100+i] != NULL) *int_input[100+i] = int_input_buf[i];
-    }
+//     for (int i = 0; i < MAX_MB_IO; i++)
+//     {
+//         if (bool_input[100+(i/8)][i%8] != NULL) *bool_input[100+(i/8)][i%8] = bool_input_buf[i];
+//         if (int_input[100+i] != NULL) *int_input[100+i] = int_input_buf[i];
+//     }
 
-    pthread_mutex_unlock(&ioLock);
-}
+//     pthread_mutex_unlock(&ioLock);
+// }
 
 
-//-----------------------------------------------------------------------------
-// This function is called by the OpenPLC in a loop. Here the internal buffers
-// must be updated to reflect the actual Output state.
-//-----------------------------------------------------------------------------
-void updateBuffersOut_MB()
-{
-    pthread_mutex_lock(&ioLock);
+// //-----------------------------------------------------------------------------
+// // This function is called by the OpenPLC in a loop. Here the internal buffers
+// // must be updated to reflect the actual Output state.
+// //-----------------------------------------------------------------------------
+// void updateBuffersOut_MB()
+// {
+//     pthread_mutex_lock(&ioLock);
 
-    for (int i = 0; i < MAX_MB_IO; i++)
-    {
-        if (bool_output[100+(i/8)][i%8] != NULL) bool_output_buf[i] = *bool_output[100+(i/8)][i%8];
-        if (int_output[100+i] != NULL) int_output_buf[i] = *int_output[100+i];
-    }
+//     for (int i = 0; i < MAX_MB_IO; i++)
+//     {
+//         if (bool_output[100+(i/8)][i%8] != NULL) bool_output_buf[i] = *bool_output[100+(i/8)][i%8];
+//         if (int_output[100+i] != NULL) int_output_buf[i] = *int_output[100+i];
+//     }
 
-    pthread_mutex_unlock(&ioLock);
-}
+//     pthread_mutex_unlock(&ioLock);
+// }

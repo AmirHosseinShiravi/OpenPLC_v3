@@ -127,6 +127,7 @@ class runtime:
                 s.connect(('localhost', 43628))
                 s.send('exec_time()\n')
                 data = s.recv(10000)
+
                 s.close()
                 self.runtime_status = "Running"
             except socket.error as serr:

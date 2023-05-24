@@ -346,13 +346,14 @@ int main(int argc,char **argv)
 #endif
 
 	// Define the start, end, cycle time and latency time variables
-	struct timespec cycle_start, cycle_end, cycle_time, amir_time;
+	struct timespec cycle_start, cycle_end, cycle_time;
 	struct timespec timer_start, timer_end, sleep_latency;
 
 	//gets the starting point for the clock
 	printf("Getting current time\n");
 	clock_gettime(CLOCK_MONOTONIC, &timer_start);
 
+    
     
     declare_and_init_drvtags();
 
@@ -460,7 +461,7 @@ int main(int argc,char **argv)
         }
 #endif
 		updateCustomIn();
-        updateBuffersIn_MB(); //update input image table with data from slave devices
+        // updateBuffersIn_MB(); //update input image table with data from slave devices
         handleSpecialFunctions();
         
         setVarsFromDRVTags();
@@ -469,14 +470,14 @@ int main(int argc,char **argv)
         
         setDRVTagsFromVars();
 
-		// sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %f \n",LIO_Driver_Instance.Tags[8].TagValue);
+		// sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %Lf \n",LIO_Driver_Instance.Tags[8].TagValue);
         // log(log_msg);
 
 		// sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
         // log(log_msg);
 
         updateCustomOut();
-        updateBuffersOut_MB(); //update slave devices with data from the output image table
+        // updateBuffersOut_MB(); //update slave devices with data from the output image table
 		pthread_mutex_unlock(&bufferLock); //unlock mutex
 
 		updateBuffersOut(); //write output image

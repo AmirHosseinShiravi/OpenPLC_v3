@@ -17,7 +17,7 @@ void declare_and_init_drvtags(){
 	strcpy(LIO_Driver_Instance.Options.TagConfiguration, "Value-Status-DT");
 
 	LIO_Driver_Instance.number_of_tags = 48;
-	LIO_Driver_Instance.Tags = (LIO_driverTag*) malloc(48 * sizeof(*LIO_Driver_Instance.Tags));
+	LIO_Driver_Instance.Tags = (LIO_driverTag*)malloc(48 * sizeof(*LIO_Driver_Instance.Tags));
 	strcpy(LIO_Driver_Instance.Tags[0].Name, "DITag0" );
 	LIO_Driver_Instance.Tags[0].Type = 1;
 	LIO_Driver_Instance.Tags[0].Init =  0;
@@ -2794,7 +2794,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Options.DeleteOldestEvent = 0;
 
 	DNP_Slave_Driver_Instances[1].number_of_tags = 138;
-	DNP_Slave_Driver_Instances[1].Tags = (DNP_slave_driverTag*)malloc(138 * sizeof(*DNP_Slave_Driver_Instances[1].Tags));
+	DNP_Slave_Driver_Instances[1].Tags = (DNP_slave_driverTag*) malloc(138 * sizeof(*DNP_Slave_Driver_Instances[1].Tags));
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[0].Name, "opendoor");
 	DNP_Slave_Driver_Instances[1].Tags[0].Type = 1;
 	DNP_Slave_Driver_Instances[1].Tags[0].Class = 1;
@@ -5117,7 +5117,7 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Blocks[17].LastTagIndex = 229;
 
 	Modbus_Master_Driver_Instances[0].number_of_tags = 230;
-	Modbus_Master_Driver_Instances[0].Tags = (Modbus_master_driverTag*) malloc(230 * sizeof(*Modbus_Master_Driver_Instances[0].Tags));
+	Modbus_Master_Driver_Instances[0].Tags =(Modbus_master_driverTag*) malloc(230 * sizeof(*Modbus_Master_Driver_Instances[0].Tags));
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[0].Name, "Tag2999");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[0].BlockName, "p1var1");
 	Modbus_Master_Driver_Instances[0].Tags[0].Type = 4;
@@ -7909,7 +7909,7 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[1].Blocks[0].LastTagIndex = 12;
 
 	Modbus_Master_Driver_Instances[1].number_of_tags = 13;
-	Modbus_Master_Driver_Instances[1].Tags = (Modbus_master_driverTag*) malloc(13 * sizeof(*Modbus_Master_Driver_Instances[1].Tags));
+	Modbus_Master_Driver_Instances[1].Tags = (Modbus_master_driverTag*)malloc(13 * sizeof(*Modbus_Master_Driver_Instances[1].Tags));
 	strcpy(Modbus_Master_Driver_Instances[1].Tags[0].Name, "Tag0");
 	strcpy(Modbus_Master_Driver_Instances[1].Tags[0].BlockName, "block1");
 	Modbus_Master_Driver_Instances[1].Tags[0].Type = 2;
@@ -8082,7 +8082,7 @@ void declare_and_init_drvtags(){
 	strcpy(Modbus_Master_Driver_Instances[2].Options.PhysicalLayer, "TCP");
 
 	Modbus_Master_Driver_Instances[2].number_of_modbus_blocks = 1;
-	Modbus_Master_Driver_Instances[2].Blocks = (ModbusBlocks*)malloc(1 * sizeof(*Modbus_Master_Driver_Instances[2].Blocks));
+	Modbus_Master_Driver_Instances[2].Blocks =(ModbusBlocks*) malloc(1 * sizeof(*Modbus_Master_Driver_Instances[2].Blocks));
 	strcpy(Modbus_Master_Driver_Instances[2].Blocks[0].DeviceName, "rio3_device1");
 	Modbus_Master_Driver_Instances[2].Blocks[0].SlaveID = 1;
 	strcpy(Modbus_Master_Driver_Instances[2].Blocks[0].IP, "192.168.1.10");
@@ -8097,7 +8097,7 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[2].Blocks[0].LastTagIndex = 29;
 
 	Modbus_Master_Driver_Instances[2].number_of_tags = 30;
-	Modbus_Master_Driver_Instances[2].Tags = (Modbus_master_driverTag*) malloc(30 * sizeof(*Modbus_Master_Driver_Instances[2].Tags));
+	Modbus_Master_Driver_Instances[2].Tags = (Modbus_master_driverTag*)malloc(30 * sizeof(*Modbus_Master_Driver_Instances[2].Tags));
 	strcpy(Modbus_Master_Driver_Instances[2].Tags[0].Name, "Tag0");
 	strcpy(Modbus_Master_Driver_Instances[2].Tags[0].BlockName, "block1");
 	Modbus_Master_Driver_Instances[2].Tags[0].Type = 5;

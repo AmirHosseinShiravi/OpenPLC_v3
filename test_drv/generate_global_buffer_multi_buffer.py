@@ -33,7 +33,7 @@ def decode_config_file(file_path):
     extra_headers_string = [str()]
 
     concatenate_strings(GlueVars_functions_string, '#include "accessor.h"\n#include "iec_types.h"\n#include "iec_types_all.h"\n')
-    extern_variables = generate_extern_variables('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/VARIABLES.csv')
+    extern_variables = generate_extern_variables('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/VARIABLES.csv')
     concatenate_strings(GlueVars_functions_string, extern_variables)
 
 
@@ -62,7 +62,7 @@ int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[1];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -79,7 +79,7 @@ int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[1];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -429,7 +429,7 @@ typedef struct Database_Driver_Struct{
                     tags = driver_instance_node.find('Tags').findall('Tag')
                     number_of_tags = len(tags)
                     concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.number_of_tags = {number_of_tags};')
-                    concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.Tags = (LIO_driverTag*) malloc({number_of_tags} * sizeof(*LIO_Driver_Instance.Tags));')
+                    concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.Tags = malloc({number_of_tags} * sizeof(*LIO_Driver_Instance.Tags));')
                     # we don't need to initialize other variables because of we don't use them for tihs
                     # driver.
                     for tag in tags:
@@ -536,7 +536,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = (DNP_slave_driverTag*)malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
                         for tag in tags:
                             tag_index = tag.attrib.get("TagIndex", None)
                             if tag_index:
@@ -612,12 +612,12 @@ typedef struct Database_Driver_Struct{
                                 parity = 'N'
                     
                         string= f'\t{Modbus_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
-                                f'\tstrcpy({Modbus_options_prefix}.COMPort, \"{options.attrib.get("COMPort", None)}\");\n' + \
+                                f'\tstrcpy({Modbus_options_prefix}.COMPort, {options.attrib.get("COMPort", None)});\n' + \
                                 f'\t{Modbus_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.DataBit = {options.attrib.get("DataBit", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.StopBit = {options.attrib.get("StopBit", None)};\n' + \
-                                f'\tstrcpy({Modbus_options_prefix}.Parity, \"{parity}\");\n' + \
+                                f"\tstrcpy({Modbus_options_prefix}.Parity, '{parity}');\n" + \
                                 f'\tstrcpy({Modbus_options_prefix}.WakeUpString, "{options.attrib.get("WakeUpString", None)}");\n' + \
                                 f'\t{Modbus_options_prefix}.DelayBetweenPolls = {options.attrib.get("DelayBetweenPolls", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.ContPoll = {options.attrib.get("ContPoll", None)};\n' + \
@@ -635,7 +635,7 @@ typedef struct Database_Driver_Struct{
                         number_of_blocks = len(blocks)
                         
                         concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_modbus_blocks = {number_of_blocks};')
-                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = (ModbusBlocks*)malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
                         for i, block in enumerate(blocks):
                             Modbus_blocks_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks[{i}]"
 
@@ -657,7 +657,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = (Modbus_master_driverTag*) malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
                         # we don't need to initialize other variables because of we don't use them for tihs
                         # driver.
                         for tag in tags:
@@ -725,7 +725,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = (Modbus_master_driverTag*) malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
                         # we don't need to initialize other variables because of we don't use them for tihs
                         # driver.
                         for tag in tags:
@@ -821,22 +821,22 @@ typedef struct Database_Driver_Struct{
     ###########  DRVTags .h file  #############
     DRVTags_headers_file_string = ""
     DRVTags_headers_file_string  = DRVTags_string_headers + DRVTags_string_type_definitions[0]
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/DRVTags.h', 'w') as output_file_handler:
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/DRVTags.h', 'w') as output_file_handler:
         output_file_handler.write(DRVTags_headers_file_string)
 
     ########### DRVTags .cpp file  ###############
 
     DRVTags_cpp_file_string =  DRVTags_string_type_init[0] + DRVTags_string_body[0]
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/DRVTags.cpp', 'w') as output_file_handler:
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/DRVTags.cpp', 'w') as output_file_handler:
         output_file_handler.write(DRVTags_cpp_file_string)
 
     ########## GlueVars_functions.cpp file  ################
     GlueVars_functions_cpp_string = '#include "ladder.h"\n\n\n' + setDRVTagsFromVars_string[0] + setVarsFromDRVTags_string [0]
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/GlueVars_functions.cpp', 'w') as output_file_handler:
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/GlueVars_functions.cpp', 'w') as output_file_handler:
         output_file_handler.write(GlueVars_functions_cpp_string)
 
     ########### GlueVars_functions.h file  ################
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/GlueVars_functions.h', 'w') as output_file_handler:
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/GlueVars_functions.h', 'w') as output_file_handler:
         output_file_handler.write(GlueVars_functions_string[0])
     
     ################  add to ladder.h file  ##################
@@ -866,8 +866,8 @@ typedef struct Database_Driver_Struct{
         concatenate_strings(extra_headers_string, 'void declare_and_init_drvtags();')
         new_ladder_file_string = new_ladder_file_string + extra_headers_string[0] 
 
-    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/webserver/core/ladder.h', 'w') as output_file_handler:    
+    with open('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/ladder.h', 'w') as output_file_handler:    
         output_file_handler.write(new_ladder_file_string)
 
-decode_config_file('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/decode_config/aa.cfg')
+decode_config_file('/home/amir/Water_RTU/OpenPLC_runtime/OpenPLC_v3/test_drv/aa.cfg')
     
