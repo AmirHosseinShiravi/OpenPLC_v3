@@ -6,7 +6,7 @@
 #include "iec_types.h"
 #include "iec_types_all.h"
 #include "accessor.h"
-#include "modbus.h"
+#include <modbus.h>
 
 
 
@@ -18,7 +18,7 @@ int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[1];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -35,7 +35,7 @@ int BaudRate;
 int DataBit;
 int Instance;
 int StopBit;
-char Parity[1];
+char Parity;
 char WakeUpString[20];
 int DelayBetweenPolls;
 int ContPoll;
@@ -326,7 +326,7 @@ typedef struct Database_Driver_Struct{
 
 #define number_of_DNP_Slave_Driver_Instances 2
 
-#define number_of_Modbus_Master_Driver_Instances 3
+#define number_of_Modbus_Master_Driver_Instances 1
 
 #define number_of_Modbus_Slave_Driver_Instances 0
 

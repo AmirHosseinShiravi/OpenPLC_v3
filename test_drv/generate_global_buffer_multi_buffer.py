@@ -429,7 +429,7 @@ typedef struct Database_Driver_Struct{
                     tags = driver_instance_node.find('Tags').findall('Tag')
                     number_of_tags = len(tags)
                     concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.number_of_tags = {number_of_tags};')
-                    concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.Tags = malloc({number_of_tags} * sizeof(*LIO_Driver_Instance.Tags));')
+                    concatenate_strings(DRVTags_string_body ,f'\tLIO_Driver_Instance.Tags = (LIO_driverTag*) malloc({number_of_tags} * sizeof(*LIO_Driver_Instance.Tags));')
                     # we don't need to initialize other variables because of we don't use them for tihs
                     # driver.
                     for tag in tags:
@@ -488,20 +488,19 @@ typedef struct Database_Driver_Struct{
                 case "DNP3Master":
                     pass
                 case "DNP3Slave":
+                    driver_instance_node = tree.find(driver_instance_name)
+                    # get LIO's Option
+                    options = driver_instance_node.find('options')
                     if options.attrib.get("Disable", None) == "true":
                         continue
                     else:
-                        driver_instance_node = tree.find(driver_instance_name)
-                        # get LIO's Option
-                        options = driver_instance_node.find('options')
-
                         DNP_options_prefix = f"DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Options"
                         string= f'\t{DNP_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
                                 f'\t{DNP_options_prefix}.COMPort = {options.attrib.get("COMPort", None)};\n' + \
                                 f'\t{DNP_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
                                 f'\t{DNP_options_prefix}.DataBits = {options.attrib.get("DataBits", None)};\n' + \
                                 f'\t{DNP_options_prefix}.StopBits = {options.attrib.get("StopBits", None)};\n' + \
-                                f'\t{DNP_options_prefix}.Parity = {options.attrib.get("Parity", None)};\n' + \
+                                f'\t{DNP_options_prefix}.Parity = \'{options.attrib.get("Parity", None)}\';\n' + \
                                 f'\t{DNP_options_prefix}.FlowControl = {options.attrib.get("FlowControl", None)};\n' + \
                                 f'\t{DNP_options_prefix}.SlaveAddress = {options.attrib.get("SlaveAddress", None)};\n' + \
                                 f'\t{DNP_options_prefix}.MasterAddress = {options.attrib.get("MasterAddress", None)};\n' + \
@@ -536,7 +535,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tDNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags = (DNP_slave_driverTag*)malloc({number_of_tags} * sizeof(*DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags));')
                         for tag in tags:
                             tag_index = tag.attrib.get("TagIndex", None)
                             if tag_index:
@@ -593,14 +592,15 @@ typedef struct Database_Driver_Struct{
                                             concatenate_strings(setVarsFromDRVTags_string, f'\t__SET_VAR(,RES0__{driver_instance_name.upper()}_{tag.attrib.get("Name", "").upper()}_DT,,DNP_Slave_Driver_Instances[{number_of_DNP_Slave_Driver_Instances}].Tags[{tag_index}].TagValueDT);')
                         
                         number_of_DNP_Slave_Driver_Instances += 1
- 
+
                 case "ModbusMaster":
+                    driver_instance_node = tree.find(driver_instance_name)
+                    # get LIO's Option
+                    options = driver_instance_node.find('options')
                     if options.attrib.get("Disable", None) == "true":
                         continue
                     else:
-                        driver_instance_node = tree.find(driver_instance_name)
-                        # get LIO's Option
-                        options = driver_instance_node.find('options')
+
 
                         Modbus_options_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Options"
                         match options.attrib.get("Parity", None):
@@ -612,12 +612,12 @@ typedef struct Database_Driver_Struct{
                                 parity = 'N'
                     
                         string= f'\t{Modbus_options_prefix}.Disable = {options.attrib.get("Disable", None)};\n' + \
-                                f'\tstrcpy({Modbus_options_prefix}.COMPort, {options.attrib.get("COMPort", None)});\n' + \
+                                f'\tstrcpy({Modbus_options_prefix}.COMPort, \"{options.attrib.get("COMPort", None)}\");\n' + \
                                 f'\t{Modbus_options_prefix}.BaudRate = {options.attrib.get("BaudRate", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.DataBit = {options.attrib.get("DataBit", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.Instance = {options.attrib.get("Instance", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.StopBit = {options.attrib.get("StopBit", None)};\n' + \
-                                f"\tstrcpy({Modbus_options_prefix}.Parity, '{parity}');\n" + \
+                                f'\t{Modbus_options_prefix}.Parity = \'{parity}\';\n' + \
                                 f'\tstrcpy({Modbus_options_prefix}.WakeUpString, "{options.attrib.get("WakeUpString", None)}");\n' + \
                                 f'\t{Modbus_options_prefix}.DelayBetweenPolls = {options.attrib.get("DelayBetweenPolls", None)};\n' + \
                                 f'\t{Modbus_options_prefix}.ContPoll = {options.attrib.get("ContPoll", None)};\n' + \
@@ -635,7 +635,7 @@ typedef struct Database_Driver_Struct{
                         number_of_blocks = len(blocks)
                         
                         concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_modbus_blocks = {number_of_blocks};')
-                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks = (ModbusBlocks*)malloc({number_of_blocks} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks));')
                         for i, block in enumerate(blocks):
                             Modbus_blocks_prefix = f"Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Blocks[{i}]"
 
@@ -657,7 +657,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tModbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags = (Modbus_master_driverTag*) malloc({number_of_tags} * sizeof(*Modbus_Master_Driver_Instances[{number_of_Modbus_Master_Driver_Instances}].Tags));')
                         # we don't need to initialize other variables because of we don't use them for tihs
                         # driver.
                         for tag in tags:
@@ -695,12 +695,13 @@ typedef struct Database_Driver_Struct{
                 case "ModbusSlave":
                     pass
                 case "SQLite":
+                    driver_instance_node = tree.find(driver_instance_name)
+                    # get LIO's Option
+                    options = driver_instance_node.find('options')
                     if options.attrib.get("Disable", None) == "true":
                         continue
                     else:                    
-                        driver_instance_node = tree.find(driver_instance_name)
-                        # get LIO's Option
-                        options = driver_instance_node.find('options')
+
 
                         database_options_prefix = f"Database_Driver_Instances[{number_of_Database_Driver_Instances}].Options"
 
@@ -725,7 +726,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = (Modbus_master_driverTag*) malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
                         # we don't need to initialize other variables because of we don't use them for tihs
                         # driver.
                         for tag in tags:

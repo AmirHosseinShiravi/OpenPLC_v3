@@ -27,8 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-// #include <pthread.h>
-
+#include <pthread.h>
 #include <modbus.h>
 #include <errno.h>
 #include <string.h>
@@ -38,9 +37,6 @@
 #include <fstream>
 #include <string>
 
-
-
-
 #include "ladder.h"
 
 
@@ -49,15 +45,12 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // Thread to poll each slave device
 //-----------------------------------------------------------------------------
-void querySlaveDevices(int arg)
+void *querySlaveDevices(void *arg)
 {
     int instance_index;
-    // instance_index = *(int*)arg;
-    instance_index = arg;
-    unsigned char log_msg[1000];
+    instance_index = *(int*)arg;
 
-
-    while (run_openplc)
+    while (1)
     {
         unsigned char log_msg[1000];
         
@@ -95,15 +88,13 @@ void querySlaveDevices(int arg)
             //Verify if device is connected
             if (!Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected && !rtu_port_connected)
             {
-                sprintf((char *)log_msg, "Device %s-%s is disconnected. Attempting to reconnect...\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName,
+                sprintf(log_msg, "Device %s-%s is disconnected. Attempting to reconnect...\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName,
                                                                                                Modbus_Master_Driver_Instances[instance_index].Blocks[i].Name);
                 log(log_msg);
-
-
                 if (modbus_connect(Modbus_Master_Driver_Instances[instance_index].Blocks[i].mb_ctx) == -1)
                 {
-                    
-                    sprintf((char *)log_msg, "Connection failed on MB device %s-%s: %s\n",Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName,
+
+                    sprintf(log_msg, "Connection failed on MB device %s-%s: %s\n",Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName,
                                                                                   Modbus_Master_Driver_Instances[instance_index].Blocks[i].Name, modbus_strerror(errno));
                     log(log_msg);
                     
@@ -118,7 +109,7 @@ void querySlaveDevices(int arg)
                 }
                 else
                 {
-                    sprintf((char *)log_msg, "Connected to MB device %s-%s\n",Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, Modbus_Master_Driver_Instances[instance_index].Blocks[i].Name);
+                    sprintf(log_msg, "Connected to MB device %s-%s\n",Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, Modbus_Master_Driver_Instances[instance_index].Blocks[i].Name);
                     log(log_msg);
                     Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = true;
                 }
@@ -130,8 +121,7 @@ void querySlaveDevices(int arg)
                 ts.tv_sec = 0;
                 if (!strcmp(Modbus_Master_Driver_Instances[instance_index].Options.PhysicalLayer, "RS232") || !strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "RS485"))
                 {
-                    
-                    ts.tv_nsec = (1000000000LL * 28) / Modbus_Master_Driver_Instances[instance_index].Options.BaudRate;
+                    ts.tv_nsec = (1000*1000*1000*28)/ Modbus_Master_Driver_Instances[instance_index].Options.BaudRate;
                 }
                 else
                 {
@@ -158,7 +148,7 @@ void querySlaveDevices(int arg)
                             Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
                         
-                        sprintf((char *)log_msg, "Modbus Read Discrete Input Registers failed on MB device %s: %s\n",  Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Discrete Input Registers failed on MB device %s: %s\n",  Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
                         // bool_input_index += (mb_devices[i].discrete_inputs.num_regs);
                         // if (special_functions[2] != NULL) *special_functions[2]++;
@@ -211,7 +201,7 @@ void querySlaveDevices(int arg)
                             Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
 
-                        sprintf((char *)log_msg, "Modbus Write Coils failed on MB device %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Write Coils failed on MB device %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
                         // if (special_functions[2] != NULL) *special_functions[2]++;
                         Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
@@ -266,7 +256,7 @@ void querySlaveDevices(int arg)
                             Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
                         
-                        sprintf((char *)log_msg, "Modbus Write Coils failed on MB device %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Write Coils failed on MB device %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
                         // if (special_functions[2] != NULL) *special_functions[2]++;
                         Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
@@ -391,7 +381,7 @@ void querySlaveDevices(int arg)
                             Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
                         
-                        sprintf((char *)log_msg, "Modbus Read Holding Registers failed on MB device  %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Holding Registers failed on MB device  %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
                         // if (special_functions[2] != NULL) *special_functions[2]++;
                         Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
@@ -625,7 +615,7 @@ void querySlaveDevices(int arg)
                             Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
                         }
                         
-                        sprintf((char *)log_msg, "Modbus Read Holding Registers failed on MB device  %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Holding Registers failed on MB device  %s: %s\n", Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
                         log(log_msg);
                         // if (special_functions[2] != NULL) *special_functions[2]++;
                         Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
@@ -640,31 +630,19 @@ void querySlaveDevices(int arg)
 }
 }
 
-
-
-void myFunction(int arg) {
-    while (true) {
-        // Do some work here...
-        cout << "Thread " << this_thread::get_id() << " is running with argument " << arg << endl;
-        sleepms(1000);
-    }
-}
-
-
 //-----------------------------------------------------------------------------
 // This function is called by the main OpenPLC routine when it is initializing.
 // Modbus master initialization procedures are here.
 //-----------------------------------------------------------------------------
-void initializeMB(vector<thread> *workerThreads, int numThreads)
+void initializeMB()
 {
-
     // parseConfig();
     pthread_t *thread_array;
     int *instances_index;
     unsigned char log_msg[1000];
     
-    instances_index = (int*) malloc(number_of_Modbus_Master_Driver_Instances * sizeof(int));
-    thread_array = (pthread_t*) malloc(number_of_Modbus_Master_Driver_Instances * sizeof(pthread_t));
+    instances_index = malloc(number_of_Modbus_Master_Driver_Instances * sizeof(int));
+    thread_array = malloc(number_of_Modbus_Master_Driver_Instances * sizeof(pthread_t));
     // if Disable == false then init modbus instance
     for (int i = 0; i < number_of_Modbus_Master_Driver_Instances; i++)
     {
@@ -677,8 +655,6 @@ void initializeMB(vector<thread> *workerThreads, int numThreads)
                     if (strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "TCP") == 0 || !strcmp(Modbus_Master_Driver_Instances[i].Blocks[j].IP, "")) // may second condition useless
                     {
                         Modbus_Master_Driver_Instances[i].Blocks[j].mb_ctx = modbus_new_tcp(Modbus_Master_Driver_Instances[i].Blocks[j].IP, Modbus_Master_Driver_Instances[i].Blocks[j].SocketPort);
-                        sprintf((char *)log_msg, "Create connection for device : %s\n", Modbus_Master_Driver_Instances[i].Blocks[j].DeviceName);
-                        log(log_msg);
                     }
                     // RTU Mode
                     else if (strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "RS232") == 0 || strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "RS485") == 0)
@@ -703,7 +679,7 @@ void initializeMB(vector<thread> *workerThreads, int numThreads)
                         //         mb_devices[i].rtu_data_bit != mb_devices[share_index].rtu_data_bit || mb_devices[i].rtu_stop_bit != mb_devices[share_index].rtu_stop_bit)
                         //     {
                         //         unsigned char log_msg[1000];
-                        //         sprintf((char *)log_msg, "Warning MB device %s port setting missmatch\n", mb_devices[i].dev_name);
+                        //         sprintf(log_msg, "Warning MB device %s port setting missmatch\n", mb_devices[i].dev_name);
                         //         log(log_msg);
                         //     }
                         //     mb_devices[i].mb_ctx = mb_devices[share_index].mb_ctx;
@@ -721,7 +697,7 @@ void initializeMB(vector<thread> *workerThreads, int numThreads)
                             ret = modbus_rtu_set_serial_mode(Modbus_Master_Driver_Instances[i].Blocks[j].mb_ctx, MODBUS_RTU_RS232);
                         }
                         if (ret == -1){
-                            sprintf((char *)log_msg, "Error MB device %s Not Config Properly\n", Modbus_Master_Driver_Instances[i].Blocks[j].DeviceName);
+                            sprintf(log_msg, "Error MB device %s Not Config Properly\n", Modbus_Master_Driver_Instances[i].Blocks[j].DeviceName);
                             log(log_msg);
                         }
                     }
@@ -730,8 +706,7 @@ void initializeMB(vector<thread> *workerThreads, int numThreads)
                 // slave id
 
                 modbus_set_slave(Modbus_Master_Driver_Instances[i].Blocks[j].mb_ctx, Modbus_Master_Driver_Instances[i].Blocks[j].SlaveID);
-                sprintf((char *)log_msg, "set slave for device : %s with Slave ID : %d \n", Modbus_Master_Driver_Instances[i].Blocks[j].DeviceName, Modbus_Master_Driver_Instances[i].Blocks[j].SlaveID);
-                log(log_msg);
+
                 // timeout
                 uint32_t to_sec = Modbus_Master_Driver_Instances[i].Blocks[j].Timeout / 1000;
                 uint32_t to_usec = (Modbus_Master_Driver_Instances[i].Blocks[j].Timeout % 1000) * 1000;
@@ -742,30 +717,54 @@ void initializeMB(vector<thread> *workerThreads, int numThreads)
             // if (special_functions[2] != NULL)
             //     *special_functions[2] = 0;
 
+            if (number_of_Modbus_Master_Driver_Instances > 0)
+            {
 
-        }
-    }
+                for (int k = 0; k < number_of_Modbus_Master_Driver_Instances; k++){
+                    instances_index[k] = k;
+                    int ret = pthread_create(&thread_array[k], NULL, querySlaveDevices, (void*)&instances_index[k]);
+                    if (ret == 0)
+                    {
+                        pthread_detach(thread_array[k]);
+                    }
+                }
 
-    if (number_of_Modbus_Master_Driver_Instances > 0)
-    {
-        // for (int k = 0; k < number_of_Modbus_Master_Driver_Instances; k++)
-        // {
-        //     instances_index[k] = k;
-        //     // int ret = pthread_create(&thread_array[k], NULL, querySlaveDevices, (void *)&instances_index[k]);
-        //     // sprintf((char *)log_msg, "ret: %d \n", ret);
-        //     // log(log_msg);
-        //     // if (ret == 0)
-        //     // {
-        //     //     pthread_detach(thread_array[k]);
-        //     // }
-
-        // }
-
-            // Create multiple threads to run myFunction in the background
-        for (int k = 0; k < number_of_Modbus_Master_Driver_Instances; k++)
-        {
-            
-            workerThreads->emplace_back(querySlaveDevices, k);
+            }
         }
     }
 }
+
+//-----------------------------------------------------------------------------
+// This function is called by the OpenPLC in a loop. Here the internal buffers
+// must be updated to reflect the actual Input state.
+//-----------------------------------------------------------------------------
+// void updateBuffersIn_MB()
+// {
+//     pthread_mutex_lock(&ioLock);
+
+//     for (int i = 0; i < MAX_MB_IO; i++)
+//     {
+//         if (bool_input[100+(i/8)][i%8] != NULL) *bool_input[100+(i/8)][i%8] = bool_input_buf[i];
+//         if (int_input[100+i] != NULL) *int_input[100+i] = int_input_buf[i];
+//     }
+
+//     pthread_mutex_unlock(&ioLock);
+// }
+
+
+// //-----------------------------------------------------------------------------
+// // This function is called by the OpenPLC in a loop. Here the internal buffers
+// // must be updated to reflect the actual Output state.
+// //-----------------------------------------------------------------------------
+// void updateBuffersOut_MB()
+// {
+//     pthread_mutex_lock(&ioLock);
+
+//     for (int i = 0; i < MAX_MB_IO; i++)
+//     {
+//         if (bool_output[100+(i/8)][i%8] != NULL) bool_output_buf[i] = *bool_output[100+(i/8)][i%8];
+//         if (int_output[100+i] != NULL) int_output_buf[i] = *int_output[100+i];
+//     }
+
+//     pthread_mutex_unlock(&ioLock);
+// }

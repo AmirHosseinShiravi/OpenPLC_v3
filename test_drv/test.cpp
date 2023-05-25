@@ -1,4 +1,3 @@
-
 #include "ladder.h"
 
 // g++ -std=gnu++11 long_double.cpp -o long_double -lstdc++
@@ -7,12 +6,13 @@
 // g++ -std=gnu++11 -I ./lib -c Res0.c -w
 // g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -w
 
+using namespace std;
 
 TIME __CURRENT_TIME;
 unsigned char log_buffer[1000000];
 int log_index = 0;
 int log_counter = 0;
-
+uint8_t run_openplc = 1; //Variable to control OpenPLC Runtime execution
 
 pthread_mutex_t bufferLock; //mutex for the internal buffers
 pthread_mutex_t logLock; //mutex for the internal log
@@ -75,6 +75,8 @@ int main(){
     
     setVarsFromDRVTags();
     setDRVTagsFromVars();
+
+    int amir = 1;
     unsigned char log_msg[1000];
     sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %Lf \n",LIO_Driver_Instance.Tags[8].TagValue);
     log(log_msg);
@@ -82,6 +84,21 @@ int main(){
 	sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
     log(log_msg);
 
-    initializeMB();
+    
+    vector<thread> workerThreads;
+
+    int numThreads = 3;
+
+    initializeMB(&workerThreads, numThreads);
+
+
+    sprintf((char *)log_msg, "************************************************************************* \n");
+    log(log_msg);
+
+    // Join all threads before exiting the program
+    for (auto& thread : workerThreads) {
+        thread.join();
+    }
+
     return 0;
 }
