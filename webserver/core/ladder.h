@@ -155,7 +155,6 @@ void declare_and_init_drvtags();
 
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;
-extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
 extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
 
 // Gluvar_functions

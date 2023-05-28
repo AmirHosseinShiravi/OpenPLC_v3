@@ -324,7 +324,7 @@ typedef struct Database_Driver_Struct{
 
 #define number_of_DNP_Master_Driver_Instances 0
 
-#define number_of_DNP_Slave_Driver_Instances 2
+#define number_of_DNP_Slave_Driver_Instances 0
 
 #define number_of_Modbus_Master_Driver_Instances 1
 

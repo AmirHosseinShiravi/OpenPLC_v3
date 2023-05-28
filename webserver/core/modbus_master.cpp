@@ -240,7 +240,47 @@ void querySlaveDevices(int arg)
                 }
                 
                 // Read coils
-                // Do Something
+                if (Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count != 0 && Modbus_Master_Driver_Instances[instance_index].Blocks[i].Type == 1)
+                {
+                    int lastTagIndex = Modbus_Master_Driver_Instances[instance_index].Blocks[i].LastTagIndex;
+                    int start_address = Modbus_Master_Driver_Instances[instance_index].Blocks[i].StartAdd;
+                    // sleepms(mb_devices[i].rtu_tx_pause);
+                    uint8_t *tempBuff;
+                    tempBuff = (uint8_t *)malloc(Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count);
+                    nanosleep(&ts, NULL); 
+                    int return_val = modbus_read_bits(Modbus_Master_Driver_Instances[instance_index].Blocks[i].mb_ctx,
+                                                            Modbus_Master_Driver_Instances[instance_index].Blocks[i].StartAdd,
+                                                            Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count, tempBuff);
+                    if (return_val == -1)
+                    {
+                        if (strcmp(Modbus_Master_Driver_Instances[i].Options.PhysicalLayer, "TCP") == 0)
+                        {
+                            modbus_close(Modbus_Master_Driver_Instances[instance_index].Blocks[i].mb_ctx);
+                            Modbus_Master_Driver_Instances[instance_index].Blocks[i].isConnected = false;
+                        }
+                        
+                        sprintf((char *)log_msg, "Modbus Read coils failed on MB device %s: %s\n",  Modbus_Master_Driver_Instances[instance_index].Blocks[i].DeviceName, modbus_strerror(errno));
+                        log(log_msg);
+                        // bool_input_index += (mb_devices[i].discrete_inputs.num_regs);
+                        // if (special_functions[2] != NULL) *special_functions[2]++;
+                        
+                        // block error tag
+                        Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex - 1].TagValue++;
+                    }
+                    else
+                    {
+
+                        pthread_mutex_lock(&bufferLock);
+                        for (int j = 0; j < return_val; j++)
+                        {
+                            Modbus_Master_Driver_Instances[instance_index].Tags[start_address + j].TagValue = tempBuff[j];
+                            // bool_input_index++;
+                        }
+                        pthread_mutex_unlock(&bufferLock);
+                    }
+
+                    free(tempBuff);
+                }
 
                 //Read input registers
                 if (Modbus_Master_Driver_Instances[instance_index].Blocks[i].Count != 0 && Modbus_Master_Driver_Instances[instance_index].Blocks[i].Type >= 8 && \
