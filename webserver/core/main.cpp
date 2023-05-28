@@ -299,14 +299,24 @@ int main(int argc,char **argv)
     type_logger_callback logger = logger_callback; 
     ethercat_configure("../utils/ethercat_src/build/ethercat.cfg", logger);
 #endif
+
+
+
+
+    declare_and_init_drvtags();
+
+
+
+
+
     initializeHardware();
     // Modbus_Master_Driver_Instances[0].Options.WriteByChange == true:
     //  then : 
     //      initializeMB();
     //  else:
     //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
-
-    // initializeMB();
+    std::vector<std::thread> workerThreads;
+    initializeMB(&workerThreads);
     initCustomLayer();
     updateBuffersIn();
     updateCustomIn();
@@ -355,7 +365,6 @@ int main(int argc,char **argv)
 
     
     
-    declare_and_init_drvtags();
 
         
     // ///////////////// GET REALTIME CLOCK   //////////////////////
@@ -470,6 +479,8 @@ int main(int argc,char **argv)
         
         setDRVTagsFromVars();
 
+        
+
 		// sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %Lf \n",LIO_Driver_Instance.Tags[8].TagValue);
         // log(log_msg);
 
@@ -522,6 +533,15 @@ int main(int argc,char **argv)
 	//             SHUTTING DOWN OPENPLC RUNTIME
 	//======================================================
     pthread_join(interactive_thread, NULL);
+
+
+    // Join all threads before exiting the program
+    for (auto& thread : workerThreads) {
+        thread.join();
+    }
+
+
+
 #ifdef _ethercat_src
     ethercat_terminate_src();
 #endif

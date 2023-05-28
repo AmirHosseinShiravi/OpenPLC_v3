@@ -1,7 +1,9 @@
 #include "DRVTags.h"
 #include "GlueVars_functions.h"
-#include <pthread.h>
 #include <stdint.h>
+
+#include <vector>
+#include <thread>
 
 #define MODBUS_PROTOCOL     0
 #define DNP3_PROTOCOL       1
@@ -123,11 +125,12 @@ int processEnipMessage(unsigned char *buffer, int buffer_size);
 //pccc.cpp ADDED Ulmer
 uint16_t processPCCCMessage(unsigned char *buffer, int buffer_size);
 
+
 //modbus_master.cpp
-void initializeMB();
-void *querySlaveDevices(void *arg);
-// void updateBuffersIn_MB();
-// void updateBuffersOut_MB();
+void initializeMB(std::vector<std::thread> *workerThreads);
+void querySlaveDevices(int arg);
+void updateBuffersIn_MB();
+void updateBuffersOut_MB();
 
 //dnp3.cpp
 void dnp3StartServer(int port);
@@ -140,7 +143,20 @@ int readPersistentStorage();
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;
 extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
-extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[3];
+extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
+
+// Gluvar_functions
+void setDRVTagsFromVars();
+void setVarsFromDRVTags();
+
+// DRVTags_init_function
+void declare_and_init_drvtags();
+
+
+// Driver Instances buffers defenitions
+extern LIO_Driver_Struct           LIO_Driver_Instance;
+extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
+extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
 
 // Gluvar_functions
 void setDRVTagsFromVars();

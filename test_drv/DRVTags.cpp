@@ -4884,24 +4884,24 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Blocks = (ModbusBlocks*)malloc(1 * sizeof(*Modbus_Master_Driver_Instances[0].Blocks));
 	strcpy(Modbus_Master_Driver_Instances[0].Blocks[0].DeviceName, "pumpag1");
 	Modbus_Master_Driver_Instances[0].Blocks[0].SlaveID = 5;
-	strcpy(Modbus_Master_Driver_Instances[0].Blocks[0].IP, "127.0.0.1");
+	strcpy(Modbus_Master_Driver_Instances[0].Blocks[0].IP, "192.168.1.248");
 	Modbus_Master_Driver_Instances[0].Blocks[0].SocketPort = 502;
 	strcpy(Modbus_Master_Driver_Instances[0].Blocks[0].Name, "p1var1");
-	Modbus_Master_Driver_Instances[0].Blocks[0].Type = 2;
-	Modbus_Master_Driver_Instances[0].Blocks[0].StartAdd = 40001;
-	Modbus_Master_Driver_Instances[0].Blocks[0].Count = 17;
+	Modbus_Master_Driver_Instances[0].Blocks[0].Type = 53;
+	Modbus_Master_Driver_Instances[0].Blocks[0].StartAdd = 0;
+	Modbus_Master_Driver_Instances[0].Blocks[0].Count = 10;
 	Modbus_Master_Driver_Instances[0].Blocks[0].Timeout = 2000;
 	Modbus_Master_Driver_Instances[0].Blocks[0].Enable = true;
 	Modbus_Master_Driver_Instances[0].Blocks[0].FirstTagIndex = 0;
-	Modbus_Master_Driver_Instances[0].Blocks[0].LastTagIndex = 21;
+	Modbus_Master_Driver_Instances[0].Blocks[0].LastTagIndex = 14;
 
-	Modbus_Master_Driver_Instances[0].number_of_tags = 22;
-	Modbus_Master_Driver_Instances[0].Tags = (Modbus_master_driverTag*) malloc(22 * sizeof(*Modbus_Master_Driver_Instances[0].Tags));
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[0].Name, "Tag40001");
+	Modbus_Master_Driver_Instances[0].number_of_tags = 15;
+	Modbus_Master_Driver_Instances[0].Tags = (Modbus_master_driverTag*) malloc(15 * sizeof(*Modbus_Master_Driver_Instances[0].Tags));
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[0].Name, "Tag0");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[0].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[0].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[0].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[0].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[0].Address = 40001;
+	Modbus_Master_Driver_Instances[0].Tags[0].Address = 0;
 	Modbus_Master_Driver_Instances[0].Tags[0].TagIndex = 0;
 	Modbus_Master_Driver_Instances[0].Tags[0].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[0].OldTagValue = 0;
@@ -4909,11 +4909,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[0].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[0].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[1].Name, "Tag40002");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[1].Name, "Tag1");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[1].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[1].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[1].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[1].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[1].Address = 40002;
+	Modbus_Master_Driver_Instances[0].Tags[1].Address = 1;
 	Modbus_Master_Driver_Instances[0].Tags[1].TagIndex = 1;
 	Modbus_Master_Driver_Instances[0].Tags[1].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[1].OldTagValue = 0;
@@ -4921,11 +4921,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[1].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[1].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[2].Name, "Tag40003");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[2].Name, "Tag2");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[2].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[2].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[2].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[2].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[2].Address = 40003;
+	Modbus_Master_Driver_Instances[0].Tags[2].Address = 2;
 	Modbus_Master_Driver_Instances[0].Tags[2].TagIndex = 2;
 	Modbus_Master_Driver_Instances[0].Tags[2].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[2].OldTagValue = 0;
@@ -4933,11 +4933,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[2].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[2].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[3].Name, "Tag40004");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[3].Name, "Tag3");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[3].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[3].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[3].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[3].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[3].Address = 40004;
+	Modbus_Master_Driver_Instances[0].Tags[3].Address = 3;
 	Modbus_Master_Driver_Instances[0].Tags[3].TagIndex = 3;
 	Modbus_Master_Driver_Instances[0].Tags[3].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[3].OldTagValue = 0;
@@ -4945,11 +4945,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[3].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[3].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[4].Name, "Tag40005");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[4].Name, "Tag4");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[4].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[4].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[4].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[4].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[4].Address = 40005;
+	Modbus_Master_Driver_Instances[0].Tags[4].Address = 4;
 	Modbus_Master_Driver_Instances[0].Tags[4].TagIndex = 4;
 	Modbus_Master_Driver_Instances[0].Tags[4].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[4].OldTagValue = 0;
@@ -4957,11 +4957,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[4].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[4].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[5].Name, "Tag40006");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[5].Name, "Tag5");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[5].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[5].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[5].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[5].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[5].Address = 40006;
+	Modbus_Master_Driver_Instances[0].Tags[5].Address = 5;
 	Modbus_Master_Driver_Instances[0].Tags[5].TagIndex = 5;
 	Modbus_Master_Driver_Instances[0].Tags[5].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[5].OldTagValue = 0;
@@ -4969,11 +4969,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[5].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[5].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[6].Name, "Tag40007");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[6].Name, "Tag6");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[6].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[6].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[6].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[6].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[6].Address = 40007;
+	Modbus_Master_Driver_Instances[0].Tags[6].Address = 6;
 	Modbus_Master_Driver_Instances[0].Tags[6].TagIndex = 6;
 	Modbus_Master_Driver_Instances[0].Tags[6].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[6].OldTagValue = 0;
@@ -4981,11 +4981,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[6].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[6].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[7].Name, "Tag40008");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[7].Name, "Tag7");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[7].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[7].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[7].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[7].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[7].Address = 40008;
+	Modbus_Master_Driver_Instances[0].Tags[7].Address = 7;
 	Modbus_Master_Driver_Instances[0].Tags[7].TagIndex = 7;
 	Modbus_Master_Driver_Instances[0].Tags[7].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[7].OldTagValue = 0;
@@ -4993,11 +4993,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[7].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[7].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[8].Name, "Tag40009");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[8].Name, "Tag8");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[8].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[8].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[8].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[8].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[8].Address = 40009;
+	Modbus_Master_Driver_Instances[0].Tags[8].Address = 8;
 	Modbus_Master_Driver_Instances[0].Tags[8].TagIndex = 8;
 	Modbus_Master_Driver_Instances[0].Tags[8].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[8].OldTagValue = 0;
@@ -5005,11 +5005,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[8].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[8].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[9].Name, "Tag40010");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[9].Name, "Tag9");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[9].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[9].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[9].Type = 53;
 	Modbus_Master_Driver_Instances[0].Tags[9].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[9].Address = 40010;
+	Modbus_Master_Driver_Instances[0].Tags[9].Address = 9;
 	Modbus_Master_Driver_Instances[0].Tags[9].TagIndex = 9;
 	Modbus_Master_Driver_Instances[0].Tags[9].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[9].OldTagValue = 0;
@@ -5017,11 +5017,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[9].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[9].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[10].Name, "Tag40011");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[10].Name, "OnLine");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[10].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[10].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[10].Type = 201;
 	Modbus_Master_Driver_Instances[0].Tags[10].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[10].Address = 40011;
+	Modbus_Master_Driver_Instances[0].Tags[10].Address = 0;
 	Modbus_Master_Driver_Instances[0].Tags[10].TagIndex = 10;
 	Modbus_Master_Driver_Instances[0].Tags[10].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[10].OldTagValue = 0;
@@ -5029,11 +5029,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[10].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[10].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[11].Name, "Tag40012");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[11].Name, "SendNum");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[11].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[11].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[11].Type = 201;
 	Modbus_Master_Driver_Instances[0].Tags[11].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[11].Address = 40012;
+	Modbus_Master_Driver_Instances[0].Tags[11].Address = 1;
 	Modbus_Master_Driver_Instances[0].Tags[11].TagIndex = 11;
 	Modbus_Master_Driver_Instances[0].Tags[11].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[11].OldTagValue = 0;
@@ -5041,11 +5041,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[11].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[11].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[12].Name, "Tag40013");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[12].Name, "RecNum");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[12].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[12].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[12].Type = 201;
 	Modbus_Master_Driver_Instances[0].Tags[12].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[12].Address = 40013;
+	Modbus_Master_Driver_Instances[0].Tags[12].Address = 2;
 	Modbus_Master_Driver_Instances[0].Tags[12].TagIndex = 12;
 	Modbus_Master_Driver_Instances[0].Tags[12].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[12].OldTagValue = 0;
@@ -5053,11 +5053,11 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[12].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[12].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[13].Name, "Tag40014");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[13].Name, "Error");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[13].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[13].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[13].Type = 201;
 	Modbus_Master_Driver_Instances[0].Tags[13].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[13].Address = 40014;
+	Modbus_Master_Driver_Instances[0].Tags[13].Address = 3;
 	Modbus_Master_Driver_Instances[0].Tags[13].TagIndex = 13;
 	Modbus_Master_Driver_Instances[0].Tags[13].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[13].OldTagValue = 0;
@@ -5065,100 +5065,16 @@ void declare_and_init_drvtags(){
 	Modbus_Master_Driver_Instances[0].Tags[13].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[13].TagValueDT = time_temp;
 
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[14].Name, "Tag40015");
+	strcpy(Modbus_Master_Driver_Instances[0].Tags[14].Name, "Poll");
 	strcpy(Modbus_Master_Driver_Instances[0].Tags[14].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[14].Type = 2;
+	Modbus_Master_Driver_Instances[0].Tags[14].Type = 202;
 	Modbus_Master_Driver_Instances[0].Tags[14].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[14].Address = 40015;
+	Modbus_Master_Driver_Instances[0].Tags[14].Address = 4;
 	Modbus_Master_Driver_Instances[0].Tags[14].TagIndex = 14;
 	Modbus_Master_Driver_Instances[0].Tags[14].TagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[14].OldTagValue = 0;
 	Modbus_Master_Driver_Instances[0].Tags[14].TagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[14].OldTagStatus = 1;
 	Modbus_Master_Driver_Instances[0].Tags[14].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[15].Name, "Tag40016");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[15].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[15].Type = 2;
-	Modbus_Master_Driver_Instances[0].Tags[15].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[15].Address = 40016;
-	Modbus_Master_Driver_Instances[0].Tags[15].TagIndex = 15;
-	Modbus_Master_Driver_Instances[0].Tags[15].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[15].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[15].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[15].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[15].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[16].Name, "Tag40017");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[16].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[16].Type = 2;
-	Modbus_Master_Driver_Instances[0].Tags[16].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[16].Address = 40017;
-	Modbus_Master_Driver_Instances[0].Tags[16].TagIndex = 16;
-	Modbus_Master_Driver_Instances[0].Tags[16].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[16].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[16].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[16].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[16].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[17].Name, "OnLine");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[17].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[17].Type = 201;
-	Modbus_Master_Driver_Instances[0].Tags[17].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[17].Address = 0;
-	Modbus_Master_Driver_Instances[0].Tags[17].TagIndex = 17;
-	Modbus_Master_Driver_Instances[0].Tags[17].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[17].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[17].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[17].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[17].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[18].Name, "SendNum");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[18].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[18].Type = 201;
-	Modbus_Master_Driver_Instances[0].Tags[18].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[18].Address = 1;
-	Modbus_Master_Driver_Instances[0].Tags[18].TagIndex = 18;
-	Modbus_Master_Driver_Instances[0].Tags[18].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[18].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[18].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[18].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[18].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[19].Name, "RecNum");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[19].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[19].Type = 201;
-	Modbus_Master_Driver_Instances[0].Tags[19].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[19].Address = 2;
-	Modbus_Master_Driver_Instances[0].Tags[19].TagIndex = 19;
-	Modbus_Master_Driver_Instances[0].Tags[19].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[19].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[19].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[19].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[19].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[20].Name, "Error");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[20].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[20].Type = 201;
-	Modbus_Master_Driver_Instances[0].Tags[20].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[20].Address = 3;
-	Modbus_Master_Driver_Instances[0].Tags[20].TagIndex = 20;
-	Modbus_Master_Driver_Instances[0].Tags[20].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[20].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[20].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[20].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[20].TagValueDT = time_temp;
-
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[21].Name, "Poll");
-	strcpy(Modbus_Master_Driver_Instances[0].Tags[21].BlockName, "p1var1");
-	Modbus_Master_Driver_Instances[0].Tags[21].Type = 202;
-	Modbus_Master_Driver_Instances[0].Tags[21].Init =  0;
-	Modbus_Master_Driver_Instances[0].Tags[21].Address = 4;
-	Modbus_Master_Driver_Instances[0].Tags[21].TagIndex = 21;
-	Modbus_Master_Driver_Instances[0].Tags[21].TagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[21].OldTagValue = 0;
-	Modbus_Master_Driver_Instances[0].Tags[21].TagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[21].OldTagStatus = 1;
-	Modbus_Master_Driver_Instances[0].Tags[21].TagValueDT = time_temp;
 
 }
