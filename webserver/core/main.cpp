@@ -315,8 +315,12 @@ int main(int argc,char **argv)
     //      initializeMB();
     //  else:
     //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
-    std::vector<std::thread> workerThreads;
-    initializeMB(&workerThreads);
+
+    #ifdef have_Modbus_Master_Driver_Instances
+        std::vector<std::thread> workerThreads;
+        initializeMB(&workerThreads);
+    #endif
+
     initCustomLayer();
     updateBuffersIn();
     updateCustomIn();
@@ -393,42 +397,6 @@ int main(int argc,char **argv)
     // sprintf((char *)log_msg, "\n%d:%d:%d:%d:%d:%d -- %s\n", current_time->tm_year + 1900, current_time->tm_mon,current_time->tm_mday,current_time->tm_hour,current_time->tm_min,current_time->tm_sec, current_time->tm_zone);
     // log(log_msg);
     // ///////////////////////////////////////////////////////////////
-
-
-
-
-
-    // for(int i=0; i< number_of_driver_instances; i++)
-    // {
-    //     if(strcmp(DRVTags[i].DriverInstanceType , (char *)"LOCAL_IO") == 0){
-    //         sprintf((char *)log_msg,"in :: %s :: instance:: .\n", DRVTags[i].DriverInstanceName );
-    //         log(log_msg);
-    //         sprintf((char *)log_msg,"number of tagsin driver :: %s :: instance:: %d :: is :: %d .\n", DRVTags[i].DriverInstanceName,i , DRVTags[i].number_of_tags );
-    //         log(log_msg);
-    //     }
-    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"DNP3Master") == 0){
-    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
-    //         log(log_msg);
-    //     }
-    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"DNP3Slave") == 0){
-    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
-    //         log(log_msg);
-    //     }
-    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"ModbusMaster") == 0){
-
-    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
-    //         log(log_msg);
-    //     }
-    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"ModbusSlave") == 0){
-    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
-    //         log(log_msg);
-    //     }
-    //     else if(strcmp(DRVTags[i].DriverInstanceType , (char *)"SQLite") == 0){
-    //         sprintf((char *)log_msg,"in :: %s :: instance :: %d :: .\n", DRVTags[i].DriverInstanceName, i );
-    //         log(log_msg);
-    //     }
-
-    // }
 
 
 	//======================================================
@@ -534,12 +502,12 @@ int main(int argc,char **argv)
 	//======================================================
     pthread_join(interactive_thread, NULL);
 
-
-    // Join all threads before exiting the program
-    for (auto& thread : workerThreads) {
-        thread.join();
-    }
-
+    #ifdef have_Modbus_Master_Driver_Instances
+        // Join all threads before exiting the program
+        for (auto& thread : workerThreads) {
+            thread.join();
+        }
+    #endif
 
 
 #ifdef _ethercat_src

@@ -139,20 +139,6 @@ void dnp3StartServer(int port);
 void startPstorage();
 int readPersistentStorage();
 
-
-// Driver Instances buffers defenitions
-extern LIO_Driver_Struct           LIO_Driver_Instance;
-extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
-extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
-
-// Gluvar_functions
-void setDRVTagsFromVars();
-void setVarsFromDRVTags();
-
-// DRVTags_init_function
-void declare_and_init_drvtags();
-
-
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;
 extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];

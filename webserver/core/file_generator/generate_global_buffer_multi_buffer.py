@@ -726,7 +726,7 @@ typedef struct Database_Driver_Struct{
                         tags = driver_instance_node.find('Tags').findall('Tag')
                         number_of_tags = len(tags)
                         concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].number_of_tags = {number_of_tags};')
-                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = (Modbus_master_driverTag*) malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
+                        concatenate_strings(DRVTags_string_body ,f'\tDatabase_Driver_Instances[{number_of_Database_Driver_Instances}].Tags = (Database_driverTag*) malloc({number_of_tags} * sizeof(*Database_Driver_Instances[{number_of_Database_Driver_Instances}].Tags));')
                         # we don't need to initialize other variables because of we don't use them for tihs
                         # driver.
                         for tag in tags:
@@ -785,10 +785,24 @@ typedef struct Database_Driver_Struct{
 
         # define DRVTags
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_DNP_Master_Driver_Instances {number_of_DNP_Master_Driver_Instances}')
+        if number_of_DNP_Master_Driver_Instances > 0:
+            concatenate_strings(DRVTags_string_type_definitions ,f'\n#define have_DNP_Master_Driver_Instances\n')
+        
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_DNP_Slave_Driver_Instances {number_of_DNP_Slave_Driver_Instances}')
+        if number_of_DNP_Slave_Driver_Instances > 0:
+            concatenate_strings(DRVTags_string_type_definitions ,f'\n#define have_DNP_Slave_Driver_Instances\n')
+        
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_Modbus_Master_Driver_Instances {number_of_Modbus_Master_Driver_Instances}')
+        if number_of_Modbus_Master_Driver_Instances > 0:
+            concatenate_strings(DRVTags_string_type_definitions ,f'\n#define have_Modbus_Master_Driver_Instances\n')
+        
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_Modbus_Slave_Driver_Instances {number_of_Modbus_Slave_Driver_Instances}')
+        if number_of_Modbus_Slave_Driver_Instances > 0 :
+            concatenate_strings(DRVTags_string_type_definitions ,f'\n#define have_Modbus_Slave_Driver_Instances\n')
+        
         concatenate_strings(DRVTags_string_type_definitions ,f'\n#define number_of_Database_Driver_Instances {number_of_Database_Driver_Instances}\n')
+        if number_of_Database_Driver_Instances > 0 :
+            concatenate_strings(DRVTags_string_type_definitions ,f'\n#define have_Database_Driver_Instances\n')
 
 
         concatenate_strings(DRVTags_string_type_init ,'#include "DRVTags.h"\n')

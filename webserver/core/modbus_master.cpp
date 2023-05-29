@@ -52,26 +52,30 @@ void querySlaveDevices(int arg)
     instance_index = arg;
     unsigned char log_msg[1000];
     bool amir = false;
-    RES0__RIO_P1VAR1_TAG0.value = 0;
+    // RES0__RIO_P1VAR1_TAG0.value = 0;
     bool run_command = false;
+
+#ifdef have_Modbus_Master_Driver_Instances
 
     while (run_openplc)
     {
-        // if(amir){
-        //     RES0__RIO_P1VAR1_TAG0.value = +100.123;
-        //     amir = false;
-        // }
-        // else {
-        //     RES0__RIO_P1VAR1_TAG0.value = -100.123;
-        //     amir = true;
-        // }
-        // sprintf((char *)log_msg, "RES0__RIO_P1VAR1_TAG0 -> value=  %Lf \n",Modbus_Master_Driver_Instances[0].Tags[0].TagValue);
-        // log(log_msg);
+        if(amir){
+            RES0__RIO_P1VAR1_TAG0.value = +100.123;
+            amir = false;
+        }
+        else {
+            RES0__RIO_P1VAR1_TAG0.value = -100.123;
+            amir = true;
+        }
+        sprintf((char *)log_msg, "RES0__RIO_P1VAR1_TAG0 -> value=  %Lf \n",Modbus_Master_Driver_Instances[0].Tags[0].TagValue);
+        log(log_msg);
 
         for (int i = 0; i < Modbus_Master_Driver_Instances[instance_index].number_of_modbus_blocks; i++)
         {
             run_command = false;
-
+            
+            if (Modbus_Master_Driver_Instances[instance_index].Blocks[i].Enable)
+            {
             // Check if there is a connected RTU device using the same port
             bool found_sharing = false;
             bool rtu_port_connected = false;
@@ -159,7 +163,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -223,7 +227,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -289,7 +293,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -356,7 +360,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -521,7 +525,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -675,7 +679,7 @@ void querySlaveDevices(int arg)
                     else
                     {
                         // check poll tag
-                        if ((bool)Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
+                        if (*(bool*)&Modbus_Master_Driver_Instances[instance_index].Tags[lastTagIndex])
                         {
                             run_command = true;
                         }
@@ -852,9 +856,12 @@ void querySlaveDevices(int arg)
                 }
             }
         }
-        // sleepms(Modbus_Master_Driver_Instances[instance_index].Options.DelayBetweenPolls);
-        sleepms(1000);
+        
+        sleepms(Modbus_Master_Driver_Instances[instance_index].Options.DelayBetweenPolls);
+        // sleepms(1000);
+        }
     }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -864,14 +871,10 @@ void querySlaveDevices(int arg)
 void initializeMB(vector<thread> *workerThreads)
 {
 
-    // parseConfig();
-    // pthread_t *thread_array;
-    // int *instances_index;
+    #ifdef have_Modbus_Master_Driver_Instances
+
     unsigned char log_msg[1000];
 
-    // instances_index = (int*) malloc(number_of_Modbus_Master_Driver_Instances * sizeof(int));
-    // thread_array = (pthread_t*) malloc(number_of_Modbus_Master_Driver_Instances * sizeof(pthread_t));
-    // if Disable == false then init modbus instance
     for (int i = 0; i < number_of_Modbus_Master_Driver_Instances; i++)
     {
         if (!(Modbus_Master_Driver_Instances[0].Options.Disable))
@@ -932,4 +935,5 @@ void initializeMB(vector<thread> *workerThreads)
             workerThreads->emplace_back(querySlaveDevices, k);
         }
     }
+    #endif
 }

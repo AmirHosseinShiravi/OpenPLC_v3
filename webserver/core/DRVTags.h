@@ -328,6 +328,9 @@ typedef struct Database_Driver_Struct{
 
 #define number_of_Modbus_Master_Driver_Instances 1
 
+#define have_Modbus_Master_Driver_Instances
+
+
 #define number_of_Modbus_Slave_Driver_Instances 0
 
 #define number_of_Database_Driver_Instances 0
