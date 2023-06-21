@@ -207,36 +207,51 @@ typedef struct DNP_master_driver_options{
 
 typedef struct DNP_slave_driver_options{
     bool Disable;
+    
+    // name of physicallayer interface: TCP | Serial
+    char PhysicalLayer[20];
+
+    // Serial interface settings
     int COMPort;
     int BaudRate;
     int DataBits;
     int StopBits;
     int Parity;
     int FlowControl;
+
+    // TCP interface settings
     int SlaveAddress;
     int MasterAddress;
     int Instance;
     int SocketPort;
+    char MasterIPAddress[20];
+    char LocalIPAddress[20];
+
+    // General settings
     int PhysicalLayerScanTime;
     int SBOTimeOut;
     int LinkStatusPeriod;
     int AppConfirmationTimeout;
     int MaxEventNum;
     int ClockValidPeriod;
-    int DLLAckConfirmationTimeout;
-    char TagConfiguration[20];
-    int UnsolicitedRetryDelay;
-    int UnsolicitedSendRetries;
-    char MasterIPAddress[20];
-    char LocalIPAddress[20];
-    int EnableUnsolicited;
-    int SendUnsolicitedWhenOnline;
     int UseLocalTime;
     int DiagMode;
-    int DLLAckConfirmation;
-    char PhysicalLayer[20];
     int DIHighSpeedEventScan;
     int DeleteOldestEvent;
+
+    // Data Link Layer settings
+    int DLLAckConfirmationTimeout;
+    int DLLAckConfirmation;
+
+    // determine type of tag configurtion:
+    // Value | Value-Status | Value-Status-DT
+    char TagConfiguration[20];
+
+    // Solicited Mode Settings
+    int EnableUnsolicited;
+    int SendUnsolicitedWhenOnline;
+    int UnsolicitedRetryDelay;
+    int UnsolicitedSendRetries;
 }DNP_slave_driver_options;
 
 typedef struct DNP_master_driverTag{
@@ -324,7 +339,10 @@ typedef struct Database_Driver_Struct{
 
 #define number_of_DNP_Master_Driver_Instances 0
 
-#define number_of_DNP_Slave_Driver_Instances 0
+#define number_of_DNP_Slave_Driver_Instances 2
+
+#define have_DNP_Slave_Driver_Instances
+
 
 #define number_of_Modbus_Master_Driver_Instances 1
 

@@ -10,23 +10,16 @@ VAR_EXTERNAL
 	I : ARRAY [0..255] OF LWORD;
 	Q : ARRAY [0..255] OF LWORD;
 	M : ARRAY [0..255] OF LWORD;
-	rio_p1var1_Tag40001 : BOOL;
-	rio_p1var1_Tag40002 : BOOL;
-	rio_p1var1_Tag40003 : BOOL;
-	rio_p1var1_Tag40004 : BOOL;
-	rio_p1var1_Tag40005 : BOOL;
-	rio_p1var1_Tag40006 : BOOL;
-	rio_p1var1_Tag40007 : BOOL;
-	rio_p1var1_Tag40008 : BOOL;
-	rio_p1var1_Tag40009 : BOOL;
-	rio_p1var1_Tag40010 : BOOL;
-	rio_p1var1_Tag40011 : BOOL;
-	rio_p1var1_Tag40012 : BOOL;
-	rio_p1var1_Tag40013 : BOOL;
-	rio_p1var1_Tag40014 : BOOL;
-	rio_p1var1_Tag40015 : BOOL;
-	rio_p1var1_Tag40016 : BOOL;
-	rio_p1var1_Tag40017 : BOOL;
+	rio_p1var1_Tag0 : REAL;
+	rio_p1var1_Tag2 : REAL;
+	rio_p1var1_Tag4 : REAL;
+	rio_p1var1_Tag6 : REAL;
+	rio_p1var1_Tag8 : REAL;
+	rio_p1var1_Tag10 : REAL;
+	rio_p1var1_Tag12 : REAL;
+	rio_p1var1_Tag14 : REAL;
+	rio_p1var1_Tag16 : REAL;
+	rio_p1var1_Tag18 : REAL;
 	rio_p1var1_OnLine : UINT;
 	rio_p1var1_SendNum : UINT;
 	rio_p1var1_RecNum : UINT;
@@ -887,23 +880,16 @@ VAR_GLOBAL
 	I : ARRAY [0..255] OF LWORD;
 	Q : ARRAY [0..255] OF LWORD;
 	M : ARRAY [0..255] OF LWORD;
-	rio_p1var1_Tag40001 : BOOL;(*Input*)
-	rio_p1var1_Tag40002 : BOOL;(*Input*)
-	rio_p1var1_Tag40003 : BOOL;(*Input*)
-	rio_p1var1_Tag40004 : BOOL;(*Input*)
-	rio_p1var1_Tag40005 : BOOL;(*Input*)
-	rio_p1var1_Tag40006 : BOOL;(*Input*)
-	rio_p1var1_Tag40007 : BOOL;(*Input*)
-	rio_p1var1_Tag40008 : BOOL;(*Input*)
-	rio_p1var1_Tag40009 : BOOL;(*Input*)
-	rio_p1var1_Tag40010 : BOOL;(*Input*)
-	rio_p1var1_Tag40011 : BOOL;(*Input*)
-	rio_p1var1_Tag40012 : BOOL;(*Input*)
-	rio_p1var1_Tag40013 : BOOL;(*Input*)
-	rio_p1var1_Tag40014 : BOOL;(*Input*)
-	rio_p1var1_Tag40015 : BOOL;(*Input*)
-	rio_p1var1_Tag40016 : BOOL;(*Input*)
-	rio_p1var1_Tag40017 : BOOL;(*Input*)
+	rio_p1var1_Tag0 : REAL;(*Output*)
+	rio_p1var1_Tag2 : REAL;(*Output*)
+	rio_p1var1_Tag4 : REAL;(*Output*)
+	rio_p1var1_Tag6 : REAL;(*Output*)
+	rio_p1var1_Tag8 : REAL;(*Output*)
+	rio_p1var1_Tag10 : REAL;(*Output*)
+	rio_p1var1_Tag12 : REAL;(*Output*)
+	rio_p1var1_Tag14 : REAL;(*Output*)
+	rio_p1var1_Tag16 : REAL;(*Output*)
+	rio_p1var1_Tag18 : REAL;(*Output*)
 	rio_p1var1_OnLine : UINT;(*Input*)
 	rio_p1var1_SendNum : UINT;(*Input*)
 	rio_p1var1_RecNum : UINT;(*Input*)

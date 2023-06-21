@@ -519,13 +519,18 @@ typedef struct Database_Driver_Struct{
                                 f'\tstrcpy({DNP_options_prefix}.MasterIPAddress, "{options.attrib.get("MasterIPAddress", None)}");\n' + \
                                 f'\tstrcpy({DNP_options_prefix}.LocalIPAddress, "{options.attrib.get("LocalIPAddress", None)}");\n' + \
                                 f'\t{DNP_options_prefix}.EnableUnsolicited = {options.attrib.get("EnableUnsolicited", None)};\n' + \
-                                f'\t{DNP_options_prefix}.SendUnsolicitedWhenOnline = {options.attrib.get("SendUnsolicitedWhenOnline", None)};\n' + \
                                 f'\t{DNP_options_prefix}.UseLocalTime = {options.attrib.get("UseLocalTime", None)};\n' + \
-                                f'\t{DNP_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
                                 f'\t{DNP_options_prefix}.DLLAckConfirmation = {options.attrib.get("DLLAckConfirmation", None)};\n' + \
                                 f'\tstrcpy({DNP_options_prefix}.PhysicalLayer, "{options.attrib.get("PhysicalLayer", None)}");\n' + \
-                                f'\t{DNP_options_prefix}.DIHighSpeedEventScan = {options.attrib.get("DIHighSpeedEventScan", None)};\n' + \
-                                f'\t{DNP_options_prefix}.DeleteOldestEvent = {options.attrib.get("DeleteOldestEvent", None)};\n'
+                                f'\t{DNP_options_prefix}.DLLNumRetry = 10;'
+                                
+                                # TODO: add DLLNumRetry to .cfg file
+                                # f'\t{DNP_options_prefix}.DLLNumRetry = {options.attrib.get("DLLNumRetry", None)};\n'    
+                                                    
+                                # f'\t{DNP_options_prefix}.SendUnsolicitedWhenOnline = {options.attrib.get("SendUnsolicitedWhenOnline", None)};\n' + \
+                                # f'\t{DNP_options_prefix}.DiagMode = {options.attrib.get("DiagMode", None)};\n' + \
+                                # f'\t{DNP_options_prefix}.DIHighSpeedEventScan = {options.attrib.get("DIHighSpeedEventScan", None)};\n' + \
+                                # f'\t{DNP_options_prefix}.DeleteOldestEvent = {options.attrib.get("DeleteOldestEvent", None)};\n'
                         
                         concatenate_strings(DRVTags_string_body ,string)
 

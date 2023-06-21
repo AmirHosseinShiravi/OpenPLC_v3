@@ -15,9 +15,11 @@
 //#include <opendnp3/outstation/Database.h>
 
 #include <string>
+#include <cstring>
 #include <thread>
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <signal.h>
 #include <algorithm> 
@@ -86,7 +88,17 @@ static inline std::string &trim(std::string &s) {
 // Class to handle commands from the master
 //-----------------------------------------------------------------------------
 class CommandCallback: public ICommandHandler {
+
+private:
+    int instance_number;
+
 public:
+
+    CommandCallback(int num);
+
+    CommandCallback::CommandCallback(int num){
+        instance_number = num;
+    }
    
     //CROB - changed to support offsets (yurgen1975)
     virtual CommandStatus Select(const ControlRelayOutputBlock& command, uint16_t index) {
@@ -290,6 +302,60 @@ OutstationStackConfig create_config() {
     return OutstationStackConfig(DatabaseSizes::AllTypes(10));
 }
 
+
+
+
+void initialize_DNP3_slaves(vector<thread> *workerThreads)
+{
+    #ifdef have_DNP_Slave_Driver_Instances
+
+    // unsigned char log_msg[1000];
+
+    for (int i = 0; i < number_of_DNP_Slave_Driver_Instances; i++)
+    {
+        if(!(DNP_Slave_Driver_Instances[i].Options.Disable))
+        {
+            workerThreads->emplace_back(dnp3StartServer, i);
+        }
+    }
+
+    #endif
+}
+
+
+
+
+
+
+void parseDNP3Config(OutstationStackConfig* config, int instance_number)
+{
+    ///////////// Data Link Layer Configurations ///////////////
+    *config->link.LocalAddr        = (uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MasterAddress;
+    *config->link.RemoteAddr       = (uint16_t) DNP_Slave_Driver_Instances[instance_number].Options.SlaveAddress;
+    *config->link.Timeout          = openpal::TimeDuration::Seconds(DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmationTimeout);
+    *config->link.KeepAliveTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.LinkStatusPeriod);
+    *config->link.UseConfirms      = (bool)DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmation;
+    *config->link.NumRetry         = (uint32_t) DNP_Slave_Driver_Instances[instance_number].Options.DLLNumRetry;
+
+    
+    /////////////// OutStation configurations //////////////////
+    // *config->outstation.params.solConfirmTimeout = openpal::TimeDuration::Milliseconds();
+    // *config->outstation.params.unsolConfirmTimeout = 
+    // rename "UnsolicitedRetryDelay -> unsolRetryTimeout" in .cfg file
+    *config->outstation.params.unsolRetryTimeout = openpal::TimeDuration::Milliseconds(DNP_Slave_Driver_Instances[instance_number].Options.UnsolicitedRetryDelay);
+    *config->outstation.params.allowUnsolicited = (bool)DNP_Slave_Driver_Instances[instance_number].Options.EnableUnsolicited;
+    *config->outstation.params.selectTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.SBOTimeOut);
+    // *config->outstation.params.maxControlsPerRequest = 
+    // *config->outstation.params.maxRxFragSize = 
+    // *config->outstation.params.maxTxFragSize = 
+    *config->outstation.eventBufferConfig = EventBufferConfig::AllTypes((uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MaxEventNum);
+
+}
+
+
+
+
+
 //----------------------------------------------------------------------
 // parse dnp3.cfg and set dnp3 settings
 //----------------------------------------------------------------------
@@ -416,10 +482,11 @@ void ConsoleLogger::Log(const openpal::LogEntry& entry)
 }
 
 
+
 //------------------------------------------------------------------
 //Function to begin DNP3 server functions
 //------------------------------------------------------------------
-void dnp3StartServer(int port) {
+void dnp3StartServer(int instance_number) {
 
     const uint32_t FILTERS = levels::NORMAL;
 
@@ -427,18 +494,79 @@ void dnp3StartServer(int port) {
     // Log messages to the console
     DNP3Manager manager(1, ConsoleLogger::Create());
 
-    // Create a listener server
-    auto channel = manager.AddTCPServer("DNP3_Server", FILTERS, ChannelRetry::Default(), "0.0.0.0", port, PrintingChannelListener::Create());
+    char dnp_id[25] = "DNP3_Server_instance_";
+    char instance_char;
+    itoa(instance_number, instance_char, 10);
+    strncat(dnp_id, instance_char, 1); // use 1 because instance must be within 1,...,6
+
+    switch(DNP_Slave_Driver_Instances[instance_number].Options.PhysicalLayer)
+    {
+        case "TCP":
+            uint16_t port = DNP_Slave_Driver_Instances[instance_number].Options.SocketPort;
+            string endpiont = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
+            // Create a listener server
+            auto channel = manager.AddTCPServer(dnp_id, FILTERS, ChannelRetry::Default(), endpiont, port, PrintingChannelListener::Create());
+        break;
+
+        case "TCP-TLS":
+            uint16_t port = DNP_Slave_Driver_Instances[instance_number].Options.SocketPort;
+            string local_address = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
+            string host_address = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
+
+            std::error_code ec;
+            // Create a TCP server (listener)
+            auto channel = manager.AddTLSClient(
+                            dnp_id,
+                            FILTERS,
+                            ChannelRetry::Default(),
+                            host_address,
+                            local_address,
+                            port,
+                            TLSConfig(
+                                caCertificate,
+                                certificateChain,
+                                privateKey,
+                                2
+                            ),
+                            PrintingChannelListener::Create(),
+                            ec
+                        );
+
+            if (ec)
+            {
+                std::cout << "Unable to create tls server: " << ec.message() << std::endl;
+                return ec.value();
+            }
+        break;
+
+        case "RS232":
+        break;
+
+        case "RS485":
+
+        break;
+    }
+    
+
+
+
+	// The main object for a outstation. The defaults are useable,
+	// but understanding the options are important.
+    int number_of_tags= DNP_Slave_Driver_Instances[instance_number].number_of_tags;
+	OutstationStackConfig config(DatabaseSizes::AllTypes(number_of_tags));
+
+    parseDNP3Config(&config, instance_number);
+
 
     // Create a new outstation with a log level, command handler, and
     // config info this returns a thread-safe interface used for
     // updating the outstation's database.
-    std::shared_ptr<ICommandHandler> cc = std::make_shared<CommandCallback>();
+    std::shared_ptr<ICommandHandler> cc = std::make_shared<CommandCallback>(instance_number);
     auto outstation = channel->AddOutstation(
             "outstation",
             cc, 
             DefaultOutstationApplication::Create(), 
-            parseDNP3Config()
+            config
     );
 
     // Enable the outstation and start communications
@@ -463,3 +591,65 @@ void dnp3StartServer(int port) {
     channel->Shutdown();
     printf("DNP3 Server deactivated\n");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// //------------------------------------------------------------------
+// //Function to begin DNP3 server functions
+// //------------------------------------------------------------------
+// void dnp3StartServer(int port) {
+
+//     const uint32_t FILTERS = levels::NORMAL;
+
+//     // Allocate a single thread to the pool since this is a single outstation
+//     // Log messages to the console
+//     DNP3Manager manager(1, ConsoleLogger::Create());
+
+//     // Create a listener server
+//     auto channel = manager.AddTCPServer("DNP3_Server", FILTERS, ChannelRetry::Default(), "0.0.0.0", port, PrintingChannelListener::Create());
+
+//     // Create a new outstation with a log level, command handler, and
+//     // config info this returns a thread-safe interface used for
+//     // updating the outstation's database.
+//     std::shared_ptr<ICommandHandler> cc = std::make_shared<CommandCallback>();
+//     auto outstation = channel->AddOutstation(
+//             "outstation",
+//             cc, 
+//             DefaultOutstationApplication::Create(), 
+//             parseDNP3Config()
+//     );
+
+//     // Enable the outstation and start communications
+//     outstation->Enable();
+//     printf("DNP3 Enabled \n");
+
+//     mapUnusedIO();
+
+//     // Continuously update
+//     struct timespec timer_start;
+//     clock_gettime(CLOCK_MONOTONIC, &timer_start);
+    
+//     while(run_dnp3) 
+//     {
+//         pthread_mutex_lock(&bufferLock);
+//         update_vals(outstation);
+//         pthread_mutex_unlock(&bufferLock);
+//         sleep_until(&timer_start, OPLC_CYCLE);
+//     }
+    
+//     printf("Shutting down DNP3 server\n");
+//     channel->Shutdown();
+//     printf("DNP3 Server deactivated\n");
+// }

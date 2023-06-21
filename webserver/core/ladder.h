@@ -135,12 +135,17 @@ void updateBuffersOut_MB();
 //dnp3.cpp
 void dnp3StartServer(int port);
 
+void initialize_DNP3_slaves(std::vector<std::thread> *workerThreads);
+
+
+
 //persistent_storage.cpp
 void startPstorage();
 int readPersistentStorage();
 
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;
+extern DNP_Slave_Driver_Struct     DNP_Slave_Driver_Instances[2];
 extern Modbus_Master_Driver_Struct Modbus_Master_Driver_Instances[1];
 
 // Gluvar_functions

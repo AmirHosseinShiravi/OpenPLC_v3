@@ -316,10 +316,17 @@ int main(int argc,char **argv)
     //  else:
     //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
 
+
     #ifdef have_Modbus_Master_Driver_Instances
-        std::vector<std::thread> workerThreads;
-        initializeMB(&workerThreads);
+        std::vector<std::thread> Modbus_slave_workerThreads;
+        initializeMB(&Modbus_slave_workerThreads);
     #endif
+
+    #ifdef have_Modbus_Master_Driver_Instances
+        std::vector<std::thread> DNP3_slave_workerThreads;
+        initialize_DNP3_slaves(&DNP3_slave_workerThreads);
+    #endif
+
 
     initCustomLayer();
     updateBuffersIn();
@@ -504,7 +511,7 @@ int main(int argc,char **argv)
 
     #ifdef have_Modbus_Master_Driver_Instances
         // Join all threads before exiting the program
-        for (auto& thread : workerThreads) {
+        for (auto& thread : Modbus_slave_workerThreads) {
             thread.join();
         }
     #endif
