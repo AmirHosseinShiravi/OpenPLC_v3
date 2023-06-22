@@ -30,6 +30,15 @@
 
 #include "ladder.h"
 
+
+
+// #include <opendnp3/gen/BinaryQuality.h>
+// #include <opendnp3/gen/AnalogQuality.h>
+// #include <opendnp3/gen/BinaryOutputStatusQuality.h>
+// #include <opendnp3/gen/AnalogOutputStatusQuality.h>
+
+
+
 //some modbus defines
 #define MAX_DISCRETE_INPUT      8192
 #define MAX_COILS               8192
@@ -84,6 +93,10 @@ static inline std::string &trim(std::string &s) {
 }
 
 
+// IMPORTANT: when we execute an command, the commandstatus maybe set to "SUCCESS" but according to document, it's means : "command was accepted, initiated, or queued".
+// but some time maybe return "DOWNSTREAM_FAIL" and according to document, it's means : "command not accepted because the outstation is forwarding the request to another downstream device which cannot be reached or is otherwise incapable of performing the request"
+// it can be true for us because must of execution is processed in another devices like extensions and ... .
+// so we need to implement it in the code. but in another devices like ALBORZ RTU it not implemented yet.
 //-----------------------------------------------------------------------------
 // Class to handle commands from the master
 //-----------------------------------------------------------------------------
@@ -100,6 +113,8 @@ public:
         instance_number = num;
     }
    
+    // Important: check index address to exist in out tags array
+
     //CROB - changed to support offsets (yurgen1975)
     virtual CommandStatus Select(const ControlRelayOutputBlock& command, uint16_t index) {
         index = index + offset_di;
@@ -217,54 +232,103 @@ protected:
 // Function to update DNP3 values every time they may have changed
 // Updated by Yurgen1975 to support slave devices: DI/DO address 800 and AI/AO address 100
 //------------------------------------------------------------------
-void update_vals(std::shared_ptr<IOutstation> outstation){
+void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
     UpdateBuilder builder;
-    // Update Discrete input (Binary input) - changed to support offsets (yurgen1975)
-    for(int i = offset_di; i < MAX_DISCRETE_INPUT; i++) {
-        builder.Update(Binary((bool)(*bool_input[i/8][i%8])), i-offset_di);
-    }
 
-    // Update Coils (Binary Output) - changed to support offsets (yurgen1975)
-    for(int i = offset_do; i < MAX_COILS; i++) {
-        builder.Update(BinaryOutputStatus((bool)(*bool_output[i/8][i%8])), i-offset_do);
-    }    
+        if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value", 5) == 0)
+        {
+            for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
+            {
+                switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
+                {
+                    case 1:
+                        builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue)),
+                                                            DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 4:
+                        builder.Update(Analog((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue)), 
+                                                            DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 50:
+                        builder.Update(BinaryOutputStatus((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue)), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 51:
+                        builder.Update(AnalogOutputStatus((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue)), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                }
+            }
+        }
+        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status", 12) == 0)
+        {
+            /*
+                "TagStatus" must be on of : 1,2,4,8,16,32,64,128
+                or 1 or 2 (based on QualityFlags.h file)
+            */
+            for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
+            {
+                switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
+                {
+                    case 1:
+                        builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue), 
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus),
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 4:
+                        builder.Update(Analog((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus), 
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 50:
+                        builder.Update(BinaryOutputStatus((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 51:
+                        builder.Update(AnalogOutputStatus((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                }
+            }
+        }
+        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 15) == 0)
+        {
+            for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
+            {
+                switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
+                {
+                    int64_t t_sec= (int64_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValueDT.tv_sec;
+                    int64_t t_nsec= (int64_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValueDT.tv_nsec;
+                    long long total_nsec = (long long)(t_sec * * 1000000000LL  + t_nsec);
+                    int64_t TagValueDT = (int64_t)(total_nsec / 1000000LL);
 
-    // Update Input Registers (Analog Input) - changed to support offsets (yurgen1975)
-    for (int i = offset_ai; i < MAX_INP_REGS; i++) {
-        builder.Update(Analog((int)(*int_input[i])), i-offset_ai);
-    }
-    
-    // Update Holding Registers (Analog Output) - changed to support offsets (yurgen1975)
-    for (int i = offset_ao; i < MIN_16B_RANGE; i++) {
-        builder.Update(AnalogOutputStatus((int)(*int_output[i])), i-offset_ao);
-    }
-    // Update Holding registers for memory
-    for (int i = MIN_16B_RANGE; i < MAX_16B_RANGE; i++) {
-        if(int_memory[i - MIN_16B_RANGE] != NULL)
-            builder.Update(
-                    AnalogOutputStatus((int)(*int_memory[i - MIN_16B_RANGE])),
-                    i
-            );
-    } 
-    // Update Holding registers for 32 b memory
-    for (int i = MIN_32B_RANGE; i < MAX_32B_RANGE; i++) {
-        if(dint_memory[i - MIN_32B_RANGE] != NULL)
-            builder.Update(
-                    AnalogOutputStatus((int)(*dint_memory[i - MIN_32B_RANGE])),
-                    i
-            );
-    } 
-    // Update Holding registers for 64 b memory
-    for (int i = MIN_64B_RANGE; 
-         (i < MAX_64B_RANGE && 
-            i - MIN_64B_RANGE < sizeof(lint_memory) / sizeof(lint_memory[0])); 
-         i++) {
-        if(lint_memory[i - MIN_64B_RANGE] != NULL)
-            builder.Update(
-                    AnalogOutputStatus((int)(*lint_memory[i - MIN_64B_RANGE])),
-                    i
-            );
-    } 
+                    case 1:
+                        builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue), 
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus,
+                                                        TagValueDT),
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 4:
+                        builder.Update(Analog((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus, TagValueDT), 
+                                                        DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 50:
+                        builder.Update(BinaryOutputStatus((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus, TagValueDT), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                    case 51:
+                        builder.Update(AnalogOutputStatus((double)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus, TagValueDT), 
+                                                                    DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                        break;
+                }
+            }
+        }
+
     outstation->Apply(builder.Build());
 }
 
@@ -324,9 +388,6 @@ void initialize_DNP3_slaves(vector<thread> *workerThreads)
 
 
 
-
-
-
 void parseDNP3Config(OutstationStackConfig* config, int instance_number)
 {
     ///////////// Data Link Layer Configurations ///////////////
@@ -351,8 +412,6 @@ void parseDNP3Config(OutstationStackConfig* config, int instance_number)
     *config->outstation.eventBufferConfig = EventBufferConfig::AllTypes((uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MaxEventNum);
 
 }
-
-
 
 
 
@@ -494,33 +553,36 @@ void dnp3StartServer(int instance_number) {
     // Log messages to the console
     DNP3Manager manager(1, ConsoleLogger::Create());
 
-    char dnp_id[25] = "DNP3_Server_instance_";
-    char instance_char;
-    itoa(instance_number, instance_char, 10);
-    strncat(dnp_id, instance_char, 1); // use 1 because instance must be within 1,...,6
+    char dnp_id[100];
 
     switch(DNP_Slave_Driver_Instances[instance_number].Options.PhysicalLayer)
     {
         case "TCP":
+
+            snprintf(dnp_id, sizeof(dnp_id) , "instance %d :: DNP3_Server(TCP)", instance_number);
+
             uint16_t port = DNP_Slave_Driver_Instances[instance_number].Options.SocketPort;
             string endpiont = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
             // Create a listener server
             auto channel = manager.AddTCPServer(dnp_id, FILTERS, ChannelRetry::Default(), endpiont, port, PrintingChannelListener::Create());
-        break;
+            break;
 
         case "TCP-TLS":
-            uint16_t port = DNP_Slave_Driver_Instances[instance_number].Options.SocketPort;
-            string local_address = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
-            string host_address = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
 
+            snprintf(dnp_id, sizeof(dnp_id) , "instance %d :: DNP3_Server(TCP-TLS)", instance_number);
+
+            uint16_t port = DNP_Slave_Driver_Instances[instance_number].Options.SocketPort;
+            string endpoint = (string) DNP_Slave_Driver_Instances[instance_number].Options.LocalIPAddress;
+            string caCertificate = "";
+            string certificateChain = "";
+            string privateKey = "";
             std::error_code ec;
             // Create a TCP server (listener)
-            auto channel = manager.AddTLSClient(
+            auto channel = manager.AddTLSServer(
                             dnp_id,
                             FILTERS,
                             ChannelRetry::Default(),
-                            host_address,
-                            local_address,
+                            endpoint,
                             port,
                             TLSConfig(
                                 caCertificate,
@@ -537,13 +599,109 @@ void dnp3StartServer(int instance_number) {
                 std::cout << "Unable to create tls server: " << ec.message() << std::endl;
                 return ec.value();
             }
-        break;
+            break;
 
         case "RS232":
-        break;
+            snprintf(dnp_id, sizeof(dnp_id) , "instance %d :: DNP3_Server(Serial:RS232)", instance_number);
+
+            SerialSettings serialsettings;
+            serialsettings.deviceName = (string)COM_Port_Map[DNP_Slave_Driver_Instances[instance_number].Options.COMPort];
+            serialsettings.baud = DNP_Slave_Driver_Instances[instance_number].Options.BaudRate;
+            serialsettings.dataBits = DNP_Slave_Driver_Instances[instance_number].Options.DataBits;
+            /*
+            **** define "Parity" value in .cfg file based on below enum **** 
+            enum class Parity : uint8_t
+                {
+                Even = 1,
+                Odd = 2,
+                None = 0
+                };
+            */
+            serialsettings.parity = ParityFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.Parity);
+            /*
+             **** define "StopBits" value in .cfg file based on below enum ****
+            enum class StopBits : uint8_t
+                {
+                One = 1,
+                OnePointFive = 2,
+                Two = 3,
+                None = 0
+                };
+            */
+            serialsettings.stopBits = StopBitsFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.StopBits);
+            /*
+            **** define "FlowControl" value in .cfg file based on below enum ****
+            enum class FlowControl : uint8_t
+                {
+                Hardware = 1,
+                XONXOFF = 2,
+                None = 0
+                };
+            */
+            serialsettings.flowType = FlowControlFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.FlowControl);
+
+            serialsettings.asyncOpenDelay = openpal::TimeDuration::Milliseconds(500);
+
+            // Create a TCP server (listener)
+            auto channel = manager.AddSerial(
+                            dnp_id,
+                            FILTERS,
+                            ChannelRetry::Default(),
+                            serialsettings,
+                            PrintingChannelListener::Create()
+                        );
+            break;
 
         case "RS485":
 
+            snprintf(dnp_id, sizeof(dnp_id) , "instance %d :: DNP3_Server(Serial:RS485)", instance_number);
+
+            SerialSettings serialsettings;
+            serialsettings.deviceName = (string)COM_Port_Map[DNP_Slave_Driver_Instances[instance_number].Options.COMPort];
+            serialsettings.baud = DNP_Slave_Driver_Instances[instance_number].Options.BaudRate;
+            serialsettings.dataBits = DNP_Slave_Driver_Instances[instance_number].Options.DataBits;
+            /*
+            **** define "Parity" value in .cfg file based on below enum **** 
+            enum class Parity : uint8_t
+                {
+                Even = 1,
+                Odd = 2,
+                None = 0
+                };
+            */
+            serialsettings.parity = ParityFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.Parity);
+            /*
+             **** define "StopBits" value in .cfg file based on below enum ****
+            enum class StopBits : uint8_t
+                {
+                One = 1,
+                OnePointFive = 2,
+                Two = 3,
+                None = 0
+                };
+            */
+            serialsettings.stopBits = StopBitsFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.StopBits);
+            /*
+            **** define "FlowControl" value in .cfg file based on below enum ****
+            enum class FlowControl : uint8_t
+                {
+                Hardware = 1,
+                XONXOFF = 2,
+                None = 0
+                };
+            */
+            serialsettings.flowType = FlowControlFromType((uint8_t)DNP_Slave_Driver_Instances[instance_number].Options.FlowControl);
+            // TODO: add this parameter to .cfg file and change below line
+            serialsettings.asyncOpenDelay = openpal::TimeDuration::Milliseconds(500);
+
+            // Create a TCP server (listener)
+            auto channel = manager.AddSerial(
+                            dnp_id,
+                            FILTERS,
+                            ChannelRetry::Default(),
+                            serialsettings,
+                            PrintingChannelListener::Create()
+                        );
         break;
     }
     
@@ -579,77 +737,17 @@ void dnp3StartServer(int instance_number) {
     struct timespec timer_start;
     clock_gettime(CLOCK_MONOTONIC, &timer_start);
     
+    long long DNP_Cycle = (long long)DNP_Slave_Driver_Instances[instance_number].Options.PhysicalLayerScanTime * 1000000LL;
+
     while(run_dnp3) 
     {
         pthread_mutex_lock(&bufferLock);
-        update_vals(outstation);
+        update_vals(outstation, instance_number);
         pthread_mutex_unlock(&bufferLock);
-        sleep_until(&timer_start, OPLC_CYCLE);
+        sleep_until(&timer_start, DNP_Cycle);
     }
     
     printf("Shutting down DNP3 server\n");
     channel->Shutdown();
     printf("DNP3 Server deactivated\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //------------------------------------------------------------------
-// //Function to begin DNP3 server functions
-// //------------------------------------------------------------------
-// void dnp3StartServer(int port) {
-
-//     const uint32_t FILTERS = levels::NORMAL;
-
-//     // Allocate a single thread to the pool since this is a single outstation
-//     // Log messages to the console
-//     DNP3Manager manager(1, ConsoleLogger::Create());
-
-//     // Create a listener server
-//     auto channel = manager.AddTCPServer("DNP3_Server", FILTERS, ChannelRetry::Default(), "0.0.0.0", port, PrintingChannelListener::Create());
-
-//     // Create a new outstation with a log level, command handler, and
-//     // config info this returns a thread-safe interface used for
-//     // updating the outstation's database.
-//     std::shared_ptr<ICommandHandler> cc = std::make_shared<CommandCallback>();
-//     auto outstation = channel->AddOutstation(
-//             "outstation",
-//             cc, 
-//             DefaultOutstationApplication::Create(), 
-//             parseDNP3Config()
-//     );
-
-//     // Enable the outstation and start communications
-//     outstation->Enable();
-//     printf("DNP3 Enabled \n");
-
-//     mapUnusedIO();
-
-//     // Continuously update
-//     struct timespec timer_start;
-//     clock_gettime(CLOCK_MONOTONIC, &timer_start);
-    
-//     while(run_dnp3) 
-//     {
-//         pthread_mutex_lock(&bufferLock);
-//         update_vals(outstation);
-//         pthread_mutex_unlock(&bufferLock);
-//         sleep_until(&timer_start, OPLC_CYCLE);
-//     }
-    
-//     printf("Shutting down DNP3 server\n");
-//     channel->Shutdown();
-//     printf("DNP3 Server deactivated\n");
-// }

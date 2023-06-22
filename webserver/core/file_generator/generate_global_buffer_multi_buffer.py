@@ -443,8 +443,8 @@ typedef struct Database_Driver_Struct{
                                     f'\t{LIO_tag_prefix}.Range = {tag.attrib.get("Range", 0)};\n' + \
                                     f'\t{LIO_tag_prefix}.Deadband = {tag.attrib.get("Deadband", 0)};\n' + \
                                     f'\t{LIO_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                    f'\t{LIO_tag_prefix}.TagValue = 0;\n' + \
-                                    f'\t{LIO_tag_prefix}.OldTagValue = 0;\n' + \
+                                    f'\t{LIO_tag_prefix}.TagValue = {tag.attrib.get("Init", 0)};\n' + \
+                                    f'\t{LIO_tag_prefix}.OldTagValue = {tag.attrib.get("Init", 0)};\n' + \
                                     f'\t{LIO_tag_prefix}.TagStatus = 1;\n' + \
                                     f'\t{LIO_tag_prefix}.OldTagStatus = 1;\n' + \
                                     f'\t{LIO_tag_prefix}.TagValueDT = time_temp;\n'
@@ -554,8 +554,8 @@ typedef struct Database_Driver_Struct{
                                         f'\t{DNP_tag_prefix}.Deadband = {tag.attrib.get("Deadband", 0)};\n' + \
                                         f'\t{DNP_tag_prefix}.Retain = {tag.attrib.get("Retain", 0)};\n' + \
                                         f'\t{DNP_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                        f'\t{DNP_tag_prefix}.TagValue = 0;\n' + \
-                                        f'\t{DNP_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{DNP_tag_prefix}.TagValue = {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{DNP_tag_prefix}.OldTagValue = {tag.attrib.get("Init", 0)};\n' + \
                                         f'\t{DNP_tag_prefix}.TagStatus = 1;\n' + \
                                         f'\t{DNP_tag_prefix}.OldTagStatus = 1;\n' + \
                                         f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n'
@@ -675,8 +675,8 @@ typedef struct Database_Driver_Struct{
                                         f'\t{Modebus_tag_prefix}.Init =  {tag.attrib.get("Init", 0)};\n' + \
                                         f'\t{Modebus_tag_prefix}.Address = {tag.attrib.get("Address", "")};\n' + \
                                         f'\t{Modebus_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                        f'\t{Modebus_tag_prefix}.TagValue = 0;\n' + \
-                                        f'\t{Modebus_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{Modebus_tag_prefix}.TagValue = {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{Modebus_tag_prefix}.OldTagValue = {tag.attrib.get("Init", 0)};\n' + \
                                         f'\t{Modebus_tag_prefix}.TagStatus = 1;\n' + \
                                         f'\t{Modebus_tag_prefix}.OldTagStatus = 1;\n' + \
                                         f'\t{Modebus_tag_prefix}.TagValueDT = time_temp;\n'
@@ -745,8 +745,8 @@ typedef struct Database_Driver_Struct{
                                         f'\t{database_tag_prefix}.Range = {tag.attrib.get("Range", -1)};\n' + \
                                         f'\t{database_tag_prefix}.Deadband = {tag.attrib.get("Deadband", -1)};\n' + \
                                         f'\t{database_tag_prefix}.TagIndex = {tag_index};\n' + \
-                                        f'\t{database_tag_prefix}.TagValue = 0;\n' + \
-                                        f'\t{database_tag_prefix}.OldTagValue = 0;\n' + \
+                                        f'\t{database_tag_prefix}.TagValue = {tag.attrib.get("Init", 0)};\n' + \
+                                        f'\t{database_tag_prefix}.OldTagValue = {tag.attrib.get("Init", 0)};\n' + \
                                         f'\t{database_tag_prefix}.TagStatus = 1;\n' + \
                                         f'\t{database_tag_prefix}.OldTagStatus = 1;\n' + \
                                         f'\t{database_tag_prefix}.TagValueDT = time_temp;\n'

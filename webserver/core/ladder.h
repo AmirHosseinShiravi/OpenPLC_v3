@@ -154,3 +154,6 @@ void setVarsFromDRVTags();
 
 // DRVTags_init_function
 void declare_and_init_drvtags();
+
+
+string COM_Port_Map[] = {"/dev/tty0", "/dev/tty1", "/dev/tty2"};
