@@ -37,6 +37,8 @@
 #endif
 
 
+std::string COM_Port_Map[2] = {"Com1", "Com2"};
+
 
 #define OPLC_CYCLE          50000000
 
@@ -317,15 +319,15 @@ int main(int argc,char **argv)
     //      scan_blocks_poll_flag_and_run_modbus_for_it(); create a thread to scan poll flags priodically.
 
 
-    #ifdef have_Modbus_Master_Driver_Instances
-        std::vector<std::thread> Modbus_slave_workerThreads;
-        initializeMB(&Modbus_slave_workerThreads);
-    #endif
+    // #ifdef have_Modbus_Master_Driver_Instances
+    //     std::vector<std::thread> Modbus_slave_workerThreads;
+    //     initializeMB(&Modbus_slave_workerThreads);
+    // #endif
 
-    #ifdef have_Modbus_Master_Driver_Instances
-        std::vector<std::thread> DNP3_slave_workerThreads;
-        initialize_DNP3_slaves(&DNP3_slave_workerThreads);
-    #endif
+    // #ifdef have_Modbus_Master_Driver_Instances
+    //     std::vector<std::thread> DNP3_slave_workerThreads;
+    //     initialize_DNP3_slaves(&DNP3_slave_workerThreads);
+    // #endif
 
 
     initCustomLayer();
@@ -456,8 +458,8 @@ int main(int argc,char **argv)
 
         
 
-		// sprintf((char *)log_msg, "LIO_DOTAG0 -> value=  %Lf \n",LIO_Driver_Instance.Tags[8].TagValue);
-        // log(log_msg);
+		sprintf((char *)log_msg, "************** IN MAIN PROGRAM *****************\n");
+        log(log_msg);
 
 		// sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
         // log(log_msg);
@@ -509,13 +511,19 @@ int main(int argc,char **argv)
 	//======================================================
     pthread_join(interactive_thread, NULL);
 
-    #ifdef have_Modbus_Master_Driver_Instances
-        // Join all threads before exiting the program
-        for (auto& thread : Modbus_slave_workerThreads) {
-            thread.join();
-        }
-    #endif
+    // #ifdef have_Modbus_Master_Driver_Instances
+    //     // Join all threads before exiting the program
+    //     for (auto& thread : Modbus_slave_workerThreads) {
+    //         thread.join();
+    //     }
+    // #endif
 
+    // #ifdef have_DNP_Slave_Driver_Instances
+    //     // Join all threads before exiting the program
+    //     for (auto& thread : DNP3_slave_workerThreads) {
+    //         thread.join();
+    //     }
+    // #endif
 
 #ifdef _ethercat_src
     ethercat_terminate_src();

@@ -203,55 +203,42 @@ typedef struct DNP_master_driver_options{
     char PhysicalLayer[20];
     int DIHighSpeedEventScan;
     int DeleteOldestEvent;
+    int DLLNumRetry;
 }DNP_master_driver_options;
 
 typedef struct DNP_slave_driver_options{
     bool Disable;
-    
-    // name of physicallayer interface: TCP | Serial
-    char PhysicalLayer[20];
-
-    // Serial interface settings
     int COMPort;
     int BaudRate;
     int DataBits;
     int StopBits;
     int Parity;
     int FlowControl;
-
-    // TCP interface settings
     int SlaveAddress;
     int MasterAddress;
     int Instance;
     int SocketPort;
-    char MasterIPAddress[20];
-    char LocalIPAddress[20];
-
-    // General settings
     int PhysicalLayerScanTime;
     int SBOTimeOut;
     int LinkStatusPeriod;
     int AppConfirmationTimeout;
     int MaxEventNum;
     int ClockValidPeriod;
-    int UseLocalTime;
-    int DiagMode;
-    int DIHighSpeedEventScan;
-    int DeleteOldestEvent;
-
-    // Data Link Layer settings
     int DLLAckConfirmationTimeout;
-    int DLLAckConfirmation;
-
-    // determine type of tag configurtion:
-    // Value | Value-Status | Value-Status-DT
     char TagConfiguration[20];
-
-    // Solicited Mode Settings
-    int EnableUnsolicited;
-    int SendUnsolicitedWhenOnline;
     int UnsolicitedRetryDelay;
     int UnsolicitedSendRetries;
+    char MasterIPAddress[20];
+    char LocalIPAddress[20];
+    int EnableUnsolicited;
+    int SendUnsolicitedWhenOnline;
+    int UseLocalTime;
+    int DiagMode;
+    int DLLAckConfirmation;
+    char PhysicalLayer[20];
+    int DIHighSpeedEventScan;
+    int DeleteOldestEvent;
+    int DLLNumRetry;
 }DNP_slave_driver_options;
 
 typedef struct DNP_master_driverTag{
@@ -263,12 +250,12 @@ typedef struct DNP_master_driverTag{
     char Name[128];
     int Type;
     int Init;
-    int Address;
+    uint16_t Address;
     int Range;
     double Deadband;
     char BlockName[128];
-    int Class;
-    int Group;
+    uint8_t Class;
+    uint8_t Group;
     int Retain;
     int TagIndex;
 } DNP_master_driverTag;
@@ -282,12 +269,12 @@ typedef struct DNP_slave_driverTag{
     char Name[128];
     int Type;
     int Init;
-    int Address;
+    uint16_t Address;
     int Range;
     double Deadband;
     char BlockName[128];
-    int Class;
-    int Group;
+    uint8_t Class;
+    uint8_t Group;
     int Retain;
     int TagIndex;
 } DNP_slave_driverTag;

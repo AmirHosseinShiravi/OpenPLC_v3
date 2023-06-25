@@ -247,6 +247,7 @@ typedef struct DNP_master_driver_options{
     char PhysicalLayer[20];
     int DIHighSpeedEventScan;
     int DeleteOldestEvent;
+    int DLLNumRetry;
 }DNP_master_driver_options;
 
 typedef struct DNP_slave_driver_options{
@@ -281,6 +282,7 @@ typedef struct DNP_slave_driver_options{
     char PhysicalLayer[20];
     int DIHighSpeedEventScan;
     int DeleteOldestEvent;
+    int DLLNumRetry;
 }DNP_slave_driver_options;
 
 typedef struct DNP_master_driverTag{
@@ -292,12 +294,12 @@ typedef struct DNP_master_driverTag{
     char Name[128];
     int Type;
     int Init;
-    int Address;
+    uint16_t Address;
     int Range;
     double Deadband;
     char BlockName[128];
-    int Class;
-    int Group;
+    uint8_t Class;
+    uint8_t Group;
     int Retain;
     int TagIndex;
 } DNP_master_driverTag;
@@ -311,12 +313,12 @@ typedef struct DNP_slave_driverTag{
     char Name[128];
     int Type;
     int Init;
-    int Address;
+    uint16_t Address;
     int Range;
     double Deadband;
     char BlockName[128];
-    int Class;
-    int Group;
+    uint8_t Class;
+    uint8_t Group;
     int Retain;
     int TagIndex;
 } DNP_slave_driverTag;

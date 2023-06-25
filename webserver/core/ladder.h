@@ -1,7 +1,7 @@
 #include "DRVTags.h"
 #include "GlueVars_functions.h"
 #include <stdint.h>
-
+#include <string>
 #include <vector>
 #include <thread>
 
@@ -135,13 +135,15 @@ void updateBuffersOut_MB();
 //dnp3.cpp
 void dnp3StartServer(int port);
 
-void initialize_DNP3_slaves(std::vector<std::thread> *workerThreads);
-
-
-
 //persistent_storage.cpp
 void startPstorage();
 int readPersistentStorage();
+
+
+void initialize_DNP3_slaves(std::vector<std::thread> *workerThreads);
+
+
+extern std::string COM_Port_Map[2];
 
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;
@@ -154,6 +156,3 @@ void setVarsFromDRVTags();
 
 // DRVTags_init_function
 void declare_and_init_drvtags();
-
-
-string COM_Port_Map[] = {"/dev/tty0", "/dev/tty1", "/dev/tty2"};

@@ -59,16 +59,16 @@ void querySlaveDevices(int arg)
 
     while (run_openplc)
     {
-        if(amir){
-            RES0__RIO_P1VAR1_TAG0.value = +100.123;
-            amir = false;
-        }
-        else {
-            RES0__RIO_P1VAR1_TAG0.value = -100.123;
-            amir = true;
-        }
-        sprintf((char *)log_msg, "RES0__RIO_P1VAR1_TAG0 -> value=  %Lf \n",Modbus_Master_Driver_Instances[0].Tags[0].TagValue);
-        log(log_msg);
+        // if(amir){
+        //     RES0__RIO_P1VAR1_TAG0.value = +100.123;
+        //     amir = false;
+        // }
+        // else {
+        //     RES0__RIO_P1VAR1_TAG0.value = -100.123;
+        //     amir = true;
+        // }
+        // sprintf((char *)log_msg, "RES0__RIO_P1VAR1_TAG0 -> value=  %Lf \n",Modbus_Master_Driver_Instances[0].Tags[0].TagValue);
+        // log(log_msg);
 
         for (int i = 0; i < Modbus_Master_Driver_Instances[instance_index].number_of_modbus_blocks; i++)
         {

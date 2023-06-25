@@ -61,6 +61,8 @@ pthread_t dnp3_thread;
 pthread_t enip_thread;
 pthread_t pstorage_thread;
 
+
+std::vector<std::thread> DNP3_slave_workerThreads;
 //-----------------------------------------------------------------------------
 // Configure Ethercat
 //-----------------------------------------------------------------------------
@@ -80,7 +82,11 @@ void *modbusThread(void *arg)
 //-----------------------------------------------------------------------------
 void *dnp3Thread(void *arg)
 {
-    dnp3StartServer(dnp3_port);
+    #ifdef have_Modbus_Master_Driver_Instances
+        
+        initialize_DNP3_slaves(&DNP3_slave_workerThreads);
+    #endif
+    // dnp3StartServer(dnp3_port);
 }
 
 //-----------------------------------------------------------------------------
@@ -326,6 +332,14 @@ void processCommand(unsigned char *buffer, int client_fd)
             log(log_msg);
             //Stop DNP3 server
             run_dnp3 = 0;
+
+            #ifdef have_DNP_Slave_Driver_Instances
+            // Join all threads before exiting the program
+            for (auto& thread : DNP3_slave_workerThreads) {
+                thread.join();
+            }
+            #endif
+
             pthread_join(dnp3_thread, NULL);
             sprintf(log_msg, "DNP3 server was stopped\n");
             log(log_msg);
@@ -343,6 +357,15 @@ void processCommand(unsigned char *buffer, int client_fd)
         if (run_dnp3)
         {
             run_dnp3 = 0;
+
+            
+            #ifdef have_DNP_Slave_Driver_Instances
+            // Join all threads before exiting the program
+            for (auto& thread : DNP3_slave_workerThreads) {
+                thread.join();
+            }
+            #endif
+            
             pthread_join(dnp3_thread, NULL);
             sprintf(log_msg, "DNP3 server was stopped\n");
             log(log_msg);

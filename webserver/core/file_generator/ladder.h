@@ -164,3 +164,6 @@ void setVarsFromDRVTags();
 
 // DRVTags_init_function
 void declare_and_init_drvtags();
+
+
+void initialize_DNP3_slaves(vector<thread> *workerThreads);

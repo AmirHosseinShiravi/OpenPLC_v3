@@ -1,5 +1,5 @@
 #include <stdint.h>
-
+#include <string>
 #include <vector>
 #include <thread>
 
@@ -136,3 +136,9 @@ void dnp3StartServer(int port);
 //persistent_storage.cpp
 void startPstorage();
 int readPersistentStorage();
+
+
+void initialize_DNP3_slaves(std::vector<std::thread> *workerThreads);
+
+
+std::string COM_Port_Map[2] = {"Com1", "Com2"};
