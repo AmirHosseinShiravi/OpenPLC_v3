@@ -30,6 +30,12 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+
+
+#include <chrono>
+#include <thread>
+
+
 // #include "iec_types.h"
 #include "ladder.h"
 #ifdef _ethercat_src
@@ -259,6 +265,35 @@ u_int16_t *int_input_call_back(int a){ return int_input[a]; }
 u_int16_t *int_output_call_back(int a){ return int_output[a]; }
 void logger_callback(unsigned char *msg){ log(msg);}
 
+
+
+
+bool aghaamir = false;
+
+void DNP_value_changer_function(std::vector<std::thread> *workerThreads)
+{
+    while(1)
+    {
+    pthread_mutex_lock(&bufferLock); //lock mutex
+    std::chrono::milliseconds delay(5000);
+    std::this_thread::sleep_for(delay);
+    
+    unsigned char log_msg[1000];
+    aghaamir = !aghaamir;
+    RES0__DNP_OPENDOOR.value = aghaamir;
+    sprintf((char *)log_msg, "RES0__DNP_OPENDOOR:  %d \n",RES0__DNP_OPENDOOR.value);
+    log(log_msg);
+
+    pthread_mutex_unlock(&bufferLock); //unlock mutex   
+    }
+}
+
+
+
+
+
+
+
 int main(int argc,char **argv)
 {
     // Define the max/min/avg/total cycle and latency variables used in REAL-TIME computation(in nanoseconds)
@@ -328,6 +363,11 @@ int main(int argc,char **argv)
     //     std::vector<std::thread> DNP3_slave_workerThreads;
     //     initialize_DNP3_slaves(&DNP3_slave_workerThreads);
     // #endif
+
+
+    std::vector<std::thread> dnp_value_changer_workerThreads;
+    DNP_value_changer_function(&dnp_value_changer_workerThreads);
+
 
 
     initCustomLayer();
@@ -408,6 +448,8 @@ int main(int argc,char **argv)
     // ///////////////////////////////////////////////////////////////
 
 
+
+
 	//======================================================
 	//                    MAIN LOOP
 	//======================================================
@@ -458,11 +500,10 @@ int main(int argc,char **argv)
 
         
 
-		sprintf((char *)log_msg, "************** IN MAIN PROGRAM *****************\n");
-        log(log_msg);
-
-		// sprintf((char *)log_msg, "RES0__DNP_OPENDOOR.flags:  %d \n",RES0__DNP_OPENDOOR.flags);
+		// sprintf((char *)log_msg, "************** IN MAIN PROGRAM *****************\n");
         // log(log_msg);
+
+
 
         updateCustomOut();
         // updateBuffersOut_MB(); //update slave devices with data from the output image table
@@ -524,6 +565,13 @@ int main(int argc,char **argv)
     //         thread.join();
     //     }
     // #endif
+
+
+    // Join all threads before exiting the program
+    for (auto& thread : dnp_value_changer_workerThreads) {
+        thread.join();
+    }
+
 
 #ifdef _ethercat_src
     ethercat_terminate_src();

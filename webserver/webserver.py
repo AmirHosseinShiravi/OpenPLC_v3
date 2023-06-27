@@ -439,7 +439,6 @@ def login():
             rows = cur.fetchall()
             cur.close()
             conn.close()
-
             for row in rows:
                 if (row[0] == username):
                     if (row[1] == password):
@@ -448,6 +447,7 @@ def login():
                         user.name = row[2]
                         user.pict_file = str(row[3])
                         flask_login.login_user(user)
+                        print("in login section {0}".format(flask_login.current_user.is_authenticated))
                         return flask.redirect(flask.url_for('dashboard'))
                     else:
                         return pages.login_head + pages.bad_login_body

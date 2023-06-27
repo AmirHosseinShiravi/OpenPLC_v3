@@ -270,8 +270,8 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
         {
             int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
             uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
-            uint8_t svariation = DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0;
-            uint8_t evariation = DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F;
+            uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4);
+            uint8_t evariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F) >> 4);
             switch (type)
             {
                 case 1:
@@ -453,12 +453,15 @@ protected:
 //------------------------------------------------------------------
 void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
     UpdateBuilder builder;
-
-    sprintf((char *)log_msg, "*** In update_vals ***\n");
-    log(log_msg);
+    // unsigned char log_msg[1000];
+    // sprintf((char *)log_msg, "*** In update_vals ***\n");
+    // log(log_msg);
     
-        if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value", 5) == 0)
+        if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value", 20) == 0)
         {
+            sprintf((char *)log_msg, "*** In Value Mode Update values ***\n");
+            log(log_msg);
+
             for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
             {
                 switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
@@ -482,8 +485,11 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                 }
             }
         }
-        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status", 12) == 0)
+        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status", 20) == 0)
         {
+            
+            sprintf((char *)log_msg, "*** In Value-Status Mode Update values ***\n");
+            log(log_msg);
             /*
                 "TagStatus" must be on of : 1,2,4,8,16,32,64,128
                 or 1 or 2 (based on QualityFlags.h file)
@@ -493,6 +499,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                 switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
                 {
                     case 1:
+                    // (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus
                         builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue), 
                                                         (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus),
                                                         DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
@@ -503,7 +510,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                                                         DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
                         break;
                     case 50:
-                        builder.Update(BinaryOutputStatus((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
+                        builder.Update(BinaryOutputStatus((bool)(1),
                                                                     (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus), 
                                                                     DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
                         break;
@@ -515,8 +522,11 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                 }
             }
         }
-        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 15) == 0)
+        else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 20) == 0)
         {
+            sprintf((char *)log_msg, "*** In Value-Status-DT Mode Update values ***\n");
+            log(log_msg);
+
             for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
             {
                 long long t_sec= (long long)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValueDT.tv_sec;
@@ -553,6 +563,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
 
     outstation->Apply(builder.Build());
 }
+
 
 //----------------------------------------------------------------------
 // Need to parse 'database_size' first
@@ -634,8 +645,34 @@ void parseDNP3Config(OutstationStackConfig& config, int instance_number)
     // *config.outstation.params.maxTxFragSize = 
 
     // get and sum number of datapoint and set event buffer for each of them
-    config.outstation.eventBufferConfig = EventBufferConfig::AllTypes((uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MaxEventNum);
+    int number_of_binary_point;
+    int number_of_analog_point;
+    int number_of_binary_status_point;
+    int number_of_analog_status_point;
+    for (int k= 0; k < DNP_Slave_Driver_Instances[instance_number].number_of_tags; k++)
+    {
+        switch (DNP_Slave_Driver_Instances[instance_number].Tags[k].Type)
+        {
+            case(1):
+                number_of_binary_point++;
+                break;
+            case(4):
+                number_of_analog_point++;
+                break;
+            case(50):
+                number_of_binary_status_point++;
+                break;
+            case(51):
+                number_of_analog_status_point++;
+                break;
+        }
 
+    }
+    config.outstation.eventBufferConfig.maxBinaryEvents = (uint16_t)number_of_binary_point;
+    config.outstation.eventBufferConfig.maxAnalogEvents = (uint16_t)number_of_analog_point;
+    config.outstation.eventBufferConfig.maxBinaryOutputStatusEvents = (uint16_t)number_of_binary_status_point;
+    config.outstation.eventBufferConfig.maxAnalogOutputStatusEvents = (uint16_t)number_of_analog_status_point;
+    // config.outstation.eventBufferConfig = EventBufferConfig::AllTypes((uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MaxEventNum);
 }
 
 
