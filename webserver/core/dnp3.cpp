@@ -14,6 +14,8 @@
 #include <opendnp3/LogLevels.h>
 //#include <opendnp3/outstation/Database.h>
 
+// #include <opendnp3/gen/BinaryQuality.h>
+
 #include <string>
 #include <cstring>
 #include <thread>
@@ -53,7 +55,7 @@
 #define MIN_64B_RANGE			4096
 #define MAX_64B_RANGE			8191
 
-#define OPLC_CYCLE              50000000
+#define OPLC_CYCLE              500000000
 
 // Initial offset parameters (yurgen1975)
 int offset_di = 0;
@@ -74,6 +76,19 @@ IEC_BOOL dnp3_discrete_input[MAX_DISCRETE_INPUT];
 IEC_BOOL dnp3_coils[MAX_COILS];
 IEC_UINT dnp3_input_regs[MAX_INP_REGS];
 IEC_UINT dnp3_holding_regs[MAX_HOLD_REGS];
+
+
+struct number_of_points_of_each_type_struct{
+    int number_of_binary_point;
+    int number_of_analog_point;
+    int number_of_binary_status_point;
+    int number_of_analog_status_point;
+};
+
+struct number_of_points_of_each_type_struct number_of_points_of_each_type[number_of_DNP_Slave_Driver_Instances];
+
+
+
 
 
 // trim string from left
@@ -264,46 +279,115 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 
 void config_datapoints(OutstationStackConfig& config, int instance_number)
 {
-    for (int i= 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++ )
+    int binary_counter = 0;
+    int analog_counter = 0;
+    int boStatus_counter = 0;
+    int aoStatus_counter = 0;
+    
+    uint16_t last_address = 0;
+
+    uint16_t tags_address_array[DNP_Slave_Driver_Instances[instance_number].number_of_tags];
+
+    for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
+    {
+        tags_address_array[m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
+    }
+
+    int size = sizeof(tags_address_array) / sizeof(tags_address_array[0]);
+
+    std::sort(tags_address_array, tags_address_array + size);
+
+
+    for (int k= 0; k < DNP_Slave_Driver_Instances[instance_number].number_of_tags; k++ )
     {
         try
         {
-            int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
-            uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
-            uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4);
-            uint8_t evariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F) >> 4);
-            switch (type)
+            // pthread_mutex_lock(&bufferLock); //lock mutex
+            // int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
+            // uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
+            // uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4) ;
+            // uint8_t evariation = (DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F);
+            // pthread_mutex_unlock(&bufferLock); //unlock mutex   
+
+            // sprintf((char *)log_msg, "********************************************\n", type);
+            // log(log_msg);            
+            // sprintf((char *)log_msg, "%d\n", type);
+            // log(log_msg);
+            // sprintf((char *)log_msg, "%d\n", tag_class);
+            // log(log_msg);
+            // sprintf((char *)log_msg, "%d\n", svariation);
+            // log(log_msg);
+            // sprintf((char *)log_msg, "%d\n", evariation);
+            // log(log_msg);
+            // sprintf((char *)log_msg, "********************************************\n", type);
+            // log(log_msg);
+
+            
+            for (int i= 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++ )
             {
-                case 1:
-                    config.dbConfig.binary[i].clazz = getPointClassEnumFromValue(tag_class);
-                    config.dbConfig.binary[i].evariation = static_cast<EventBinaryVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-                    config.dbConfig.binary[i].svariation = static_cast<StaticBinaryVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-                    // config.dbConfig.binary[i].opType = OperateType::SelectBeforeOperate;
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[i].Address == tags_address_array[k])
+                {
+
+                    pthread_mutex_lock(&bufferLock); //lock mutex
+                    int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
+                    uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
+                    uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4) ;
+                    uint8_t evariation = (DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F);
+                    pthread_mutex_unlock(&bufferLock); //unlock mutex  
+
+                    switch (type)
+                    {
+                        case 1:
+                            sprintf((char *)log_msg, "Instance: %d :: Binary Tag: %d :: Address: %d\n", instance_number, binary_counter, DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                            log(log_msg);
+                            config.dbConfig.binary[binary_counter].clazz = getPointClassEnumFromValue(tag_class);
+                            config.dbConfig.binary[binary_counter].evariation = static_cast<EventBinaryVariation>(getEventGroupVariationEnumFromValue(evariation, type));
+                            config.dbConfig.binary[binary_counter].svariation = static_cast<StaticBinaryVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
+                            config.dbConfig.binary[binary_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
+                            binary_counter++;
+                            break;
+
+                        case 4:
+                            sprintf((char *)log_msg, "Instance: %d :: Analog Tag: %d\n", instance_number, analog_counter);
+                            log(log_msg);
+                            config.dbConfig.analog[analog_counter].clazz = getPointClassEnumFromValue(tag_class);
+                            config.dbConfig.analog[analog_counter].evariation = static_cast<EventAnalogVariation>(getEventGroupVariationEnumFromValue(evariation, type));
+                            config.dbConfig.analog[analog_counter].svariation = static_cast<StaticAnalogVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
+                            config.dbConfig.analog[analog_counter].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
+                            config.dbConfig.analog[analog_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
+                            analog_counter++;
+                            break;
+
+                        case 50:
+                            sprintf((char *)log_msg, "Instance: %d :: BinaryOutputStatus Tag: %d\n", instance_number, boStatus_counter);
+                            log(log_msg);
+                            config.dbConfig.boStatus[boStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
+                            config.dbConfig.boStatus[boStatus_counter].evariation = static_cast<EventBinaryOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
+                            config.dbConfig.boStatus[boStatus_counter].svariation = static_cast<StaticBinaryOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
+                            config.dbConfig.boStatus[boStatus_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
+                            boStatus_counter++;
+                            break;
+
+                        case 51:
+                            sprintf((char *)log_msg, "Instance: %d :: AnalogOutputStatus Tag: %d\n", instance_number, aoStatus_counter);
+                            log(log_msg);                
+                            config.dbConfig.aoStatus[aoStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
+                            config.dbConfig.aoStatus[aoStatus_counter].evariation = static_cast<EventAnalogOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
+                            config.dbConfig.aoStatus[aoStatus_counter].svariation = static_cast<StaticAnalogOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
+                            config.dbConfig.aoStatus[aoStatus_counter].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
+                            config.dbConfig.aoStatus[aoStatus_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
+                            aoStatus_counter++;
+                            break;
+                    }
                     break;
-                case 4:
-                    config.dbConfig.analog[i].clazz = getPointClassEnumFromValue(tag_class);
-                    config.dbConfig.analog[i].evariation = static_cast<EventAnalogVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-                    config.dbConfig.analog[i].svariation = static_cast<StaticAnalogVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-                    config.dbConfig.analog[i].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
-                    break;
-                case 50:
-                    config.dbConfig.boStatus[i].clazz = getPointClassEnumFromValue(tag_class);
-                    config.dbConfig.boStatus[i].evariation = static_cast<EventBinaryOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-                    config.dbConfig.boStatus[i].svariation = static_cast<StaticBinaryOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-                    break;
-                case 51:
-                    config.dbConfig.aoStatus[i].clazz = getPointClassEnumFromValue(tag_class);
-                    config.dbConfig.aoStatus[i].evariation = static_cast<EventAnalogOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-                    config.dbConfig.aoStatus[i].svariation = static_cast<StaticAnalogOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-                    config.dbConfig.aoStatus[i].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
-                    break;
+                }
             }
         }
         catch(const std::exception& e)
         {
             std::cerr << e.what() << '\n';
         }
-        
+        last_address++;
         
     }
 }
@@ -488,8 +572,8 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
         else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status", 20) == 0)
         {
             
-            sprintf((char *)log_msg, "*** In Value-Status Mode Update values ***\n");
-            log(log_msg);
+            // sprintf((char *)log_msg, "*** In Value-Status Mode Update values ***\n");
+            // log(log_msg);
             /*
                 "TagStatus" must be on of : 1,2,4,8,16,32,64,128
                 or 1 or 2 (based on QualityFlags.h file)
@@ -499,7 +583,13 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                 switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
                 {
                     case 1:
-                    // (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus
+                        // if (!amir)
+                        // {
+                        //     sprintf((char *)log_msg, "*** In Value-Status Mode :: Binary Tag: %d  ***\n", i);
+                        //     log(log_msg);
+                            
+                        // }
+                        
                         builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue), 
                                                         (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus),
                                                         DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
@@ -510,7 +600,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                                                         DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
                         break;
                     case 50:
-                        builder.Update(BinaryOutputStatus((bool)(1),
+                        builder.Update(BinaryOutputStatus((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue),
                                                                     (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus), 
                                                                     DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
                         break;
@@ -521,6 +611,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                         break;
                 }
             }
+            // amir = !amir;
         }
         else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 20) == 0)
         {
@@ -563,7 +654,6 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
 
     outstation->Apply(builder.Build());
 }
-
 
 //----------------------------------------------------------------------
 // Need to parse 'database_size' first
@@ -620,16 +710,39 @@ void initialize_DNP3_slaves(vector<thread> *workerThreads)
 }
 
 
+void determine_number_of_points_of_each_types(int instance_number)
+{
+    for (int k= 0; k < DNP_Slave_Driver_Instances[instance_number].number_of_tags; k++)
+    {
+        switch (DNP_Slave_Driver_Instances[instance_number].Tags[k].Type)
+        {
+            case(1):
+                number_of_points_of_each_type[instance_number].number_of_binary_point++;
+                break;
+            case(4):
+                number_of_points_of_each_type[instance_number].number_of_analog_point++;
+                break;
+            case(50):
+                number_of_points_of_each_type[instance_number].number_of_binary_status_point++;
+                break;
+            case(51):
+                number_of_points_of_each_type[instance_number].number_of_analog_status_point++;
+                break;
+        }
+
+    }
+}
+
 
 void parseDNP3Config(OutstationStackConfig& config, int instance_number)
 {
     ///////////// Data Link Layer Configurations ///////////////
     config.link.LocalAddr        = (uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MasterAddress;
     config.link.RemoteAddr       = (uint16_t) DNP_Slave_Driver_Instances[instance_number].Options.SlaveAddress;
-    // config.link.Timeout          = openpal::TimeDuration::Seconds(DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmationTimeout);
-    // config.link.KeepAliveTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.LinkStatusPeriod);
-    // config.link.UseConfirms      = (bool)DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmation;
-    // config.link.NumRetry         = (uint32_t) DNP_Slave_Driver_Instances[instance_number].Options.DLLNumRetry;
+    config.link.Timeout          = openpal::TimeDuration::Seconds(DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmationTimeout);
+    config.link.KeepAliveTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.LinkStatusPeriod);
+    config.link.UseConfirms      = (bool)DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmation;
+    config.link.NumRetry         = (uint32_t) DNP_Slave_Driver_Instances[instance_number].Options.DLLNumRetry;
 
     
     /////////////// OutStation configurations //////////////////
@@ -640,149 +753,26 @@ void parseDNP3Config(OutstationStackConfig& config, int instance_number)
     config.outstation.params.unsolRetryTimeout = openpal::TimeDuration::Milliseconds(DNP_Slave_Driver_Instances[instance_number].Options.UnsolicitedRetryDelay);
     config.outstation.params.allowUnsolicited = (bool)DNP_Slave_Driver_Instances[instance_number].Options.EnableUnsolicited;
     config.outstation.params.selectTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.SBOTimeOut);
+    config.outstation.params.indexMode = IndexMode::Discontiguous;
     // *config.outstation.params.maxControlsPerRequest = 
     // *config.outstation.params.maxRxFragSize = 
     // *config.outstation.params.maxTxFragSize = 
 
     // get and sum number of datapoint and set event buffer for each of them
-    int number_of_binary_point;
-    int number_of_analog_point;
-    int number_of_binary_status_point;
-    int number_of_analog_status_point;
-    for (int k= 0; k < DNP_Slave_Driver_Instances[instance_number].number_of_tags; k++)
-    {
-        switch (DNP_Slave_Driver_Instances[instance_number].Tags[k].Type)
-        {
-            case(1):
-                number_of_binary_point++;
-                break;
-            case(4):
-                number_of_analog_point++;
-                break;
-            case(50):
-                number_of_binary_status_point++;
-                break;
-            case(51):
-                number_of_analog_status_point++;
-                break;
-        }
-
-    }
-    config.outstation.eventBufferConfig.maxBinaryEvents = (uint16_t)number_of_binary_point;
-    config.outstation.eventBufferConfig.maxAnalogEvents = (uint16_t)number_of_analog_point;
-    config.outstation.eventBufferConfig.maxBinaryOutputStatusEvents = (uint16_t)number_of_binary_status_point;
-    config.outstation.eventBufferConfig.maxAnalogOutputStatusEvents = (uint16_t)number_of_analog_status_point;
+    sprintf((char *)log_msg, "$$$$$$$$$$$$$$$$$$$$$$$  Number of points:: %d :: %d :: %d :: %d ::\n", number_of_points_of_each_type[instance_number].number_of_binary_point,
+                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_point, 
+                                                                                                        number_of_points_of_each_type[instance_number].number_of_binary_status_point, 
+                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_status_point);
+    log(log_msg);
+    config.outstation.eventBufferConfig.maxBinaryEvents = (uint16_t)number_of_points_of_each_type[instance_number].number_of_binary_point;
+    config.outstation.eventBufferConfig.maxAnalogEvents = (uint16_t)number_of_points_of_each_type[instance_number].number_of_analog_point;
+    config.outstation.eventBufferConfig.maxBinaryOutputStatusEvents = (uint16_t)number_of_points_of_each_type[instance_number].number_of_binary_status_point;
+    config.outstation.eventBufferConfig.maxAnalogOutputStatusEvents = (uint16_t)number_of_points_of_each_type[instance_number].number_of_analog_status_point;
     // config.outstation.eventBufferConfig = EventBufferConfig::AllTypes((uint16_t)DNP_Slave_Driver_Instances[instance_number].Options.MaxEventNum);
+
 }
 
-
-
-//----------------------------------------------------------------------
-// parse dnp3.cfg and set dnp3 settings
-//----------------------------------------------------------------------
-OutstationStackConfig parseDNP3Config() {
-    string line;
-    ifstream cfgfile("dnp3.cfg");
-    OutstationStackConfig config = create_config();
-    if(cfgfile.is_open()) {
-        while (getline(cfgfile, line)) {
-            if (line[0] == '#')
-                continue;
-            try {
-                istringstream iss(line);
-                string token;
-                getline(iss, token, '=');
-                token = trim(token);
-                if (token == "local_address") {
-                    getline(iss, token, '=');     
-                    config.link.LocalAddr = atoi(token.c_str());
-                } else if (token == "remote_address") {
-                    getline(iss, token, '=');     
-                    config.link.RemoteAddr = atoi(token.c_str());
-                } else if (token == "keep_alive_timeout") {
-                    getline(iss, token, '=');     
-                    if(token == "MAX") {
-                        config.link.KeepAliveTimeout = 
-                            openpal::TimeDuration::Max();
-                    }
-                    else {
-                        config.link.KeepAliveTimeout = 
-                            openpal::TimeDuration::Seconds(atoi(token.c_str()));
-                    }
-                } else if (token == "enable_unsolicited") {
-                    getline(iss, token, '=');
-                    if(token == "True")
-                        config.outstation.params.allowUnsolicited = true;
-                    else
-                        config.outstation.params.allowUnsolicited = false;
-                } else if (token == "select_timeout") {
-                    getline(iss, token, '=');     
-                    config.outstation.params.selectTimeout = 
-                        openpal::TimeDuration::Seconds(atoi(token.c_str()));
-                } else if (token == "max_controls_per_request") {
-                    getline(iss, token, '=');
-                    config.outstation.params.maxControlsPerRequest = 
-                        atoi(token.c_str()); 
-                } else if (token == "max_rx_frag_size") {
-                    getline(iss, token, '=');     
-                    config.outstation.params.maxRxFragSize = 
-                        atoi(token.c_str());
-                } else if (token == "max_tx_frag_size") {
-                    getline(iss, token, '=');     
-                    config.outstation.params.maxTxFragSize = 
-                        atoi(token.c_str());
-                } else if (token == "event_buffer_size") {
-                    getline(iss, token, '=');     
-                    config.outstation.eventBufferConfig =
-                        EventBufferConfig::AllTypes(atoi(token.c_str()));
-
-// get offsets from dnp.cfg (yurgen1975)
-                } else if (token == "offset_di") {
-                    getline(iss, token, '=');     
-                    offset_di = atoi(token.c_str());
-                        
-                } else if (token == "offset_do") {
-                    getline(iss, token, '=');     
-                    offset_do = atoi(token.c_str());
-                        
-                } else if (token == "offset_ai") {
-                    getline(iss, token, '=');     
-                    offset_ai = atoi(token.c_str());
-                        
-                } else if (token == "offset_ao") {
-                    getline(iss, token, '=');     
-                    offset_ao = atoi(token.c_str());
-// -------------------------------------------------------------------
-
-                } else if (token == "sol_confirm_timeout") {
-                    getline(iss, token, '=');     
-                    config.outstation.params.solConfirmTimeout =
-                        openpal::TimeDuration::Milliseconds(
-                            atoi(token.c_str())
-                        );
-                } else if (token == "unsol_confirm_timeout") {
-                    getline(iss, token, '=');     
-                    config.outstation.params.unsolConfirmTimeout = 
-                        openpal::TimeDuration::Milliseconds(
-                            atoi(token.c_str())
-                        );
-                } else if (token == "unsol_retry_timeout") {
-                    getline(iss, token, '=');
-                    config.outstation.params.unsolRetryTimeout = 
-                        openpal::TimeDuration::Milliseconds(
-                            atoi(token.c_str())
-                        );
-                }
-            }
-            catch(...) {
-                cout << "Malformatted Line: " << line << endl;
-                exit(1);
-            }
-        }
-    }
-
-    return config;
-} 
+ 
 
 /*class ILogHandler
 {
@@ -798,7 +788,7 @@ OutstationStackConfig parseDNP3Config() {
 void ConsoleLogger::Log(const openpal::LogEntry& entry)
 {
     unsigned char log_msg[1000];
-    sprintf(log_msg, "DNP3 ID %s: %s\n", entry.loggerid, entry.message);
+    sprintf((char*)log_msg, "DNP3 ID %s: %s\n", entry.loggerid, entry.message);
     log(log_msg);
 }
 
@@ -827,7 +817,9 @@ void dnp3StartServer(int instance_number) {
     // Log messages to the console
     DNP3Manager manager(1, ConsoleLogger::Create());
 
-    
+
+
+
 
     char dnp_id[100];
     uint16_t port;
@@ -996,7 +988,37 @@ void dnp3StartServer(int instance_number) {
 	// The main object for a outstation. The defaults are useable,
 	// but understanding the options are important.
     int number_of_tags= DNP_Slave_Driver_Instances[instance_number].number_of_tags;
-	OutstationStackConfig config(DatabaseSizes::AllTypes(number_of_tags));
+
+
+    determine_number_of_points_of_each_types(instance_number);
+
+
+    sprintf((char *)log_msg, "$$$$$$$$$$$$$$$$$$$$$$$ instance: %d :: Number of points:: %d :: %d :: %d :: %d ::\n", instance_number, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_binary_point,
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_point, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_binary_status_point, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_status_point);
+    log(log_msg);
+
+    DatabaseSizes size_of_points_database = DatabaseSizes((uint16_t) number_of_points_of_each_type[instance_number].number_of_binary_point,
+                                                            (uint16_t) 0,
+                                                            (uint16_t) number_of_points_of_each_type[instance_number].number_of_analog_point,
+                                                            (uint16_t) 0,
+                                                            (uint16_t) 0,
+                                                            (uint16_t) number_of_points_of_each_type[instance_number].number_of_binary_status_point,
+                                                            (uint16_t) number_of_points_of_each_type[instance_number].number_of_analog_status_point,
+                                                            (uint16_t) 0);
+
+	// OutstationStackConfig config(DatabaseSizes::AllTypes(number_of_tags));
+
+    // int count = 20;
+	// OutstationStackConfig config(DatabaseSizes(count, count, count, count, count, count, count, count));
+
+	OutstationStackConfig config(size_of_points_database);
+
+	// OutstationStackConfig config(DatabaseSizes::AllTypes(300));
+
+
 
     sprintf((char *)log_msg, "*** Before configs ***\n");
     log(log_msg);
@@ -1043,8 +1065,10 @@ void dnp3StartServer(int instance_number) {
     
     // long long DNP_Cycle = (long long)DNP_Slave_Driver_Instances[instance_number].Options.PhysicalLayerScanTime * 1000000LL;
 
-    while(run_dnp3) 
+    while(1) 
     {
+        // sprintf((char *)log_msg, "*** in loop ***\n");
+        // log(log_msg);
         pthread_mutex_lock(&bufferLock);
         update_vals(outstation, instance_number);
         pthread_mutex_unlock(&bufferLock);
