@@ -321,6 +321,7 @@ typedef struct DNP_slave_driverTag{
     uint8_t Group;
     int Retain;
     int TagIndex;
+    bool selectedBeforeOperate;
 } DNP_slave_driverTag;
 
 

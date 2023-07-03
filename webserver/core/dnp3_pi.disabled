@@ -30,7 +30,6 @@
 #include <locale>
 #include <fstream>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "ladder.h"
 
@@ -89,10 +88,7 @@ struct number_of_points_of_each_type_struct{
 struct number_of_points_of_each_type_struct number_of_points_of_each_type[number_of_DNP_Slave_Driver_Instances];
 
 
-uint16_t** tags_address_array = malloc(number_of_DNP_Slave_Driver_Instances * sizeof(uint16_t*));
 
-
-unordered_map<uint16_t, uint16_t> dnp_address_to_buffer_index_map[number_of_DNP_Slave_Driver_Instances];
 
 
 // trim string from left
@@ -113,7 +109,6 @@ static inline std::string &rtrim(std::string &s) {
 static inline std::string &trim(std::string &s) {
     return ltrim(rtrim(s));
 }
-
 
 PointClass getPointClassEnumFromValue(uint8_t value)
 {
@@ -282,93 +277,6 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 }
 
 
-// void config_datapoints(OutstationStackConfig& config, int instance_number)
-// {
-//     int binary_counter = 0;
-//     int analog_counter = 0;
-//     int boStatus_counter = 0;
-//     int aoStatus_counter = 0;
-
-//     // uint16_t tags_address_array[DNP_Slave_Driver_Instances[instance_number].number_of_tags];
-
-//     // for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
-//     // {
-//     //     tags_address_array[m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
-//     // }
-
-//     uint16_t arr_size = sizeof(tags_address_array[instance_number]) / sizeof(tags_address_array[instance_number][0]);
-    
-//     sprintf((char *)log_msg, "*** instance: %d :: size of tags_address_array : %d ::  ***\n", instance_number,  arr_size);
-//     log(log_msg);
-
-//     for (int i= 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++ )
-//     {
-//         try
-//         {
-
-//             pthread_mutex_lock(&bufferLock); //lock mutex
-//             int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
-//             uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
-//             uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4) ;
-//             uint8_t evariation = (DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F);
-//             pthread_mutex_unlock(&bufferLock); //unlock mutex  
-
-//             switch (type)
-//             {
-//                 case 1:
-//                     sprintf((char *)log_msg, "Instance: %d :: Binary Tag: %d :: Address: %d\n", instance_number, binary_counter, DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
-//                     log(log_msg);
-//                     config.dbConfig.binary[binary_counter].clazz = getPointClassEnumFromValue(tag_class);
-//                     config.dbConfig.binary[binary_counter].evariation = static_cast<EventBinaryVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-//                     config.dbConfig.binary[binary_counter].svariation = static_cast<StaticBinaryVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-//                     config.dbConfig.binary[binary_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
-//                     binary_counter++;
-//                     break;
-
-//                 case 4:
-//                     sprintf((char *)log_msg, "Instance: %d :: Analog Tag: %d\n", instance_number, analog_counter);
-//                     log(log_msg);
-//                     config.dbConfig.analog[analog_counter].clazz = getPointClassEnumFromValue(tag_class);
-//                     config.dbConfig.analog[analog_counter].evariation = static_cast<EventAnalogVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-//                     config.dbConfig.analog[analog_counter].svariation = static_cast<StaticAnalogVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-//                     config.dbConfig.analog[analog_counter].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
-//                     config.dbConfig.analog[analog_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
-//                     analog_counter++;
-//                     break;
-
-//                 case 50:
-//                     sprintf((char *)log_msg, "Instance: %d :: BinaryOutputStatus Tag: %d\n", instance_number, boStatus_counter);
-//                     log(log_msg);
-//                     config.dbConfig.boStatus[boStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
-//                     config.dbConfig.boStatus[boStatus_counter].evariation = static_cast<EventBinaryOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-//                     config.dbConfig.boStatus[boStatus_counter].svariation = static_cast<StaticBinaryOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-//                     config.dbConfig.boStatus[boStatus_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
-//                     boStatus_counter++;
-//                     break;
-
-//                 case 51:
-//                     sprintf((char *)log_msg, "Instance: %d :: AnalogOutputStatus Tag: %d\n", instance_number, aoStatus_counter);
-//                     log(log_msg);                
-//                     config.dbConfig.aoStatus[aoStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
-//                     config.dbConfig.aoStatus[aoStatus_counter].evariation = static_cast<EventAnalogOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
-//                     config.dbConfig.aoStatus[aoStatus_counter].svariation = static_cast<StaticAnalogOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
-//                     config.dbConfig.aoStatus[aoStatus_counter].deadband = DNP_Slave_Driver_Instances[instance_number].Tags[i].Deadband;
-//                     config.dbConfig.aoStatus[aoStatus_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
-//                     aoStatus_counter++;
-//                     break;
-//             }
-            
-        
-            
-//         }
-//         catch(const std::exception& e)
-//         {
-//             std::cerr << e.what() << '\n';
-//         }
-//     }
-// }
-
-
 void config_datapoints(OutstationStackConfig& config, int instance_number)
 {
     int binary_counter = 0;
@@ -378,16 +286,16 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
     
     uint16_t last_address = 0;
 
-    // uint16_t tags_address_array[DNP_Slave_Driver_Instances[instance_number].number_of_tags];
+    uint16_t tags_address_array[DNP_Slave_Driver_Instances[instance_number].number_of_tags];
 
-    // for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
-    // {
-    //     tags_address_array[m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
-    // }
+    for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
+    {
+        tags_address_array[m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
+    }
 
+    int size = sizeof(tags_address_array) / sizeof(tags_address_array[0]);
 
-
-    ////////////// TODO: Write with One For, because now we have 
+    std::sort(tags_address_array, tags_address_array + size);
 
 
     for (int k= 0; k < DNP_Slave_Driver_Instances[instance_number].number_of_tags; k++ )
@@ -417,7 +325,7 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
             
             for (int i= 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++ )
             {
-                if(DNP_Slave_Driver_Instances[instance_number].Tags[i].Address == tags_address_array[instance_number][k])
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[i].Address == tags_address_array[k])
                 {
 
                     pthread_mutex_lock(&bufferLock); //lock mutex
@@ -485,36 +393,6 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
 }
 
 
-template<typename T>
-bool isElementInArray(const T* arr, size_t size, const T& target) {
-    std::unordered_set<T> hashSet(arr, arr + size);
-    return hashSet.find(target) != hashSet.end();
-}
-
-
-bool index_existance_check(uint16_t index, int instance_number)
-{   
-    uint16_t* arr = tags_address_array[instance_number];
-    size_t size = sizeof(arr) / sizeof(arr[0]);
-
-    if (isElementInArray(arr, DNP_Slave_Driver_Instances[instance_number].number_of_tags, index)) {
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-void map_address_to_index(int instance_number)
-{
-    dnp_address_to_buffer_index_map[instance_number].reserve(DNP_Slave_Driver_Instances[instance_number].number_of_tags);
-
-    for (int i = 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
-    {
-        uint16_t address = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
-        dnp_address_to_buffer_index_map[instance_number][address] = i;
-    }
-}
 
 // IMPORTANT: when we execute an command, the commandstatus maybe set to "SUCCESS" but according to document, it's means : "command was accepted, initiated, or queued".
 // but some time maybe return "DOWNSTREAM_FAIL" and according to document, it's means : "command not accepted because the outstation is forwarding the request to another downstream device which cannot be reached or is otherwise incapable of performing the request"
@@ -540,67 +418,32 @@ public:
 
     //CROB - changed to support offsets (yurgen1975)
     virtual CommandStatus Select(const ControlRelayOutputBlock& command, uint16_t index) {
-        // if index was out of range, return CommandStatus::OUT_OF_RANGE
-        sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d  ***\n", index);
-        log(log_msg);
-        bool index_existance = index_existance_check(index, instance_number);
-        if (!index_existance){
-            // find better choice for return CommandStatus
-            return CommandStatus::UNDEFINED;
-        }
-        else
-        {   
-            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
-            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
-            sprintf((char *)log_msg, "*** :: In Select CommandStatus ::  ***\n");
-            log(log_msg);
-            return CommandStatus::SUCCESS;
-        }
-
+        index = index + offset_di;
         
+        return CommandStatus::SUCCESS;
     }
     virtual CommandStatus Operate(const ControlRelayOutputBlock& command, uint16_t index, OperateType opType) {
 
+        index = index + offset_di;
         auto code = command.functionCode;
         CommandStatus return_val;
+            
+           
+        if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
+            return_val = CommandStatus::SUCCESS;
 
-        bool index_existance = index_existance_check(index, instance_number);
-        if (!index_existance){
-            // find better choice for return CommandStatus
-            return CommandStatus::UNDEFINED;
+            IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
+                           
+            pthread_mutex_lock(&bufferLock);
+            if(bool_output[index/8][index%8] != NULL) {
+                *bool_output[index/8][index%8] = crob_val;
+            }
+            pthread_mutex_unlock(&bufferLock);
         }
-        else
-        {
-            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
-
-            if (opType == OperateType::SelectBeforeOperate)
-            {
-                if(DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate == false)
-                {
-                    sprintf((char *)log_msg, "*** :: In Operate :: No Select ::  ***\n");
-                    log(log_msg);
-                    return_val = CommandStatus::NO_SELECT;
-                    return return_val;
-                }
-
-            }
-
-            if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
-                // return_val = CommandStatus::SUCCESS;
-                IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
-                pthread_mutex_lock(&bufferLock);
-                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
-                pthread_mutex_unlock(&bufferLock);
-                return_val = CommandStatus::SUCCESS;
-                
-                sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
-                log(log_msg);
-            }
-            else {
-                return_val = CommandStatus::NOT_SUPPORTED;
-            }
-            return return_val;
+        else {
+            return_val = CommandStatus::NOT_SUPPORTED;
         }
+        return return_val;
     }
 
     //Analog Out - changed to support offsets (yurgen1975)
@@ -731,6 +574,9 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
             
             // sprintf((char *)log_msg, "*** In Value-Status Mode Update values ***\n");
             // log(log_msg);
+
+            printf((char *)log_msg, "*** In Value-Status Mode Update values:: amirhossein: %s ***\n", amirhossein);
+            log(log_msg);
             /*
                 "TagStatus" must be on of : 1,2,4,8,16,32,64,128
                 or 1 or 2 (based on QualityFlags.h file)
@@ -740,6 +586,13 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                 switch (DNP_Slave_Driver_Instances[instance_number].Tags[i].Type)
                 {
                     case 1:
+                        // if (!amir)
+                        // {
+                        //     sprintf((char *)log_msg, "*** In Value-Status Mode :: Binary Tag: %d  ***\n", i);
+                        //     log(log_msg);
+                            
+                        // }
+                        
                         builder.Update(Binary((bool)(DNP_Slave_Driver_Instances[instance_number].Tags[i].TagValue), 
                                                         (uint8_t)DNP_Slave_Driver_Instances[instance_number].Tags[i].TagStatus),
                                                         DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
@@ -761,6 +614,7 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
                         break;
                 }
             }
+            // amir = !amir;
         }
         else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 20) == 0)
         {
@@ -804,7 +658,39 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
     outstation->Apply(builder.Build());
 }
 
+//----------------------------------------------------------------------
+// Need to parse 'database_size' first
+//----------------------------------------------------------------------
+OutstationStackConfig create_config() {
+    string line;
+    ifstream cfgfile("dnp3.cfg");
+    bool found = false;
+    if(cfgfile.is_open()) {
+        while (getline(cfgfile, line)) {
+            if (line[0] == '#')
+                continue;
+            try {
+                istringstream iss(line);
+                string token;
+                getline(iss, token, '=');
+                token = trim(token);
+                if (token == "database_size") {
+                    getline(iss, token, '=');
+                    return OutstationStackConfig(
+                               DatabaseSizes::AllTypes(atoi(token.c_str()))
+                           );
+                }
+                else 
+                    continue;
+            } catch(...) {
+                cout << "Malformatted Line: " << line << endl;
+                exit(1);
+            } 
 
+        }
+    }
+    return OutstationStackConfig(DatabaseSizes::AllTypes(10));
+}
 
 
 
@@ -928,29 +814,14 @@ int PhysicalLayerStringToInt(char* input)
 //------------------------------------------------------------------
 void dnp3StartServer(int instance_number) {
 
-
-    tags_address_array[instance_number] = (uint16_t*) malloc(DNP_Slave_Driver_Instances[instance_number].number_of_tags * sizeof(uint16_t));
-    
-
-    for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
-    {
-        tags_address_array[instance_number][m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
-
-    }
-    // because use of pointer to pointer to create 2-D array, sizeof not work properly
-    // int size = DNP_Slave_Driver_Instances[instance_number].number_of_tags;
-    int size = DNP_Slave_Driver_Instances[instance_number].number_of_tags;
-    std::sort(tags_address_array[instance_number], tags_address_array[instance_number] + size);
-
-
-
-    map_address_to_index(instance_number);
-
     const uint32_t FILTERS = levels::NORMAL;
 
     // Allocate a single thread to the pool since this is a single outstation
     // Log messages to the console
     DNP3Manager manager(1, ConsoleLogger::Create());
+
+
+
 
 
     char dnp_id[100];
@@ -1125,12 +996,12 @@ void dnp3StartServer(int instance_number) {
     determine_number_of_points_of_each_types(instance_number);
 
 
-    // sprintf((char *)log_msg, "$$$$$$$$$$$$$$$$$$$$$$$ instance: %d :: Number of points:: %d :: %d :: %d :: %d ::\n", instance_number, 
-    //                                                                                                                     number_of_points_of_each_type[instance_number].number_of_binary_point,
-    //                                                                                                                     number_of_points_of_each_type[instance_number].number_of_analog_point, 
-    //                                                                                                                     number_of_points_of_each_type[instance_number].number_of_binary_status_point, 
-    //                                                                                                                     number_of_points_of_each_type[instance_number].number_of_analog_status_point);
-    // log(log_msg);
+    sprintf((char *)log_msg, "$$$$$$$$$$$$$$$$$$$$$$$ instance: %d :: Number of points:: %d :: %d :: %d :: %d ::\n", instance_number, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_binary_point,
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_point, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_binary_status_point, 
+                                                                                                                        number_of_points_of_each_type[instance_number].number_of_analog_status_point);
+    log(log_msg);
 
     DatabaseSizes size_of_points_database = DatabaseSizes((uint16_t) number_of_points_of_each_type[instance_number].number_of_binary_point,
                                                             (uint16_t) 0,
@@ -1196,7 +1067,7 @@ void dnp3StartServer(int instance_number) {
     clock_gettime(CLOCK_MONOTONIC, &timer_start);
     
     // long long DNP_Cycle = (long long)DNP_Slave_Driver_Instances[instance_number].Options.PhysicalLayerScanTime * 1000000LL;
-    
+    bool amirhossein = false;
     while(1) 
     {
         // sprintf((char *)log_msg, "*** in loop ***\n");
