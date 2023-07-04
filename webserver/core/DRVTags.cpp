@@ -14,7 +14,7 @@ void declare_and_init_drvtags(){
 	LIO_Driver_Instance.Options.ChatterFilterBaseTimeMs = 1000;
 	LIO_Driver_Instance.Options.ChatterFilterFreezeTimeMs =  2000;
 	LIO_Driver_Instance.Options.IOScan = 100;
-	strcpy(LIO_Driver_Instance.Options.TagConfiguration, "Value");
+	strcpy(LIO_Driver_Instance.Options.TagConfiguration, "Value-Status-DT");
 
 	LIO_Driver_Instance.number_of_tags = 48;
 	LIO_Driver_Instance.Tags = (LIO_driverTag*) malloc(48 * sizeof(*LIO_Driver_Instance.Tags));
@@ -652,7 +652,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Options.SlaveAddress = 1015;
 	DNP_Slave_Driver_Instances[0].Options.MasterAddress = 1023;
 	DNP_Slave_Driver_Instances[0].Options.Instance = 1;
-	DNP_Slave_Driver_Instances[0].Options.SocketPort = 20001;
+	DNP_Slave_Driver_Instances[0].Options.SocketPort = 20000;
 	DNP_Slave_Driver_Instances[0].Options.PhysicalLayerScanTime = 100.0;
 	DNP_Slave_Driver_Instances[0].Options.SBOTimeOut = 10;
 	DNP_Slave_Driver_Instances[0].Options.LinkStatusPeriod = 60;
@@ -660,11 +660,11 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Options.MaxEventNum = 100;
 	DNP_Slave_Driver_Instances[0].Options.ClockValidPeriod = 60;
 	DNP_Slave_Driver_Instances[0].Options.DLLAckConfirmationTimeout = 2;
-	strcpy(DNP_Slave_Driver_Instances[0].Options.TagConfiguration , "Value-Status");
+	strcpy(DNP_Slave_Driver_Instances[0].Options.TagConfiguration , "Value-Status-DT");
 	DNP_Slave_Driver_Instances[0].Options.UnsolicitedRetryDelay = 5;
 	DNP_Slave_Driver_Instances[0].Options.UnsolicitedSendRetries = 3;
 	strcpy(DNP_Slave_Driver_Instances[0].Options.MasterIPAddress, "192.168.101.5");
-	strcpy(DNP_Slave_Driver_Instances[0].Options.LocalIPAddress, "172.0.0.1");
+	strcpy(DNP_Slave_Driver_Instances[0].Options.LocalIPAddress, "192.168.1.10");
 	DNP_Slave_Driver_Instances[0].Options.EnableUnsolicited = 1;
 	DNP_Slave_Driver_Instances[0].Options.UseLocalTime = 1;
 	DNP_Slave_Driver_Instances[0].Options.DLLAckConfirmation = 0;
@@ -686,6 +686,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[0].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[0].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[0].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[0].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[1].Name, "alarmAC");
 	DNP_Slave_Driver_Instances[0].Tags[1].Type = 1;
@@ -701,6 +702,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[1].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[1].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[1].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[1].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[2].Name, "SUBSCADAWell1");
 	DNP_Slave_Driver_Instances[0].Tags[2].Type = 1;
@@ -716,6 +718,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[2].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[2].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[2].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[2].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[3].Name, "DC24V");
 	DNP_Slave_Driver_Instances[0].Tags[3].Type = 1;
@@ -731,6 +734,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[3].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[3].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[3].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[3].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[4].Name, "FaultWell1");
 	DNP_Slave_Driver_Instances[0].Tags[4].Type = 1;
@@ -746,6 +750,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[4].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[4].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[4].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[4].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[5].Name, "ONWell1");
 	DNP_Slave_Driver_Instances[0].Tags[5].Type = 1;
@@ -761,6 +766,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[5].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[5].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[5].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[5].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[6].Name, "AutoWell1");
 	DNP_Slave_Driver_Instances[0].Tags[6].Type = 1;
@@ -776,6 +782,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[6].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[6].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[6].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[6].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[7].Name, "FaultWell2");
 	DNP_Slave_Driver_Instances[0].Tags[7].Type = 1;
@@ -791,6 +798,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[7].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[7].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[7].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[7].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[8].Name, "ONWell2");
 	DNP_Slave_Driver_Instances[0].Tags[8].Type = 1;
@@ -806,6 +814,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[8].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[8].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[8].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[8].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[9].Name, "AutoWell2");
 	DNP_Slave_Driver_Instances[0].Tags[9].Type = 1;
@@ -821,6 +830,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[9].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[9].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[9].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[9].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[10].Name, "SubScadaWell2");
 	DNP_Slave_Driver_Instances[0].Tags[10].Type = 1;
@@ -836,6 +846,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[10].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[10].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[10].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[10].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[11].Name, "FaultWell3");
 	DNP_Slave_Driver_Instances[0].Tags[11].Type = 1;
@@ -851,6 +862,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[11].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[11].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[11].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[11].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[12].Name, "ONWell3");
 	DNP_Slave_Driver_Instances[0].Tags[12].Type = 1;
@@ -866,6 +878,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[12].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[12].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[12].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[12].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[13].Name, "AutoWell3");
 	DNP_Slave_Driver_Instances[0].Tags[13].Type = 1;
@@ -881,6 +894,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[13].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[13].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[13].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[13].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[14].Name, "SubScadaWell3");
 	DNP_Slave_Driver_Instances[0].Tags[14].Type = 1;
@@ -896,6 +910,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[14].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[14].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[14].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[14].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[15].Name, "roomwaterAlarm");
 	DNP_Slave_Driver_Instances[0].Tags[15].Type = 1;
@@ -911,6 +926,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[15].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[15].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[15].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[15].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[16].Name, "chamberWaterAlarm");
 	DNP_Slave_Driver_Instances[0].Tags[16].Type = 1;
@@ -926,6 +942,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[16].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[16].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[16].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[16].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[17].Name, "TankAlarmHI");
 	DNP_Slave_Driver_Instances[0].Tags[17].Type = 1;
@@ -941,6 +958,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[17].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[17].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[17].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[17].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[18].Name, "TankAlarmLOW");
 	DNP_Slave_Driver_Instances[0].Tags[18].Type = 1;
@@ -956,6 +974,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[18].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[18].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[18].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[18].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[19].Name, "Faultpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[19].Type = 1;
@@ -971,6 +990,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[19].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[19].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[19].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[19].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[20].Name, "ONpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[20].Type = 1;
@@ -986,6 +1006,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[20].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[20].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[20].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[20].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[21].Name, "Faultpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[21].Type = 1;
@@ -1001,6 +1022,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[21].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[21].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[21].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[21].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[22].Name, "ONpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[22].Type = 1;
@@ -1016,6 +1038,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[22].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[22].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[22].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[22].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[23].Name, "Faultpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[23].Type = 1;
@@ -1031,6 +1054,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[23].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[23].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[23].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[23].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[24].Name, "ONpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[24].Type = 1;
@@ -1046,6 +1070,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[24].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[24].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[24].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[24].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[25].Name, "Faultpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[25].Type = 1;
@@ -1061,6 +1086,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[25].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[25].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[25].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[25].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[26].Name, "ONpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[26].Type = 1;
@@ -1076,6 +1102,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[26].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[26].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[26].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[26].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[27].Name, "pressureWell1HI");
 	DNP_Slave_Driver_Instances[0].Tags[27].Type = 1;
@@ -1091,6 +1118,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[27].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[27].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[27].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[27].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[28].Name, "pressureWell1LOW");
 	DNP_Slave_Driver_Instances[0].Tags[28].Type = 1;
@@ -1106,6 +1134,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[28].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[28].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[28].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[28].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[29].Name, "phase1Well1");
 	DNP_Slave_Driver_Instances[0].Tags[29].Type = 1;
@@ -1121,6 +1150,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[29].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[29].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[29].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[29].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[30].Name, "phase2Well1");
 	DNP_Slave_Driver_Instances[0].Tags[30].Type = 1;
@@ -1136,6 +1166,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[30].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[30].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[30].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[30].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[31].Name, "phase3Well1");
 	DNP_Slave_Driver_Instances[0].Tags[31].Type = 1;
@@ -1151,6 +1182,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[31].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[31].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[31].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[31].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[32].Name, "pressureWell2HI");
 	DNP_Slave_Driver_Instances[0].Tags[32].Type = 1;
@@ -1166,6 +1198,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[32].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[32].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[32].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[32].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[33].Name, "pressureWell2LOW");
 	DNP_Slave_Driver_Instances[0].Tags[33].Type = 1;
@@ -1181,6 +1214,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[33].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[33].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[33].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[33].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[34].Name, "phase1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[34].Type = 1;
@@ -1196,6 +1230,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[34].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[34].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[34].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[34].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[35].Name, "phase2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[35].Type = 1;
@@ -1211,6 +1246,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[35].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[35].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[35].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[35].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[36].Name, "phase3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[36].Type = 1;
@@ -1226,6 +1262,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[36].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[36].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[36].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[36].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[37].Name, "pressureWell3HI");
 	DNP_Slave_Driver_Instances[0].Tags[37].Type = 1;
@@ -1241,6 +1278,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[37].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[37].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[37].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[37].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[38].Name, "pressureWell3LOW");
 	DNP_Slave_Driver_Instances[0].Tags[38].Type = 1;
@@ -1256,6 +1294,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[38].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[38].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[38].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[38].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[39].Name, "phase1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[39].Type = 1;
@@ -1271,6 +1310,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[39].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[39].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[39].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[39].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[40].Name, "phase2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[40].Type = 1;
@@ -1286,6 +1326,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[40].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[40].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[40].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[40].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[41].Name, "phase3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[41].Type = 1;
@@ -1301,6 +1342,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[41].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[41].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[41].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[41].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[42].Name, "pressureWell1");
 	DNP_Slave_Driver_Instances[0].Tags[42].Type = 4;
@@ -1316,6 +1358,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[42].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[42].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[42].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[42].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[43].Name, "pressureWell2");
 	DNP_Slave_Driver_Instances[0].Tags[43].Type = 4;
@@ -1331,6 +1374,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[43].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[43].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[43].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[43].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[44].Name, "pressureWell3");
 	DNP_Slave_Driver_Instances[0].Tags[44].Type = 4;
@@ -1346,6 +1390,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[44].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[44].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[44].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[44].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[45].Name, "pressurepumpag123");
 	DNP_Slave_Driver_Instances[0].Tags[45].Type = 4;
@@ -1361,6 +1406,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[45].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[45].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[45].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[45].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[46].Name, "pressurepumpag456");
 	DNP_Slave_Driver_Instances[0].Tags[46].Type = 4;
@@ -1376,6 +1422,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[46].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[46].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[46].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[46].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[47].Name, "levelmeterTank");
 	DNP_Slave_Driver_Instances[0].Tags[47].Type = 4;
@@ -1391,6 +1438,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[47].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[47].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[47].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[47].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[48].Name, "CHLmeter");
 	DNP_Slave_Driver_Instances[0].Tags[48].Type = 4;
@@ -1406,6 +1454,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[48].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[48].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[48].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[48].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[49].Name, "I1well1");
 	DNP_Slave_Driver_Instances[0].Tags[49].Type = 4;
@@ -1421,6 +1470,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[49].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[49].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[49].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[49].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[50].Name, "I2well1");
 	DNP_Slave_Driver_Instances[0].Tags[50].Type = 4;
@@ -1436,6 +1486,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[50].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[50].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[50].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[50].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[51].Name, "I3well1");
 	DNP_Slave_Driver_Instances[0].Tags[51].Type = 4;
@@ -1451,6 +1502,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[51].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[51].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[51].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[51].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[52].Name, "V1well1");
 	DNP_Slave_Driver_Instances[0].Tags[52].Type = 4;
@@ -1466,6 +1518,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[52].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[52].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[52].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[52].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[53].Name, "V2well1");
 	DNP_Slave_Driver_Instances[0].Tags[53].Type = 4;
@@ -1481,6 +1534,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[53].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[53].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[53].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[53].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[54].Name, "V3well1");
 	DNP_Slave_Driver_Instances[0].Tags[54].Type = 4;
@@ -1496,6 +1550,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[54].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[54].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[54].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[54].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[55].Name, "V12Well1");
 	DNP_Slave_Driver_Instances[0].Tags[55].Type = 4;
@@ -1511,6 +1566,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[55].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[55].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[55].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[55].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[56].Name, "V23Well1");
 	DNP_Slave_Driver_Instances[0].Tags[56].Type = 4;
@@ -1526,6 +1582,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[56].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[56].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[56].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[56].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[57].Name, "V31Well1");
 	DNP_Slave_Driver_Instances[0].Tags[57].Type = 4;
@@ -1541,6 +1598,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[57].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[57].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[57].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[57].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[58].Name, "P1Well1");
 	DNP_Slave_Driver_Instances[0].Tags[58].Type = 4;
@@ -1556,6 +1614,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[58].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[58].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[58].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[58].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[59].Name, "P2Well1");
 	DNP_Slave_Driver_Instances[0].Tags[59].Type = 4;
@@ -1571,6 +1630,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[59].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[59].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[59].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[59].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[60].Name, "P3Well1");
 	DNP_Slave_Driver_Instances[0].Tags[60].Type = 4;
@@ -1586,6 +1646,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[60].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[60].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[60].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[60].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[61].Name, "q1well1");
 	DNP_Slave_Driver_Instances[0].Tags[61].Type = 4;
@@ -1601,6 +1662,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[61].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[61].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[61].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[61].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[62].Name, "q2well1");
 	DNP_Slave_Driver_Instances[0].Tags[62].Type = 4;
@@ -1616,6 +1678,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[62].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[62].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[62].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[62].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[63].Name, "q3well1");
 	DNP_Slave_Driver_Instances[0].Tags[63].Type = 4;
@@ -1631,6 +1694,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[63].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[63].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[63].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[63].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[64].Name, "s1well1");
 	DNP_Slave_Driver_Instances[0].Tags[64].Type = 4;
@@ -1646,6 +1710,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[64].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[64].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[64].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[64].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[65].Name, "s2well1");
 	DNP_Slave_Driver_Instances[0].Tags[65].Type = 4;
@@ -1661,6 +1726,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[65].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[65].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[65].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[65].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[66].Name, "s3well1");
 	DNP_Slave_Driver_Instances[0].Tags[66].Type = 4;
@@ -1676,6 +1742,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[66].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[66].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[66].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[66].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[67].Name, "pf1well1");
 	DNP_Slave_Driver_Instances[0].Tags[67].Type = 4;
@@ -1691,6 +1758,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[67].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[67].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[67].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[67].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[68].Name, "pf2well1");
 	DNP_Slave_Driver_Instances[0].Tags[68].Type = 4;
@@ -1706,6 +1774,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[68].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[68].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[68].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[68].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[69].Name, "pf3well1");
 	DNP_Slave_Driver_Instances[0].Tags[69].Type = 4;
@@ -1721,6 +1790,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[69].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[69].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[69].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[69].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[70].Name, "FreqWell1");
 	DNP_Slave_Driver_Instances[0].Tags[70].Type = 4;
@@ -1736,6 +1806,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[70].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[70].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[70].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[70].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[71].Name, "I1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[71].Type = 4;
@@ -1751,6 +1822,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[71].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[71].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[71].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[71].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[72].Name, "I2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[72].Type = 4;
@@ -1766,6 +1838,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[72].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[72].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[72].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[72].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[73].Name, "I3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[73].Type = 4;
@@ -1781,6 +1854,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[73].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[73].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[73].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[73].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[74].Name, "V1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[74].Type = 4;
@@ -1796,6 +1870,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[74].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[74].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[74].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[74].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[75].Name, "V2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[75].Type = 4;
@@ -1811,6 +1886,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[75].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[75].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[75].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[75].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[76].Name, "V12Well2");
 	DNP_Slave_Driver_Instances[0].Tags[76].Type = 4;
@@ -1826,6 +1902,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[76].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[76].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[76].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[76].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[77].Name, "V23Well2");
 	DNP_Slave_Driver_Instances[0].Tags[77].Type = 4;
@@ -1841,6 +1918,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[77].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[77].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[77].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[77].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[78].Name, "V31well2");
 	DNP_Slave_Driver_Instances[0].Tags[78].Type = 4;
@@ -1856,6 +1934,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[78].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[78].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[78].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[78].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[79].Name, "p1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[79].Type = 4;
@@ -1871,6 +1950,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[79].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[79].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[79].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[79].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[80].Name, "p2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[80].Type = 4;
@@ -1886,6 +1966,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[80].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[80].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[80].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[80].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[81].Name, "p3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[81].Type = 4;
@@ -1901,6 +1982,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[81].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[81].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[81].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[81].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[82].Name, "q1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[82].Type = 4;
@@ -1916,6 +1998,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[82].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[82].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[82].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[82].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[83].Name, "q2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[83].Type = 4;
@@ -1931,6 +2014,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[83].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[83].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[83].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[83].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[84].Name, "q3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[84].Type = 4;
@@ -1946,6 +2030,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[84].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[84].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[84].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[84].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[85].Name, "s1well2");
 	DNP_Slave_Driver_Instances[0].Tags[85].Type = 4;
@@ -1961,6 +2046,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[85].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[85].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[85].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[85].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[86].Name, "s2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[86].Type = 4;
@@ -1976,6 +2062,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[86].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[86].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[86].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[86].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[87].Name, "s3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[87].Type = 4;
@@ -1991,6 +2078,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[87].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[87].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[87].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[87].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[88].Name, "PF1Well2");
 	DNP_Slave_Driver_Instances[0].Tags[88].Type = 4;
@@ -2006,6 +2094,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[88].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[88].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[88].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[88].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[89].Name, "PF2Well2");
 	DNP_Slave_Driver_Instances[0].Tags[89].Type = 4;
@@ -2021,6 +2110,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[89].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[89].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[89].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[89].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[90].Name, "PF3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[90].Type = 4;
@@ -2036,6 +2126,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[90].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[90].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[90].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[90].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[91].Name, "FreqWell2");
 	DNP_Slave_Driver_Instances[0].Tags[91].Type = 4;
@@ -2051,6 +2142,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[91].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[91].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[91].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[91].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[92].Name, "I1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[92].Type = 4;
@@ -2066,6 +2158,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[92].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[92].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[92].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[92].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[93].Name, "I2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[93].Type = 4;
@@ -2081,6 +2174,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[93].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[93].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[93].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[93].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[94].Name, "I3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[94].Type = 4;
@@ -2096,6 +2190,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[94].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[94].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[94].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[94].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[95].Name, "V1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[95].Type = 4;
@@ -2111,6 +2206,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[95].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[95].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[95].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[95].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[96].Name, "V2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[96].Type = 4;
@@ -2126,6 +2222,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[96].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[96].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[96].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[96].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[97].Name, "V3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[97].Type = 4;
@@ -2141,6 +2238,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[97].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[97].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[97].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[97].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[98].Name, "V12Well3");
 	DNP_Slave_Driver_Instances[0].Tags[98].Type = 4;
@@ -2156,6 +2254,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[98].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[98].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[98].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[98].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[99].Name, "V23Well3");
 	DNP_Slave_Driver_Instances[0].Tags[99].Type = 4;
@@ -2171,6 +2270,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[99].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[99].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[99].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[99].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[100].Name, "V31Well3");
 	DNP_Slave_Driver_Instances[0].Tags[100].Type = 4;
@@ -2186,6 +2286,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[100].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[100].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[100].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[100].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[101].Name, "P1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[101].Type = 4;
@@ -2201,6 +2302,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[101].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[101].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[101].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[101].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[102].Name, "P2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[102].Type = 4;
@@ -2216,6 +2318,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[102].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[102].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[102].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[102].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[103].Name, "P3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[103].Type = 4;
@@ -2231,6 +2334,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[103].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[103].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[103].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[103].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[104].Name, "Q1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[104].Type = 4;
@@ -2246,6 +2350,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[104].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[104].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[104].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[104].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[105].Name, "Q2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[105].Type = 4;
@@ -2261,6 +2366,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[105].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[105].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[105].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[105].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[106].Name, "Q3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[106].Type = 4;
@@ -2276,6 +2382,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[106].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[106].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[106].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[106].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[107].Name, "S1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[107].Type = 4;
@@ -2291,6 +2398,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[107].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[107].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[107].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[107].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[108].Name, "S2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[108].Type = 4;
@@ -2306,6 +2414,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[108].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[108].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[108].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[108].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[109].Name, "S3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[109].Type = 4;
@@ -2321,6 +2430,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[109].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[109].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[109].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[109].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[110].Name, "PF1Well3");
 	DNP_Slave_Driver_Instances[0].Tags[110].Type = 4;
@@ -2336,6 +2446,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[110].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[110].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[110].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[110].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[111].Name, "PF2Well3");
 	DNP_Slave_Driver_Instances[0].Tags[111].Type = 4;
@@ -2351,6 +2462,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[111].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[111].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[111].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[111].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[112].Name, "PF3Well3");
 	DNP_Slave_Driver_Instances[0].Tags[112].Type = 4;
@@ -2366,6 +2478,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[112].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[112].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[112].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[112].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[113].Name, "FreqWell3");
 	DNP_Slave_Driver_Instances[0].Tags[113].Type = 4;
@@ -2381,6 +2494,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[113].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[113].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[113].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[113].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[114].Name, "Iavpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[114].Type = 4;
@@ -2396,6 +2510,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[114].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[114].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[114].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[114].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[115].Name, "Vavpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[115].Type = 4;
@@ -2411,6 +2526,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[115].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[115].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[115].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[115].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[116].Name, "Pavpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[116].Type = 4;
@@ -2426,6 +2542,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[116].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[116].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[116].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[116].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[117].Name, "Freqpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[117].Type = 4;
@@ -2441,6 +2558,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[117].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[117].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[117].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[117].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[118].Name, "rpmpumpag1");
 	DNP_Slave_Driver_Instances[0].Tags[118].Type = 4;
@@ -2456,6 +2574,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[118].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[118].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[118].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[118].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[119].Name, "Iavpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[119].Type = 4;
@@ -2471,6 +2590,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[119].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[119].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[119].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[119].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[120].Name, "Vavpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[120].Type = 4;
@@ -2486,6 +2606,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[120].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[120].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[120].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[120].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[121].Name, "Pavpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[121].Type = 4;
@@ -2501,6 +2622,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[121].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[121].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[121].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[121].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[122].Name, "Freqpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[122].Type = 4;
@@ -2516,6 +2638,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[122].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[122].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[122].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[122].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[123].Name, "rpmpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[123].Type = 4;
@@ -2531,6 +2654,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[123].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[123].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[123].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[123].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[124].Name, "Iavpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[124].Type = 4;
@@ -2546,6 +2670,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[124].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[124].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[124].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[124].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[125].Name, "Vavpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[125].Type = 4;
@@ -2561,6 +2686,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[125].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[125].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[125].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[125].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[126].Name, "Pavpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[126].Type = 4;
@@ -2576,6 +2702,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[126].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[126].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[126].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[126].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[127].Name, "Freqpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[127].Type = 4;
@@ -2591,6 +2718,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[127].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[127].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[127].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[127].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[128].Name, "rpmpumpag4");
 	DNP_Slave_Driver_Instances[0].Tags[128].Type = 4;
@@ -2606,6 +2734,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[128].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[128].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[128].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[128].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[129].Name, "Iavpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[129].Type = 4;
@@ -2621,6 +2750,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[129].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[129].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[129].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[129].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[130].Name, "Vavpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[130].Type = 4;
@@ -2636,6 +2766,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[130].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[130].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[130].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[130].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[131].Name, "Pavpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[131].Type = 4;
@@ -2651,6 +2782,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[131].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[131].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[131].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[131].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[132].Name, "Freqpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[132].Type = 4;
@@ -2666,6 +2798,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[132].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[132].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[132].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[132].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[133].Name, "rpmpumpag5");
 	DNP_Slave_Driver_Instances[0].Tags[133].Type = 4;
@@ -2681,6 +2814,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[133].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[133].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[133].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[133].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[134].Name, "Iavpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[134].Type = 4;
@@ -2696,6 +2830,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[134].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[134].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[134].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[134].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[135].Name, "Vavpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[135].Type = 4;
@@ -2711,6 +2846,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[135].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[135].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[135].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[135].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[136].Name, "Pavpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[136].Type = 4;
@@ -2726,6 +2862,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[136].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[136].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[136].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[136].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[137].Name, "Freqpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[137].Type = 4;
@@ -2741,6 +2878,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[137].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[137].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[137].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[137].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[138].Name, "rpmpumpag6");
 	DNP_Slave_Driver_Instances[0].Tags[138].Type = 4;
@@ -2756,6 +2894,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[138].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[138].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[138].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[138].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[139].Name, "CHLmeter485");
 	DNP_Slave_Driver_Instances[0].Tags[139].Type = 4;
@@ -2771,6 +2910,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[139].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[139].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[139].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[139].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[140].Name, "Well1Stop");
 	DNP_Slave_Driver_Instances[0].Tags[140].Type = 50;
@@ -2786,6 +2926,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[140].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[140].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[140].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[140].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[141].Name, "Well1Start");
 	DNP_Slave_Driver_Instances[0].Tags[141].Type = 50;
@@ -2801,6 +2942,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[141].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[141].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[141].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[141].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[142].Name, "Well2Stop");
 	DNP_Slave_Driver_Instances[0].Tags[142].Type = 50;
@@ -2816,6 +2958,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[142].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[142].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[142].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[142].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[143].Name, "Well2Start");
 	DNP_Slave_Driver_Instances[0].Tags[143].Type = 50;
@@ -2831,6 +2974,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[143].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[143].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[143].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[143].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[144].Name, "Well3Stop");
 	DNP_Slave_Driver_Instances[0].Tags[144].Type = 50;
@@ -2846,6 +2990,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[144].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[144].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[144].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[144].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[145].Name, "Well3Start");
 	DNP_Slave_Driver_Instances[0].Tags[145].Type = 50;
@@ -2861,6 +3006,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[145].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[145].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[145].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[145].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[146].Name, "pumpag1StopStart");
 	DNP_Slave_Driver_Instances[0].Tags[146].Type = 50;
@@ -2876,6 +3022,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[146].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[146].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[146].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[146].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[147].Name, "Pumpag2StopStart");
 	DNP_Slave_Driver_Instances[0].Tags[147].Type = 50;
@@ -2891,6 +3038,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[147].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[147].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[147].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[147].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[148].Name, "Pumpag4StopStart");
 	DNP_Slave_Driver_Instances[0].Tags[148].Type = 50;
@@ -2906,6 +3054,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[148].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[148].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[148].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[148].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[149].Name, "Pumpag5StopStart");
 	DNP_Slave_Driver_Instances[0].Tags[149].Type = 50;
@@ -2921,6 +3070,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[149].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[149].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[149].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[149].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[150].Name, "Pumpag6StopStart");
 	DNP_Slave_Driver_Instances[0].Tags[150].Type = 50;
@@ -2936,6 +3086,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[150].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[150].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[150].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[150].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[151].Name, "V3Well2");
 	DNP_Slave_Driver_Instances[0].Tags[151].Type = 4;
@@ -2951,6 +3102,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[151].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[151].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[151].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[151].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[152].Name, "FaultPumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[152].Type = 1;
@@ -2966,6 +3118,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[152].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[152].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[152].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[152].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[153].Name, "ONpumpag2");
 	DNP_Slave_Driver_Instances[0].Tags[153].Type = 1;
@@ -2981,6 +3134,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[153].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[153].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[153].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[153].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[154].Name, "OnStarwell2");
 	DNP_Slave_Driver_Instances[0].Tags[154].Type = 1;
@@ -2996,6 +3150,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[154].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[154].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[154].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[154].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[155].Name, "OnStarwell3");
 	DNP_Slave_Driver_Instances[0].Tags[155].Type = 1;
@@ -3011,6 +3166,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[155].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[155].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[155].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[155].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[0].Tags[156].Name, "leveltankspare");
 	DNP_Slave_Driver_Instances[0].Tags[156].Type = 4;
@@ -3026,6 +3182,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[0].Tags[156].TagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[156].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[0].Tags[156].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[0].Tags[156].selectedBeforeOperate = false;
 
 	DNP_Slave_Driver_Instances[1].Options.Disable = false;
 	DNP_Slave_Driver_Instances[1].Options.COMPort = 1;
@@ -3034,8 +3191,8 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Options.StopBits = 1;
 	DNP_Slave_Driver_Instances[1].Options.Parity = '0';
 	DNP_Slave_Driver_Instances[1].Options.FlowControl = 0;
-	DNP_Slave_Driver_Instances[1].Options.SlaveAddress = 1016;
-	DNP_Slave_Driver_Instances[1].Options.MasterAddress = 1024;
+	DNP_Slave_Driver_Instances[1].Options.SlaveAddress = 1015;
+	DNP_Slave_Driver_Instances[1].Options.MasterAddress = 1023;
 	DNP_Slave_Driver_Instances[1].Options.Instance = 2;
 	DNP_Slave_Driver_Instances[1].Options.SocketPort = 20020;
 	DNP_Slave_Driver_Instances[1].Options.PhysicalLayerScanTime = 100.0;
@@ -3045,11 +3202,11 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Options.MaxEventNum = 100;
 	DNP_Slave_Driver_Instances[1].Options.ClockValidPeriod = 60;
 	DNP_Slave_Driver_Instances[1].Options.DLLAckConfirmationTimeout = 2;
-	strcpy(DNP_Slave_Driver_Instances[1].Options.TagConfiguration , "Value-Status");
+	strcpy(DNP_Slave_Driver_Instances[1].Options.TagConfiguration , "Value-Status-DT");
 	DNP_Slave_Driver_Instances[1].Options.UnsolicitedRetryDelay = 5;
 	DNP_Slave_Driver_Instances[1].Options.UnsolicitedSendRetries = 3;
 	strcpy(DNP_Slave_Driver_Instances[1].Options.MasterIPAddress, "192.168.110.110");
-	strcpy(DNP_Slave_Driver_Instances[1].Options.LocalIPAddress, "172.0.0.1");
+	strcpy(DNP_Slave_Driver_Instances[1].Options.LocalIPAddress, "192.168.1.10");
 	DNP_Slave_Driver_Instances[1].Options.EnableUnsolicited = 1;
 	DNP_Slave_Driver_Instances[1].Options.UseLocalTime = 1;
 	DNP_Slave_Driver_Instances[1].Options.DLLAckConfirmation = 0;
@@ -3071,6 +3228,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[0].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[0].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[0].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[0].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[1].Name, "alarmAC");
 	DNP_Slave_Driver_Instances[1].Tags[1].Type = 1;
@@ -3086,6 +3244,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[1].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[1].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[1].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[1].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[2].Name, "SUBSCADAWell1");
 	DNP_Slave_Driver_Instances[1].Tags[2].Type = 1;
@@ -3101,6 +3260,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[2].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[2].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[2].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[2].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[3].Name, "DC24V");
 	DNP_Slave_Driver_Instances[1].Tags[3].Type = 1;
@@ -3116,6 +3276,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[3].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[3].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[3].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[3].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[4].Name, "FaultWell1");
 	DNP_Slave_Driver_Instances[1].Tags[4].Type = 1;
@@ -3131,6 +3292,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[4].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[4].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[4].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[4].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[5].Name, "ONWell1");
 	DNP_Slave_Driver_Instances[1].Tags[5].Type = 1;
@@ -3146,6 +3308,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[5].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[5].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[5].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[5].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[6].Name, "AutoWell1");
 	DNP_Slave_Driver_Instances[1].Tags[6].Type = 1;
@@ -3161,6 +3324,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[6].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[6].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[6].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[6].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[7].Name, "FaultWell2");
 	DNP_Slave_Driver_Instances[1].Tags[7].Type = 1;
@@ -3176,6 +3340,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[7].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[7].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[7].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[7].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[8].Name, "ONWell2");
 	DNP_Slave_Driver_Instances[1].Tags[8].Type = 1;
@@ -3191,6 +3356,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[8].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[8].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[8].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[8].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[9].Name, "AutoWell2");
 	DNP_Slave_Driver_Instances[1].Tags[9].Type = 1;
@@ -3206,6 +3372,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[9].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[9].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[9].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[9].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[10].Name, "SubScadaWell2");
 	DNP_Slave_Driver_Instances[1].Tags[10].Type = 1;
@@ -3221,6 +3388,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[10].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[10].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[10].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[10].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[11].Name, "FaultWell3");
 	DNP_Slave_Driver_Instances[1].Tags[11].Type = 1;
@@ -3236,6 +3404,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[11].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[11].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[11].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[11].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[12].Name, "ONWell3");
 	DNP_Slave_Driver_Instances[1].Tags[12].Type = 1;
@@ -3251,6 +3420,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[12].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[12].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[12].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[12].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[13].Name, "AutoWell3");
 	DNP_Slave_Driver_Instances[1].Tags[13].Type = 1;
@@ -3266,6 +3436,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[13].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[13].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[13].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[13].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[14].Name, "SubScadaWell3");
 	DNP_Slave_Driver_Instances[1].Tags[14].Type = 1;
@@ -3281,6 +3452,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[14].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[14].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[14].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[14].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[15].Name, "roomwaterAlarm");
 	DNP_Slave_Driver_Instances[1].Tags[15].Type = 1;
@@ -3296,6 +3468,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[15].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[15].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[15].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[15].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[16].Name, "chamberWaterAlarm");
 	DNP_Slave_Driver_Instances[1].Tags[16].Type = 1;
@@ -3311,6 +3484,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[16].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[16].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[16].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[16].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[17].Name, "TankAlarmHI");
 	DNP_Slave_Driver_Instances[1].Tags[17].Type = 1;
@@ -3326,6 +3500,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[17].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[17].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[17].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[17].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[18].Name, "TankAlarmLOW");
 	DNP_Slave_Driver_Instances[1].Tags[18].Type = 1;
@@ -3341,6 +3516,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[18].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[18].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[18].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[18].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[19].Name, "Faultpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[19].Type = 1;
@@ -3356,6 +3532,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[19].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[19].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[19].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[19].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[20].Name, "ONpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[20].Type = 1;
@@ -3371,6 +3548,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[20].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[20].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[20].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[20].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[21].Name, "Faultpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[21].Type = 1;
@@ -3386,6 +3564,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[21].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[21].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[21].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[21].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[22].Name, "ONpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[22].Type = 1;
@@ -3401,6 +3580,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[22].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[22].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[22].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[22].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[23].Name, "Faultpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[23].Type = 1;
@@ -3416,6 +3596,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[23].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[23].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[23].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[23].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[24].Name, "ONpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[24].Type = 1;
@@ -3431,6 +3612,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[24].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[24].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[24].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[24].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[25].Name, "Faultpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[25].Type = 1;
@@ -3446,6 +3628,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[25].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[25].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[25].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[25].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[26].Name, "ONpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[26].Type = 1;
@@ -3461,6 +3644,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[26].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[26].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[26].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[26].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[27].Name, "pressureWell1HI");
 	DNP_Slave_Driver_Instances[1].Tags[27].Type = 1;
@@ -3476,6 +3660,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[27].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[27].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[27].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[27].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[28].Name, "pressureWell1LOW");
 	DNP_Slave_Driver_Instances[1].Tags[28].Type = 1;
@@ -3491,6 +3676,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[28].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[28].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[28].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[28].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[29].Name, "phase1Well1");
 	DNP_Slave_Driver_Instances[1].Tags[29].Type = 1;
@@ -3506,6 +3692,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[29].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[29].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[29].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[29].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[30].Name, "phase2Well1");
 	DNP_Slave_Driver_Instances[1].Tags[30].Type = 1;
@@ -3521,6 +3708,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[30].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[30].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[30].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[30].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[31].Name, "phase3Well1");
 	DNP_Slave_Driver_Instances[1].Tags[31].Type = 1;
@@ -3536,6 +3724,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[31].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[31].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[31].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[31].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[32].Name, "pressureWell2HI");
 	DNP_Slave_Driver_Instances[1].Tags[32].Type = 1;
@@ -3551,6 +3740,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[32].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[32].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[32].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[32].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[33].Name, "pressureWell2LOW");
 	DNP_Slave_Driver_Instances[1].Tags[33].Type = 1;
@@ -3566,6 +3756,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[33].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[33].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[33].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[33].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[34].Name, "phase1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[34].Type = 1;
@@ -3581,6 +3772,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[34].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[34].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[34].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[34].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[35].Name, "phase2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[35].Type = 1;
@@ -3596,6 +3788,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[35].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[35].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[35].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[35].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[36].Name, "phase3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[36].Type = 1;
@@ -3611,6 +3804,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[36].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[36].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[36].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[36].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[37].Name, "pressureWell3HI");
 	DNP_Slave_Driver_Instances[1].Tags[37].Type = 1;
@@ -3626,6 +3820,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[37].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[37].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[37].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[37].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[38].Name, "pressureWell3LOW");
 	DNP_Slave_Driver_Instances[1].Tags[38].Type = 1;
@@ -3641,6 +3836,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[38].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[38].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[38].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[38].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[39].Name, "phase1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[39].Type = 1;
@@ -3656,6 +3852,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[39].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[39].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[39].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[39].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[40].Name, "phase2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[40].Type = 1;
@@ -3671,6 +3868,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[40].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[40].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[40].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[40].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[41].Name, "phase3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[41].Type = 1;
@@ -3686,6 +3884,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[41].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[41].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[41].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[41].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[42].Name, "pressureWell1");
 	DNP_Slave_Driver_Instances[1].Tags[42].Type = 4;
@@ -3701,6 +3900,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[42].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[42].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[42].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[42].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[43].Name, "pressureWell2");
 	DNP_Slave_Driver_Instances[1].Tags[43].Type = 4;
@@ -3716,6 +3916,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[43].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[43].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[43].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[43].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[44].Name, "pressureWell3");
 	DNP_Slave_Driver_Instances[1].Tags[44].Type = 4;
@@ -3731,6 +3932,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[44].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[44].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[44].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[44].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[45].Name, "pressurepumpag123");
 	DNP_Slave_Driver_Instances[1].Tags[45].Type = 4;
@@ -3746,6 +3948,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[45].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[45].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[45].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[45].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[46].Name, "pressurepumpag456");
 	DNP_Slave_Driver_Instances[1].Tags[46].Type = 4;
@@ -3761,6 +3964,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[46].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[46].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[46].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[46].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[47].Name, "levelmeterTank");
 	DNP_Slave_Driver_Instances[1].Tags[47].Type = 4;
@@ -3776,6 +3980,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[47].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[47].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[47].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[47].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[48].Name, "CHLmeter");
 	DNP_Slave_Driver_Instances[1].Tags[48].Type = 4;
@@ -3791,6 +3996,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[48].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[48].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[48].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[48].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[49].Name, "I1well1");
 	DNP_Slave_Driver_Instances[1].Tags[49].Type = 4;
@@ -3806,6 +4012,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[49].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[49].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[49].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[49].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[50].Name, "I2well1");
 	DNP_Slave_Driver_Instances[1].Tags[50].Type = 4;
@@ -3821,6 +4028,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[50].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[50].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[50].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[50].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[51].Name, "I3well1");
 	DNP_Slave_Driver_Instances[1].Tags[51].Type = 4;
@@ -3836,6 +4044,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[51].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[51].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[51].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[51].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[52].Name, "V1well1");
 	DNP_Slave_Driver_Instances[1].Tags[52].Type = 4;
@@ -3851,6 +4060,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[52].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[52].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[52].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[52].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[53].Name, "V2well1");
 	DNP_Slave_Driver_Instances[1].Tags[53].Type = 4;
@@ -3866,6 +4076,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[53].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[53].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[53].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[53].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[54].Name, "V3well1");
 	DNP_Slave_Driver_Instances[1].Tags[54].Type = 4;
@@ -3881,6 +4092,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[54].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[54].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[54].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[54].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[55].Name, "V12Well1");
 	DNP_Slave_Driver_Instances[1].Tags[55].Type = 4;
@@ -3896,6 +4108,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[55].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[55].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[55].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[55].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[56].Name, "V23Well1");
 	DNP_Slave_Driver_Instances[1].Tags[56].Type = 4;
@@ -3911,6 +4124,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[56].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[56].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[56].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[56].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[57].Name, "V31Well1");
 	DNP_Slave_Driver_Instances[1].Tags[57].Type = 4;
@@ -3926,6 +4140,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[57].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[57].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[57].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[57].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[58].Name, "P1Well1");
 	DNP_Slave_Driver_Instances[1].Tags[58].Type = 4;
@@ -3941,6 +4156,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[58].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[58].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[58].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[58].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[59].Name, "P2Well1");
 	DNP_Slave_Driver_Instances[1].Tags[59].Type = 4;
@@ -3956,6 +4172,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[59].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[59].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[59].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[59].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[60].Name, "P3Well1");
 	DNP_Slave_Driver_Instances[1].Tags[60].Type = 4;
@@ -3971,6 +4188,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[60].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[60].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[60].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[60].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[61].Name, "q1well1");
 	DNP_Slave_Driver_Instances[1].Tags[61].Type = 4;
@@ -3986,6 +4204,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[61].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[61].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[61].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[61].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[62].Name, "q2well1");
 	DNP_Slave_Driver_Instances[1].Tags[62].Type = 4;
@@ -4001,6 +4220,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[62].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[62].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[62].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[62].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[63].Name, "q3well1");
 	DNP_Slave_Driver_Instances[1].Tags[63].Type = 4;
@@ -4016,6 +4236,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[63].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[63].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[63].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[63].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[64].Name, "s1well1");
 	DNP_Slave_Driver_Instances[1].Tags[64].Type = 4;
@@ -4031,6 +4252,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[64].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[64].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[64].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[64].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[65].Name, "s2well1");
 	DNP_Slave_Driver_Instances[1].Tags[65].Type = 4;
@@ -4046,6 +4268,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[65].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[65].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[65].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[65].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[66].Name, "s3well1");
 	DNP_Slave_Driver_Instances[1].Tags[66].Type = 4;
@@ -4061,6 +4284,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[66].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[66].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[66].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[66].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[67].Name, "pf1well1");
 	DNP_Slave_Driver_Instances[1].Tags[67].Type = 4;
@@ -4076,6 +4300,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[67].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[67].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[67].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[67].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[68].Name, "pf2well1");
 	DNP_Slave_Driver_Instances[1].Tags[68].Type = 4;
@@ -4091,6 +4316,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[68].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[68].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[68].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[68].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[69].Name, "pf3well1");
 	DNP_Slave_Driver_Instances[1].Tags[69].Type = 4;
@@ -4106,6 +4332,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[69].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[69].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[69].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[69].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[70].Name, "FreqWell1");
 	DNP_Slave_Driver_Instances[1].Tags[70].Type = 4;
@@ -4121,6 +4348,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[70].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[70].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[70].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[70].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[71].Name, "I1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[71].Type = 4;
@@ -4136,6 +4364,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[71].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[71].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[71].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[71].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[72].Name, "I2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[72].Type = 4;
@@ -4151,6 +4380,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[72].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[72].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[72].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[72].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[73].Name, "I3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[73].Type = 4;
@@ -4166,6 +4396,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[73].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[73].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[73].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[73].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[74].Name, "V1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[74].Type = 4;
@@ -4181,6 +4412,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[74].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[74].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[74].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[74].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[75].Name, "V2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[75].Type = 4;
@@ -4196,6 +4428,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[75].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[75].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[75].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[75].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[76].Name, "V12Well2");
 	DNP_Slave_Driver_Instances[1].Tags[76].Type = 4;
@@ -4211,6 +4444,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[76].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[76].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[76].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[76].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[77].Name, "V23Well2");
 	DNP_Slave_Driver_Instances[1].Tags[77].Type = 4;
@@ -4226,6 +4460,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[77].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[77].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[77].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[77].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[78].Name, "V31well2");
 	DNP_Slave_Driver_Instances[1].Tags[78].Type = 4;
@@ -4241,6 +4476,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[78].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[78].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[78].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[78].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[79].Name, "p1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[79].Type = 4;
@@ -4256,6 +4492,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[79].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[79].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[79].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[79].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[80].Name, "p2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[80].Type = 4;
@@ -4271,6 +4508,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[80].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[80].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[80].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[80].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[81].Name, "p3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[81].Type = 4;
@@ -4286,6 +4524,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[81].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[81].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[81].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[81].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[82].Name, "q1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[82].Type = 4;
@@ -4301,6 +4540,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[82].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[82].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[82].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[82].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[83].Name, "q2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[83].Type = 4;
@@ -4316,6 +4556,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[83].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[83].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[83].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[83].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[84].Name, "q3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[84].Type = 4;
@@ -4331,6 +4572,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[84].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[84].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[84].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[84].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[85].Name, "s1well2");
 	DNP_Slave_Driver_Instances[1].Tags[85].Type = 4;
@@ -4346,6 +4588,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[85].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[85].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[85].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[85].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[86].Name, "s2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[86].Type = 4;
@@ -4361,6 +4604,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[86].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[86].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[86].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[86].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[87].Name, "s3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[87].Type = 4;
@@ -4376,6 +4620,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[87].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[87].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[87].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[87].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[88].Name, "PF1Well2");
 	DNP_Slave_Driver_Instances[1].Tags[88].Type = 4;
@@ -4391,6 +4636,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[88].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[88].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[88].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[88].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[89].Name, "PF2Well2");
 	DNP_Slave_Driver_Instances[1].Tags[89].Type = 4;
@@ -4406,6 +4652,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[89].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[89].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[89].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[89].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[90].Name, "PF3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[90].Type = 4;
@@ -4421,6 +4668,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[90].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[90].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[90].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[90].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[91].Name, "FreqWell2");
 	DNP_Slave_Driver_Instances[1].Tags[91].Type = 4;
@@ -4436,6 +4684,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[91].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[91].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[91].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[91].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[92].Name, "I1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[92].Type = 4;
@@ -4451,6 +4700,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[92].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[92].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[92].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[92].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[93].Name, "I2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[93].Type = 4;
@@ -4466,6 +4716,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[93].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[93].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[93].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[93].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[94].Name, "I3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[94].Type = 4;
@@ -4481,6 +4732,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[94].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[94].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[94].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[94].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[95].Name, "V1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[95].Type = 4;
@@ -4496,6 +4748,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[95].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[95].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[95].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[95].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[96].Name, "V2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[96].Type = 4;
@@ -4511,6 +4764,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[96].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[96].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[96].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[96].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[97].Name, "V3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[97].Type = 4;
@@ -4526,6 +4780,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[97].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[97].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[97].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[97].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[98].Name, "V12Well3");
 	DNP_Slave_Driver_Instances[1].Tags[98].Type = 4;
@@ -4541,6 +4796,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[98].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[98].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[98].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[98].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[99].Name, "V23Well3");
 	DNP_Slave_Driver_Instances[1].Tags[99].Type = 4;
@@ -4556,6 +4812,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[99].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[99].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[99].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[99].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[100].Name, "V31Well3");
 	DNP_Slave_Driver_Instances[1].Tags[100].Type = 4;
@@ -4571,6 +4828,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[100].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[100].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[100].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[100].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[101].Name, "P1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[101].Type = 4;
@@ -4586,6 +4844,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[101].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[101].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[101].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[101].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[102].Name, "P2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[102].Type = 4;
@@ -4601,6 +4860,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[102].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[102].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[102].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[102].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[103].Name, "P3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[103].Type = 4;
@@ -4616,6 +4876,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[103].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[103].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[103].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[103].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[104].Name, "Q1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[104].Type = 4;
@@ -4631,6 +4892,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[104].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[104].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[104].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[104].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[105].Name, "Q2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[105].Type = 4;
@@ -4646,6 +4908,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[105].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[105].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[105].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[105].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[106].Name, "Q3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[106].Type = 4;
@@ -4661,6 +4924,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[106].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[106].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[106].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[106].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[107].Name, "S1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[107].Type = 4;
@@ -4676,6 +4940,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[107].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[107].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[107].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[107].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[108].Name, "S2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[108].Type = 4;
@@ -4691,6 +4956,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[108].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[108].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[108].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[108].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[109].Name, "S3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[109].Type = 4;
@@ -4706,6 +4972,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[109].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[109].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[109].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[109].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[110].Name, "PF1Well3");
 	DNP_Slave_Driver_Instances[1].Tags[110].Type = 4;
@@ -4721,6 +4988,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[110].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[110].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[110].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[110].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[111].Name, "PF2Well3");
 	DNP_Slave_Driver_Instances[1].Tags[111].Type = 4;
@@ -4736,6 +5004,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[111].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[111].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[111].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[111].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[112].Name, "PF3Well3");
 	DNP_Slave_Driver_Instances[1].Tags[112].Type = 4;
@@ -4751,6 +5020,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[112].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[112].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[112].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[112].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[113].Name, "FreqWell3");
 	DNP_Slave_Driver_Instances[1].Tags[113].Type = 4;
@@ -4766,6 +5036,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[113].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[113].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[113].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[113].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[114].Name, "Iavpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[114].Type = 4;
@@ -4781,6 +5052,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[114].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[114].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[114].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[114].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[115].Name, "Vavpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[115].Type = 4;
@@ -4796,6 +5068,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[115].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[115].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[115].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[115].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[116].Name, "Pavpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[116].Type = 4;
@@ -4811,6 +5084,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[116].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[116].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[116].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[116].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[117].Name, "Freqpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[117].Type = 4;
@@ -4826,6 +5100,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[117].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[117].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[117].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[117].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[118].Name, "rpmpumpag1");
 	DNP_Slave_Driver_Instances[1].Tags[118].Type = 4;
@@ -4841,6 +5116,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[118].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[118].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[118].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[118].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[119].Name, "Iavpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[119].Type = 4;
@@ -4856,6 +5132,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[119].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[119].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[119].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[119].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[120].Name, "Vavpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[120].Type = 4;
@@ -4871,6 +5148,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[120].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[120].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[120].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[120].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[121].Name, "Pavpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[121].Type = 4;
@@ -4886,6 +5164,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[121].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[121].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[121].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[121].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[122].Name, "Freqpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[122].Type = 4;
@@ -4901,6 +5180,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[122].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[122].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[122].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[122].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[123].Name, "rpmpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[123].Type = 4;
@@ -4916,6 +5196,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[123].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[123].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[123].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[123].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[124].Name, "Iavpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[124].Type = 4;
@@ -4931,6 +5212,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[124].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[124].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[124].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[124].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[125].Name, "Vavpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[125].Type = 4;
@@ -4946,6 +5228,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[125].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[125].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[125].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[125].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[126].Name, "Pavpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[126].Type = 4;
@@ -4961,6 +5244,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[126].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[126].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[126].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[126].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[127].Name, "Freqpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[127].Type = 4;
@@ -4976,6 +5260,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[127].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[127].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[127].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[127].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[128].Name, "rpmpumpag4");
 	DNP_Slave_Driver_Instances[1].Tags[128].Type = 4;
@@ -4991,6 +5276,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[128].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[128].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[128].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[128].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[129].Name, "Iavpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[129].Type = 4;
@@ -5006,6 +5292,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[129].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[129].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[129].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[129].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[130].Name, "Vavpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[130].Type = 4;
@@ -5021,6 +5308,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[130].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[130].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[130].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[130].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[131].Name, "Pavpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[131].Type = 4;
@@ -5036,6 +5324,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[131].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[131].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[131].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[131].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[132].Name, "Freqpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[132].Type = 4;
@@ -5051,6 +5340,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[132].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[132].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[132].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[132].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[133].Name, "rpmpumpag5");
 	DNP_Slave_Driver_Instances[1].Tags[133].Type = 4;
@@ -5066,6 +5356,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[133].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[133].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[133].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[133].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[134].Name, "Iavpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[134].Type = 4;
@@ -5081,6 +5372,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[134].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[134].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[134].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[134].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[135].Name, "Vavpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[135].Type = 4;
@@ -5096,6 +5388,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[135].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[135].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[135].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[135].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[136].Name, "Pavpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[136].Type = 4;
@@ -5111,6 +5404,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[136].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[136].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[136].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[136].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[137].Name, "Freqpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[137].Type = 4;
@@ -5126,6 +5420,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[137].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[137].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[137].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[137].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[138].Name, "rpmpumpag6");
 	DNP_Slave_Driver_Instances[1].Tags[138].Type = 4;
@@ -5141,6 +5436,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[138].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[138].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[138].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[138].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[139].Name, "CHLmeter485");
 	DNP_Slave_Driver_Instances[1].Tags[139].Type = 4;
@@ -5156,6 +5452,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[139].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[139].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[139].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[139].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[140].Name, "Well1Stop");
 	DNP_Slave_Driver_Instances[1].Tags[140].Type = 50;
@@ -5171,6 +5468,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[140].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[140].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[140].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[140].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[141].Name, "Well1Start");
 	DNP_Slave_Driver_Instances[1].Tags[141].Type = 50;
@@ -5186,6 +5484,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[141].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[141].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[141].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[141].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[142].Name, "Well2Stop");
 	DNP_Slave_Driver_Instances[1].Tags[142].Type = 50;
@@ -5201,6 +5500,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[142].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[142].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[142].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[142].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[143].Name, "Well2Start");
 	DNP_Slave_Driver_Instances[1].Tags[143].Type = 50;
@@ -5216,6 +5516,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[143].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[143].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[143].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[143].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[144].Name, "Well3Stop");
 	DNP_Slave_Driver_Instances[1].Tags[144].Type = 50;
@@ -5231,6 +5532,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[144].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[144].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[144].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[144].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[145].Name, "Well3Start");
 	DNP_Slave_Driver_Instances[1].Tags[145].Type = 50;
@@ -5246,6 +5548,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[145].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[145].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[145].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[145].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[146].Name, "pumpag1StopStart");
 	DNP_Slave_Driver_Instances[1].Tags[146].Type = 50;
@@ -5261,6 +5564,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[146].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[146].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[146].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[146].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[147].Name, "Pumpag2StopStart");
 	DNP_Slave_Driver_Instances[1].Tags[147].Type = 50;
@@ -5276,6 +5580,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[147].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[147].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[147].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[147].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[148].Name, "Pumpag4StopStart");
 	DNP_Slave_Driver_Instances[1].Tags[148].Type = 50;
@@ -5291,6 +5596,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[148].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[148].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[148].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[148].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[149].Name, "Pumpag5StopStart");
 	DNP_Slave_Driver_Instances[1].Tags[149].Type = 50;
@@ -5306,6 +5612,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[149].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[149].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[149].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[149].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[150].Name, "Pumpag6StopStart");
 	DNP_Slave_Driver_Instances[1].Tags[150].Type = 50;
@@ -5321,6 +5628,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[150].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[150].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[150].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[150].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[151].Name, "V3Well2");
 	DNP_Slave_Driver_Instances[1].Tags[151].Type = 4;
@@ -5336,6 +5644,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[151].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[151].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[151].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[151].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[152].Name, "FaultPumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[152].Type = 1;
@@ -5351,6 +5660,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[152].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[152].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[152].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[152].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[153].Name, "ONpumpag2");
 	DNP_Slave_Driver_Instances[1].Tags[153].Type = 1;
@@ -5366,6 +5676,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[153].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[153].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[153].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[153].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[154].Name, "OnStarwell2");
 	DNP_Slave_Driver_Instances[1].Tags[154].Type = 1;
@@ -5381,6 +5692,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[154].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[154].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[154].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[154].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[155].Name, "OnStarwell3");
 	DNP_Slave_Driver_Instances[1].Tags[155].Type = 1;
@@ -5396,6 +5708,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[155].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[155].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[155].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[155].selectedBeforeOperate = false;
 
 	strcpy(DNP_Slave_Driver_Instances[1].Tags[156].Name, "leveltankspare");
 	DNP_Slave_Driver_Instances[1].Tags[156].Type = 4;
@@ -5411,6 +5724,7 @@ void declare_and_init_drvtags(){
 	DNP_Slave_Driver_Instances[1].Tags[156].TagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[156].OldTagStatus = 1;
 	DNP_Slave_Driver_Instances[1].Tags[156].TagValueDT = time_temp;
+	DNP_Slave_Driver_Instances[1].Tags[156].selectedBeforeOperate = false;
 
 	Modbus_Master_Driver_Instances[0].Options.Disable = false;
 	strcpy(Modbus_Master_Driver_Instances[0].Options.COMPort, "3");

@@ -560,7 +560,8 @@ public:
         
     }
     virtual CommandStatus Operate(const ControlRelayOutputBlock& command, uint16_t index, OperateType opType) {
-
+        sprintf((char *)log_msg, "*** :: In Operate :: First Impression ::  ***\n");
+        log(log_msg);
         auto code = command.functionCode;
         CommandStatus return_val;
 
@@ -582,24 +583,64 @@ public:
                     return_val = CommandStatus::NO_SELECT;
                     return return_val;
                 }
-
+                else{
+                    if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
+                        // return_val = CommandStatus::SUCCESS;
+                        IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
+                        pthread_mutex_lock(&bufferLock);
+                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
+                        pthread_mutex_unlock(&bufferLock);
+                        return_val = CommandStatus::SUCCESS;
+                        
+                        sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
+                        log(log_msg);
+                    }
+                    else {
+                        return_val = CommandStatus::NOT_SUPPORTED;
+                    }
+                    return return_val;
+                }
             }
-
-            if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
-                // return_val = CommandStatus::SUCCESS;
-                IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
-                pthread_mutex_lock(&bufferLock);
-                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
-                pthread_mutex_unlock(&bufferLock);
-                return_val = CommandStatus::SUCCESS;
-                
-                sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
+            else if(opType == OperateType::DirectOperate)
+            {
+                sprintf((char *)log_msg, "*** :: In Operate :: DIrectOperate Mode ::  ***\n");
                 log(log_msg);
+                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
+                    // return_val = CommandStatus::SUCCESS;
+                    IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
+                    pthread_mutex_lock(&bufferLock);
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
+                    pthread_mutex_unlock(&bufferLock);
+                    return_val = CommandStatus::SUCCESS;
+                    
+                    // sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
+                    // log(log_msg);
+                }
+                else {
+                    return_val = CommandStatus::NOT_SUPPORTED;
+                }
+                return return_val;
             }
-            else {
-                return_val = CommandStatus::NOT_SUPPORTED;
+            else if(opType == OperateType::DirectOperateNoAck)
+            {
+                sprintf((char *)log_msg, "*** :: In Operate :: DirectOperateNoAck Mode ::  ***\n");
+                        log(log_msg);
+                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
+                    // return_val = CommandStatus::SUCCESS;
+                    IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
+                    pthread_mutex_lock(&bufferLock);
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
+                    pthread_mutex_unlock(&bufferLock);
+                    return_val = CommandStatus::SUCCESS;
+                    
+                    // sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
+                    // log(log_msg);
+                }
+                else {
+                    return_val = CommandStatus::NOT_SUPPORTED;
+                }
+                return;
             }
-            return return_val;
         }
     }
 
@@ -764,8 +805,8 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
         }
         else if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value-Status-DT", 20) == 0)
         {
-            sprintf((char *)log_msg, "*** In Value-Status-DT Mode Update values ***\n");
-            log(log_msg);
+            // sprintf((char *)log_msg, "*** In Value-Status-DT Mode Update values ***\n");
+            // log(log_msg);
 
             for (int i=0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++)
             {
@@ -858,7 +899,7 @@ void parseDNP3Config(OutstationStackConfig& config, int instance_number)
     config.link.RemoteAddr       = (uint16_t) DNP_Slave_Driver_Instances[instance_number].Options.SlaveAddress;
     config.link.Timeout          = openpal::TimeDuration::Seconds(DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmationTimeout);
     config.link.KeepAliveTimeout = openpal::TimeDuration::Seconds((int64_t)DNP_Slave_Driver_Instances[instance_number].Options.LinkStatusPeriod);
-    config.link.UseConfirms      = (bool)DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmation;
+    config.link.UseConfirms      = true;//(bool)DNP_Slave_Driver_Instances[instance_number].Options.DLLAckConfirmation;
     config.link.NumRetry         = (uint32_t) DNP_Slave_Driver_Instances[instance_number].Options.DLLNumRetry;
 
     

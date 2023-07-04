@@ -143,7 +143,7 @@ int readPersistentStorage();
 void initialize_DNP3_slaves(std::vector<std::thread> *workerThreads);
 
 
-extern std::string COM_Port_Map[2];
+std::string COM_Port_Map[2] = {"Com1", "Com2"};
 
 // Driver Instances buffers defenitions
 extern LIO_Driver_Struct           LIO_Driver_Instance;

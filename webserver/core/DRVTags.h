@@ -258,6 +258,7 @@ typedef struct DNP_master_driverTag{
     uint8_t Group;
     int Retain;
     int TagIndex;
+    bool selectedBeforeOperate;
 } DNP_master_driverTag;
 
 typedef struct DNP_slave_driverTag{

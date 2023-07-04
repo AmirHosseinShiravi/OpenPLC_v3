@@ -302,6 +302,7 @@ typedef struct DNP_master_driverTag{
     uint8_t Group;
     int Retain;
     int TagIndex;
+    bool selectedBeforeOperate;
 } DNP_master_driverTag;
 
 typedef struct DNP_slave_driverTag{
@@ -561,7 +562,8 @@ typedef struct Database_Driver_Struct{
                                         f'\t{DNP_tag_prefix}.OldTagValue = {tag.attrib.get("Init", 0)};\n' + \
                                         f'\t{DNP_tag_prefix}.TagStatus = 1;\n' + \
                                         f'\t{DNP_tag_prefix}.OldTagStatus = 1;\n' + \
-                                        f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n'
+                                        f'\t{DNP_tag_prefix}.TagValueDT = time_temp;\n' + \
+                                        f'\t{DNP_tag_prefix}.selectedBeforeOperate = false;\n'
                                 
                                 concatenate_strings(DRVTags_string_body ,string)
 
