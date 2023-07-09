@@ -26,6 +26,7 @@
 #include <signal.h>
 #include <algorithm> 
 #include <functional> 
+#include <map> 
 #include <cctype>
 #include <locale>
 #include <fstream>
@@ -288,31 +289,31 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 //     int analog_counter = 0;
 //     int boStatus_counter = 0;
 //     int aoStatus_counter = 0;
-
+// 
 //     // uint16_t tags_address_array[DNP_Slave_Driver_Instances[instance_number].number_of_tags];
-
+// 
 //     // for (int m= 0; m < DNP_Slave_Driver_Instances[instance_number].number_of_tags; m++)
 //     // {
 //     //     tags_address_array[m] = DNP_Slave_Driver_Instances[instance_number].Tags[m].Address;
 //     // }
-
+// 
 //     uint16_t arr_size = sizeof(tags_address_array[instance_number]) / sizeof(tags_address_array[instance_number][0]);
-    
+// 
 //     sprintf((char *)log_msg, "*** instance: %d :: size of tags_address_array : %d ::  ***\n", instance_number,  arr_size);
 //     log(log_msg);
-
+// 
 //     for (int i= 0; i < DNP_Slave_Driver_Instances[instance_number].number_of_tags; i++ )
 //     {
 //         try
 //         {
-
+// 
 //             pthread_mutex_lock(&bufferLock); //lock mutex
 //             int type = DNP_Slave_Driver_Instances[instance_number].Tags[i].Type;
 //             uint8_t tag_class = DNP_Slave_Driver_Instances[instance_number].Tags[i].Class & 0x0F;
 //             uint8_t svariation = ((DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0xF0) >> 4) ;
 //             uint8_t evariation = (DNP_Slave_Driver_Instances[instance_number].Tags[i].Group & 0x0F);
 //             pthread_mutex_unlock(&bufferLock); //unlock mutex  
-
+// 
 //             switch (type)
 //             {
 //                 case 1:
@@ -324,7 +325,7 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 //                     config.dbConfig.binary[binary_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
 //                     binary_counter++;
 //                     break;
-
+// 
 //                 case 4:
 //                     sprintf((char *)log_msg, "Instance: %d :: Analog Tag: %d\n", instance_number, analog_counter);
 //                     log(log_msg);
@@ -335,7 +336,7 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 //                     config.dbConfig.analog[analog_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
 //                     analog_counter++;
 //                     break;
-
+// 
 //                 case 50:
 //                     sprintf((char *)log_msg, "Instance: %d :: BinaryOutputStatus Tag: %d\n", instance_number, boStatus_counter);
 //                     log(log_msg);
@@ -345,7 +346,7 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 //                     config.dbConfig.boStatus[boStatus_counter].vIndex = DNP_Slave_Driver_Instances[instance_number].Tags[i].Address;
 //                     boStatus_counter++;
 //                     break;
-
+// 
 //                 case 51:
 //                     sprintf((char *)log_msg, "Instance: %d :: AnalogOutputStatus Tag: %d\n", instance_number, aoStatus_counter);
 //                     log(log_msg);                
@@ -357,9 +358,9 @@ uint8_t getEventGroupVariationEnumFromValue(uint8_t event_group, int type)
 //                     aoStatus_counter++;
 //                     break;
 //             }
-            
-        
-            
+        //     
+        // 
+        //     
 //         }
 //         catch(const std::exception& e)
 //         {
@@ -430,8 +431,8 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
                     switch (type)
                     {
                         case 1:
-                            sprintf((char *)log_msg, "Instance: %d :: Binary Tag: %d :: Address: %d\n", instance_number, binary_counter, DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
-                            log(log_msg);
+                            // sprintf((char *)log_msg, "Instance: %d :: Binary Tag: %d :: Address: %d\n", instance_number, binary_counter, DNP_Slave_Driver_Instances[instance_number].Tags[i].Address);
+                            // log(log_msg);
                             config.dbConfig.binary[binary_counter].clazz = getPointClassEnumFromValue(tag_class);
                             config.dbConfig.binary[binary_counter].evariation = static_cast<EventBinaryVariation>(getEventGroupVariationEnumFromValue(evariation, type));
                             config.dbConfig.binary[binary_counter].svariation = static_cast<StaticBinaryVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
@@ -440,8 +441,8 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
                             break;
 
                         case 4:
-                            sprintf((char *)log_msg, "Instance: %d :: Analog Tag: %d\n", instance_number, analog_counter);
-                            log(log_msg);
+                            // sprintf((char *)log_msg, "Instance: %d :: Analog Tag: %d\n", instance_number, analog_counter);
+                            // log(log_msg);
                             config.dbConfig.analog[analog_counter].clazz = getPointClassEnumFromValue(tag_class);
                             config.dbConfig.analog[analog_counter].evariation = static_cast<EventAnalogVariation>(getEventGroupVariationEnumFromValue(evariation, type));
                             config.dbConfig.analog[analog_counter].svariation = static_cast<StaticAnalogVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
@@ -451,8 +452,8 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
                             break;
 
                         case 50:
-                            sprintf((char *)log_msg, "Instance: %d :: BinaryOutputStatus Tag: %d\n", instance_number, boStatus_counter);
-                            log(log_msg);
+                            // sprintf((char *)log_msg, "Instance: %d :: BinaryOutputStatus Tag: %d\n", instance_number, boStatus_counter);
+                            // log(log_msg);
                             config.dbConfig.boStatus[boStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
                             config.dbConfig.boStatus[boStatus_counter].evariation = static_cast<EventBinaryOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
                             config.dbConfig.boStatus[boStatus_counter].svariation = static_cast<StaticBinaryOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
@@ -461,8 +462,8 @@ void config_datapoints(OutstationStackConfig& config, int instance_number)
                             break;
 
                         case 51:
-                            sprintf((char *)log_msg, "Instance: %d :: AnalogOutputStatus Tag: %d\n", instance_number, aoStatus_counter);
-                            log(log_msg);                
+                            // sprintf((char *)log_msg, "Instance: %d :: AnalogOutputStatus Tag: %d\n", instance_number, aoStatus_counter);
+                            // log(log_msg);                
                             config.dbConfig.aoStatus[aoStatus_counter].clazz = getPointClassEnumFromValue(tag_class);
                             config.dbConfig.aoStatus[aoStatus_counter].evariation = static_cast<EventAnalogOutputStatusVariation>(getEventGroupVariationEnumFromValue(evariation, type));
                             config.dbConfig.aoStatus[aoStatus_counter].svariation = static_cast<StaticAnalogOutputStatusVariation>(getStaticGroupVariationEnumFromValue(svariation, type));
@@ -516,10 +517,33 @@ void map_address_to_index(int instance_number)
     }
 }
 
+
+// std::unordered_map<uint16_t, std::thread> workerthreads_map;
+
+
+enum timezoneOffsets {
+    UTC = 0,
+    IR = 12600,
+};
+
+std::time_t get_current_time_timestamp_of_timezone(timezoneOffsets timezone)
+{
+    // Get the current time
+    auto currentTime = std::chrono::system_clock::now();
+    std::time_t utcTime = std::chrono::system_clock::to_time_t(currentTime);
+    auto localTime = currentTime + std::chrono::seconds(timezone);
+
+    // Convert the local time to a readable string format
+    std::time_t time = std::chrono::system_clock::to_time_t(localTime);
+
+    return time;
+}
+
+
 // IMPORTANT: when we execute an command, the commandstatus maybe set to "SUCCESS" but according to document, it's means : "command was accepted, initiated, or queued".
 // but some time maybe return "DOWNSTREAM_FAIL" and according to document, it's means : "command not accepted because the outstation is forwarding the request to another downstream device which cannot be reached or is otherwise incapable of performing the request"
 // it can be true for us because must of execution is processed in another devices like extensions and ... .
-// so we need to implement it in the code. but in another devices like ALBORZ RTU it not implemented yet.
+// so we need to implement it in the code. but in another devices like ALBORZ RTU it is not also implemented yet.
 //-----------------------------------------------------------------------------
 // Class to handle commands from the master
 //-----------------------------------------------------------------------------
@@ -527,6 +551,33 @@ class CommandCallback: public ICommandHandler {
 
 private:
     int instance_number;
+    std::vector<std::thread> workerthreads;
+    struct last_command_buffer{
+        
+        enum PointType{
+            ControlRelayOutputBlockType,
+            AnalogOutputType
+        };
+
+        enum AnalogType{
+            AnalogOutputInt16,
+            AnalogOutputInt32,
+            AnalogOutputFloat32,
+            AnalogOutputDouble64
+        };
+
+        opendnp3::ControlRelayOutputBlock last_selected_ControlRelayOutputBlock;
+
+        opendnp3::AnalogOutputInt16 last_selected_AnalogOutputInt16;
+        opendnp3::AnalogOutputInt32 last_selected_AnalogOutputInt32;
+        opendnp3::AnalogOutputFloat32 last_selected_AnalogOutputFloat32;
+        opendnp3::AnalogOutputDouble64 last_selected_AnalogOutputDouble64;
+
+        AnalogType analog_type;
+        PointType point_type;
+        uint16_t index;
+
+    }last_command_buffer;
 
 public:
 
@@ -536,13 +587,48 @@ public:
         instance_number = num;
     }
    
+
+    void action_on_dnp_tag_included_time(ControlCode& controlcode, int instance_number, uint16_t index, ControlRelayOutputBlock& command, int thread_index)
+    {
+        sprintf((char *)log_msg, "In Pulse action thread for index:  %d :: START Function\n",index);
+        log(log_msg);
+        for (int i= 0; i < command.count; i++)
+        {
+
+            if (controlcode == ControlCode::PULSE_ON)
+            {
+                pthread_mutex_lock(&bufferLock); //lock mutex
+                DNP_Slave_Driver_Instances[instance_number].Tags[index].TagValue = 1;
+                pthread_mutex_unlock(&bufferLock); //unlock mutex  
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(command.onTimeMS));
+                
+                pthread_mutex_lock(&bufferLock); //lock mutex
+                DNP_Slave_Driver_Instances[instance_number].Tags[index].TagValue = 0;
+                pthread_mutex_unlock(&bufferLock); //unlock mutex  
+                
+                std::this_thread::sleep_for(std::chrono::milliseconds(command.offTimeMS));
+
+            }
+
+        }
+        sprintf((char *)log_msg, "In Pulse action thread for index:  %d :: END Function\n",index);
+        log(log_msg);
+
+        workerthreads.erase(workerthreads.begin() + thread_index);
+
+    }
+
+
+
     // Important: check index address to exist in out tags array
 
     //CROB - changed to support offsets (yurgen1975)
     virtual CommandStatus Select(const ControlRelayOutputBlock& command, uint16_t index) {
-        // if index was out of range, return CommandStatus::OUT_OF_RANGE
+
         sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d  ***\n", index);
         log(log_msg);
+        
         bool index_existance = index_existance_check(index, instance_number);
         if (!index_existance){
             // find better choice for return CommandStatus
@@ -550,8 +636,17 @@ public:
         }
         else
         {   
+
             uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
             DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
+
+            // Store tag Command properties that master send to outstation for matching procedure in operation function
+            last_command_buffer.last_selected_ControlRelayOutputBlock.count = command.count;
+            last_command_buffer.last_selected_ControlRelayOutputBlock.functionCode = command.functionCode;
+            last_command_buffer.last_selected_ControlRelayOutputBlock.onTimeMS = command.onTimeMS;
+            last_command_buffer.last_selected_ControlRelayOutputBlock.offTimeMS = command.offTimeMS;
+            last_command_buffer.last_selected_ControlRelayOutputBlock.status = command.status;
+
             sprintf((char *)log_msg, "*** :: In Select CommandStatus ::  ***\n");
             log(log_msg);
             return CommandStatus::SUCCESS;
@@ -560,8 +655,8 @@ public:
         
     }
     virtual CommandStatus Operate(const ControlRelayOutputBlock& command, uint16_t index, OperateType opType) {
-        sprintf((char *)log_msg, "*** :: In Operate :: First Impression ::  ***\n");
-        log(log_msg);
+        // save command feature for tag and compare with operate command feature. if identical then operate can perform
+
         auto code = command.functionCode;
         CommandStatus return_val;
 
@@ -583,20 +678,54 @@ public:
                     return_val = CommandStatus::NO_SELECT;
                     return return_val;
                 }
-                else{
-                    if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
-                        // return_val = CommandStatus::SUCCESS;
-                        IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
-                        pthread_mutex_lock(&bufferLock);
-                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
-                        pthread_mutex_unlock(&bufferLock);
-                        return_val = CommandStatus::SUCCESS;
+                else
+                {
+                    // reset to default value
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = false;
+                    
+                    // check equality of Select and Operate Command feature
+                    if (command == last_command_buffer.last_selected_ControlRelayOutputBlock)
+                    {                    
+                        if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) 
+                        {
+                            sprintf((char *)log_msg, "*** :: In Operate :: Latch Mode ::  ***\n");
+                            log(log_msg);
+
+                            IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
+                            pthread_mutex_lock(&bufferLock);
+                            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
+                            pthread_mutex_unlock(&bufferLock);
+                            
+                            return_val = CommandStatus::SUCCESS;
+                        }
+                        else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL || code == ControlCode::PULSE_OFF_CANCEL)
+                        {
+                            sprintf((char *)log_msg, "*** :: In Operate :: Pulse Mode ::  ***\n");
+                            log(log_msg);
+                            
+                            if ( code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL)
+                            {
+                                int thread_in_vector_index = workerthreads.size();
+                                workerthreads.emplace_back(std::bind(&CommandCallback::action_on_dnp_tag_included_time, this, code, instance_number, buffer_index, command, thread_in_vector_index));
+                                workerthreads.back().detach();
+
+                                return_val = CommandStatus::SUCCESS;   
+                            }
+                            // PULSE_OFF: Non-interoperable code. Do not use for new applications. return NOT_SUPPORTED
+                            else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_OFF_CANCEL)
+                            {
+                                return_val = CommandStatus::NOT_SUPPORTED;
+                            }
+                        }
+
+                        else {
+                            return_val = CommandStatus::NOT_SUPPORTED;
+                        }
                         
-                        sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
-                        log(log_msg);
                     }
-                    else {
-                        return_val = CommandStatus::NOT_SUPPORTED;
+                    else
+                    {
+                        return_val = CommandStatus::FORMAT_ERROR;
                     }
                     return return_val;
                 }
@@ -605,17 +734,38 @@ public:
             {
                 sprintf((char *)log_msg, "*** :: In Operate :: DIrectOperate Mode ::  ***\n");
                 log(log_msg);
-                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
-                    // return_val = CommandStatus::SUCCESS;
+                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) 
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: Latch Mode ::  ***\n");
+                    log(log_msg);
+
                     IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
                     pthread_mutex_lock(&bufferLock);
                     DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
                     pthread_mutex_unlock(&bufferLock);
-                    return_val = CommandStatus::SUCCESS;
                     
-                    // sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
-                    // log(log_msg);
+                    return_val = CommandStatus::SUCCESS;
                 }
+                else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL || code == ControlCode::PULSE_OFF_CANCEL)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: Pulse Mode ::  ***\n");
+                    log(log_msg);
+                    
+                    if ( code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL)
+                    {
+                        int thread_in_vector_index = workerthreads.size();
+                        workerthreads.emplace_back(std::bind(&CommandCallback::action_on_dnp_tag_included_time, this, code, instance_number, buffer_index, command, thread_in_vector_index));
+                        workerthreads.back().detach();
+
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    // PULSE_OFF: Non-interoperable code. Do not use for new applications. return NOT_SUPPORTED
+                    else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_OFF_CANCEL)
+                    {
+                        return_val = CommandStatus::NOT_SUPPORTED;
+                    }
+                }
+
                 else {
                     return_val = CommandStatus::NOT_SUPPORTED;
                 }
@@ -625,17 +775,38 @@ public:
             {
                 sprintf((char *)log_msg, "*** :: In Operate :: DirectOperateNoAck Mode ::  ***\n");
                         log(log_msg);
-                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) {
-                    // return_val = CommandStatus::SUCCESS;
+                if(code == ControlCode::LATCH_ON || code == ControlCode::LATCH_OFF) 
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: Latch Mode ::  ***\n");
+                    log(log_msg);
+
                     IEC_BOOL crob_val = (code == ControlCode::LATCH_ON);
                     pthread_mutex_lock(&bufferLock);
                     DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = crob_val;
                     pthread_mutex_unlock(&bufferLock);
-                    return_val = CommandStatus::SUCCESS;
                     
-                    // sprintf((char *)log_msg, "*** :: In Operate :: Operational Mode ::  ***\n");
-                    // log(log_msg);
+                    return_val = CommandStatus::SUCCESS;
                 }
+                else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL || code == ControlCode::PULSE_OFF_CANCEL)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: Pulse Mode ::  ***\n");
+                    log(log_msg);
+                    
+                    if ( code == ControlCode::PULSE_ON || code == ControlCode::PULSE_ON_CANCEL)
+                    {
+                        int thread_in_vector_index = workerthreads.size();
+                        workerthreads.emplace_back(std::bind(&CommandCallback::action_on_dnp_tag_included_time, this, code, instance_number, buffer_index, command, thread_in_vector_index));
+                        workerthreads.back().detach();
+
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    // PULSE_OFF: Non-interoperable code. Do not use for new applications. return NOT_SUPPORTED
+                    else if (code == ControlCode::PULSE_OFF || code == ControlCode::PULSE_OFF_CANCEL)
+                    {
+                        return_val = CommandStatus::NOT_SUPPORTED;
+                    }
+                }
+
                 else {
                     return_val = CommandStatus::NOT_SUPPORTED;
                 }
@@ -646,84 +817,366 @@ public:
 
     //Analog Out - changed to support offsets (yurgen1975)
     virtual CommandStatus Select(const AnalogOutputInt16& command, uint16_t index) {
-        index = index + offset_ao;
-        return CommandStatus::SUCCESS;
+        sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d  ***\n", index);
+        log(log_msg);
+        
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
+        }
+        else
+        {   
+
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
+            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
+
+            // Store tag Command properties that master send to outstation for matching procedure in operation function
+            last_command_buffer.last_selected_AnalogOutputInt16.value = command.value;
+            last_command_buffer.last_selected_AnalogOutputInt16.status = command.status;
+
+            return CommandStatus::SUCCESS;
+        }
     }
     virtual CommandStatus Operate(const AnalogOutputInt16& command, uint16_t index, OperateType opType) {
-        index = index + offset_ao;
-        auto ao_val = command.value;
-        pthread_mutex_lock(&bufferLock);
-        if(index < MIN_16B_RANGE && int_output[index] != NULL) {
-            *int_output[index] = ao_val;
+
+        CommandStatus return_val;
+
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
         }
-        else if(index < MAX_16B_RANGE && 
-                int_memory[index - MIN_16B_RANGE] != NULL) {
-            *int_memory[index - MIN_16B_RANGE] = ao_val;
+        else
+        {
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
+
+            if (opType == OperateType::SelectBeforeOperate)
+            {
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate == false)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: No Select ::  ***\n");
+                    log(log_msg);
+                    return_val = CommandStatus::NO_SELECT;
+                    return return_val;
+                }
+                else
+                {
+                    // reset to default value
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = false;
+                    
+                    // check equality of Select and Operate Command feature
+                    if (command == last_command_buffer.last_selected_AnalogOutputInt16)
+                    {                    
+                        sprintf((char *)log_msg, "*** :: In AnalogOutputInt16 Operate Mode :: index : %d  ***\n", index);
+                        log(log_msg);
+                        pthread_mutex_lock(&bufferLock);
+                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                        pthread_mutex_unlock(&bufferLock);
+                        
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    else
+                    {
+                        return_val = CommandStatus::FORMAT_ERROR;
+                    }
+                    return return_val;
+                }
+            }
+            else if(opType == OperateType::DirectOperate)
+            {
+
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return return_val;
+            }
+            else if(opType == OperateType::DirectOperateNoAck)
+            {
+                                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return;
+            }
         }
-        else if(index > MAX_16B_RANGE) {
-            return CommandStatus::OUT_OF_RANGE;
-        }
-        pthread_mutex_unlock(&bufferLock);
-        return CommandStatus::SUCCESS;
     }
 
     //AnalogOut 32 (Int)
     virtual CommandStatus Select(const AnalogOutputInt32& command, uint16_t index) {
-        return CommandStatus::SUCCESS;
+        sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d :: value: %d ***\n", index, command.value);
+        log(log_msg);
+        
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
+        }
+        else
+        {   
+
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
+            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
+
+            // Store tag Command properties that master send to outstation for matching procedure in operation function
+            last_command_buffer.last_selected_AnalogOutputInt32.value = command.value;
+            last_command_buffer.last_selected_AnalogOutputInt32.status = command.status;
+
+            return CommandStatus::SUCCESS;
+        }
     }
     virtual CommandStatus Operate(const AnalogOutputInt32& command, uint16_t index, OperateType opType) {
-        auto ao_val = command.value;
 
-        if(index < MIN_32B_RANGE || index >= MAX_32B_RANGE)
-            return CommandStatus::OUT_OF_RANGE;
-        
-        pthread_mutex_lock(&bufferLock);
-        if(dint_memory[index - MIN_32B_RANGE] != NULL) {
-            *dint_memory[index - MIN_32B_RANGE] = ao_val;
+        CommandStatus return_val;
+
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
         }
-        pthread_mutex_unlock(&bufferLock);
+        else
+        {
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
 
-        return CommandStatus::SUCCESS;
+            if (opType == OperateType::SelectBeforeOperate)
+            {
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate == false)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: No Select ::  ***\n");
+                    log(log_msg);
+                    return_val = CommandStatus::NO_SELECT;
+                    return return_val;
+                }
+                else
+                {
+                    // reset to default value
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = false;
+                    
+                    // check equality of Select and Operate Command feature
+                    if (command == last_command_buffer.last_selected_AnalogOutputInt32)
+                    {                    
+                        sprintf((char *)log_msg, "*** :: In AnalogOutputInt32 Operate Mode :: index : %d :: value: %d ***\n", index, command.value);
+                        log(log_msg);
+                        pthread_mutex_lock(&bufferLock);
+                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                        pthread_mutex_unlock(&bufferLock);
+                        
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    else
+                    {
+                        return_val = CommandStatus::FORMAT_ERROR;
+                    }
+                    return return_val;
+                }
+            }
+            else if(opType == OperateType::DirectOperate)
+            {
+
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return return_val;
+            }
+            else if(opType == OperateType::DirectOperateNoAck)
+            {
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return;
+            }
+        }
     }
 
     //AnalogOut 32 (Float)
     virtual CommandStatus Select(const AnalogOutputFloat32& command, uint16_t index) {
 
-        return CommandStatus::SUCCESS;
+        sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d  ***\n", index);
+        log(log_msg);
+        
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
+        }
+        else
+        {   
+
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
+            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
+
+            // Store tag Command properties that master send to outstation for matching procedure in operation function
+            last_command_buffer.last_selected_AnalogOutputFloat32.value= command.value;
+            last_command_buffer.last_selected_AnalogOutputFloat32.status = command.status;
+
+            return CommandStatus::SUCCESS;
+        }
     }
     virtual CommandStatus Operate(const AnalogOutputFloat32& command, uint16_t index, OperateType opType) {
-        auto ao_val = command.value;
 
-        if(index < MIN_32B_RANGE || index >= MAX_32B_RANGE)
-            return CommandStatus::OUT_OF_RANGE;
-        
-        pthread_mutex_lock(&bufferLock);
-        if(dint_memory[index - MIN_32B_RANGE] != NULL) {
-            *dint_memory[index - MIN_32B_RANGE] = ao_val;
+        CommandStatus return_val;
+
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
         }
-        pthread_mutex_unlock(&bufferLock);
+        else
+        {
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
 
-        return CommandStatus::SUCCESS;
+            if (opType == OperateType::SelectBeforeOperate)
+            {
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate == false)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: No Select ::  ***\n");
+                    log(log_msg);
+                    return_val = CommandStatus::NO_SELECT;
+                    return return_val;
+                }
+                else
+                {
+                    // reset to default value
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = false;
+                    
+                    // check equality of Select and Operate Command feature
+                    if (command == last_command_buffer.last_selected_AnalogOutputFloat32)
+                    {     
+                        sprintf((char *)log_msg, "*** :: In AnalogOutputfloat Operate Mode :: index : %f :: value: %d ***\n", index, command.value);
+                        log(log_msg);               
+                        pthread_mutex_lock(&bufferLock);
+                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                        pthread_mutex_unlock(&bufferLock);
+                        
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    else
+                    {
+                        return_val = CommandStatus::FORMAT_ERROR;
+                    }
+                    return return_val;
+                }
+            }
+            else if(opType == OperateType::DirectOperate)
+            {
+
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return return_val;
+            }
+            else if(opType == OperateType::DirectOperateNoAck)
+            {
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return;
+            }
+        }
     }
 
     //AnalogOut 64
     virtual CommandStatus Select(const AnalogOutputDouble64& command, uint16_t index) {
-        return CommandStatus::SUCCESS;
+        sprintf((char *)log_msg, "*** :: In Select CommandStatus :: index : %d  ***\n", index);
+        log(log_msg);
+        
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
+        }
+        else
+        {   
+
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
+            DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = true;
+
+            // Store tag Command properties that master send to outstation for matching procedure in operation function
+            last_command_buffer.last_selected_AnalogOutputDouble64.value = command.value;
+            last_command_buffer.last_selected_AnalogOutputDouble64.status = command.status;
+
+            return CommandStatus::SUCCESS;
+        }
     }
     virtual CommandStatus Operate(const AnalogOutputDouble64& command, uint16_t index, OperateType opType) {
-        auto ao_val = command.value;
 
-        if(index < MIN_64B_RANGE || index >= MAX_64B_RANGE)
-            return CommandStatus::OUT_OF_RANGE;
-        
-        pthread_mutex_lock(&bufferLock);
-        if(lint_memory[index - MIN_64B_RANGE] != NULL) {
-            *lint_memory[index - MIN_64B_RANGE] = ao_val;
+        CommandStatus return_val;
+
+        bool index_existance = index_existance_check(index, instance_number);
+        if (!index_existance){
+            // find better choice for return CommandStatus
+            return CommandStatus::UNDEFINED;
         }
-        pthread_mutex_unlock(&bufferLock);
+        else
+        {
+            uint16_t buffer_index = dnp_address_to_buffer_index_map[instance_number][index];
 
-        return CommandStatus::SUCCESS;
+            if (opType == OperateType::SelectBeforeOperate)
+            {
+                if(DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate == false)
+                {
+                    sprintf((char *)log_msg, "*** :: In Operate :: No Select ::  ***\n");
+                    log(log_msg);
+                    return_val = CommandStatus::NO_SELECT;
+                    return return_val;
+                }
+                else
+                {
+                    // reset to default value
+                    DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].selectedBeforeOperate = false;
+                    
+                    // check equality of Select and Operate Command feature
+                    if (command == last_command_buffer.last_selected_AnalogOutputDouble64)
+                    {                    
+                        sprintf((char *)log_msg, "*** :: In AnalogOutputDouble Operate Mode :: index : %Lf :: value: %d ***\n", index, command.value);
+                        log(log_msg);
+                        pthread_mutex_lock(&bufferLock);
+                        DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                        pthread_mutex_unlock(&bufferLock);
+                        
+                        return_val = CommandStatus::SUCCESS;   
+                    }
+                    else
+                    {
+                        return_val = CommandStatus::FORMAT_ERROR;
+                    }
+                    return return_val;
+                }
+            }
+            else if(opType == OperateType::DirectOperate)
+            {
+
+                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return return_val;
+            }
+            else if(opType == OperateType::DirectOperateNoAck)
+            {
+                                pthread_mutex_lock(&bufferLock);
+                DNP_Slave_Driver_Instances[instance_number].Tags[buffer_index].TagValue = command.value;
+                pthread_mutex_unlock(&bufferLock);
+                return_val = CommandStatus::SUCCESS;  
+
+                return;
+            }
+        }
     }
+
+    
 protected:
     void Start() final {}
     void End() final {}
@@ -731,15 +1184,12 @@ protected:
 
 //------------------------------------------------------------------
 // Function to update DNP3 values every time they may have changed
-// Updated by Yurgen1975 to support slave devices: DI/DO address 800 and AI/AO address 100
 //------------------------------------------------------------------
 void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
     UpdateBuilder builder;
-    // unsigned char log_msg[1000];
-    // sprintf((char *)log_msg, "*** In update_vals ***\n");
-    // log(log_msg);
-    
-        if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value", 20) == 0)
+
+        // 20 is size of tagConfiguration
+        if(strncmp(DNP_Slave_Driver_Instances[instance_number].Options.TagConfiguration, "Value", 20) == 0) 
         {
             sprintf((char *)log_msg, "*** In Value Mode Update values ***\n");
             log(log_msg);
@@ -844,9 +1294,6 @@ void update_vals(std::shared_ptr<IOutstation> outstation, int instance_number){
 
     outstation->Apply(builder.Build());
 }
-
-
-
 
 
 
@@ -1245,9 +1692,16 @@ void dnp3StartServer(int instance_number) {
         pthread_mutex_lock(&bufferLock);
         update_vals(outstation, instance_number);
         pthread_mutex_unlock(&bufferLock);
+        // design this function 
+        // dnp_thread_system_tag_update_vals();
         sleep_until(&timer_start, OPLC_CYCLE);
     }
     
+    // for (int i=0; i < workerthreads.size(); i++)
+    // {
+    //     workerthreads.at(i).join();
+    // }
+
     printf("Shutting down DNP3 server\n");
     channel->Shutdown();
     printf("DNP3 Server deactivated\n");

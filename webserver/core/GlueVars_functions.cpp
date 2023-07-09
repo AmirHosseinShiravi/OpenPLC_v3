@@ -1099,6 +1099,18 @@ void setVarsFromDRVTags(){
 	__SET_VAR(,RES0__DNP_PUMPAG6STOPSTART,,DNP_Slave_Driver_Instances[0].Tags[150].TagValue);
 	__SET_VAR(,RES0__DNP_PUMPAG6STOPSTART_STATUS,,DNP_Slave_Driver_Instances[0].Tags[150].TagStatus);
 	__SET_VAR(,RES0__DNP_PUMPAG6STOPSTART_DT,,DNP_Slave_Driver_Instances[0].Tags[150].TagValueDT);
+	__SET_VAR(,RES0__DNP_AOTAG1000,,DNP_Slave_Driver_Instances[0].Tags[157].TagValue);
+	__SET_VAR(,RES0__DNP_AOTAG1000_STATUS,,DNP_Slave_Driver_Instances[0].Tags[157].TagStatus);
+	__SET_VAR(,RES0__DNP_AOTAG1000_DT,,DNP_Slave_Driver_Instances[0].Tags[157].TagValueDT);
+	__SET_VAR(,RES0__DNP_AOTAG1001,,DNP_Slave_Driver_Instances[0].Tags[158].TagValue);
+	__SET_VAR(,RES0__DNP_AOTAG1001_STATUS,,DNP_Slave_Driver_Instances[0].Tags[158].TagStatus);
+	__SET_VAR(,RES0__DNP_AOTAG1001_DT,,DNP_Slave_Driver_Instances[0].Tags[158].TagValueDT);
+	__SET_VAR(,RES0__DNP_AOTAG1002,,DNP_Slave_Driver_Instances[0].Tags[159].TagValue);
+	__SET_VAR(,RES0__DNP_AOTAG1002_STATUS,,DNP_Slave_Driver_Instances[0].Tags[159].TagStatus);
+	__SET_VAR(,RES0__DNP_AOTAG1002_DT,,DNP_Slave_Driver_Instances[0].Tags[159].TagValueDT);
+	__SET_VAR(,RES0__DNP_AOTAG1003,,DNP_Slave_Driver_Instances[0].Tags[160].TagValue);
+	__SET_VAR(,RES0__DNP_AOTAG1003_STATUS,,DNP_Slave_Driver_Instances[0].Tags[160].TagStatus);
+	__SET_VAR(,RES0__DNP_AOTAG1003_DT,,DNP_Slave_Driver_Instances[0].Tags[160].TagValueDT);
 	__SET_VAR(,RES0__DNP2_WELL1STOP,,DNP_Slave_Driver_Instances[1].Tags[140].TagValue);
 	__SET_VAR(,RES0__DNP2_WELL1STOP_STATUS,,DNP_Slave_Driver_Instances[1].Tags[140].TagStatus);
 	__SET_VAR(,RES0__DNP2_WELL1STOP_DT,,DNP_Slave_Driver_Instances[1].Tags[140].TagValueDT);
